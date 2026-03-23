@@ -45,7 +45,10 @@ header ul li a {
     color: white;
     cursor: pointer;
 }
-
+/* Logo */
+.logo img {
+    height: 50px;
+}
 /* HERO */
 .hero {
     background: linear-gradient(to right, var(--azul), var(--verde));
