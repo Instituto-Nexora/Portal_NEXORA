@@ -1,0 +1,27 @@
+{
+  "feature": "portal-nexora",
+  "created_at": "2026-04-25T00:00:00Z",
+  "updated_at": "2026-04-25T02:25:00Z",
+  "squads": {
+    "frontend-001": {
+      "domain": "frontend",
+      "pipeline": "feature-development",
+      "started_at": "2026-04-25T00:00:00Z",
+      "completed_at": "2026-04-25T00:00:00Z",
+      "status": "completed",
+      "completed_steps": ["01-gate-integridade", "02-arquitetura", "03-checkpoint-design", "04-implementacao", "05-review", "06-docs", "update-task"],
+      "current_step": null,
+      "suspended_at": null
+    },
+    "produto-001": {
+      "domain": "produto",
+      "pipeline": "nova-feature",
+      "started_at": "2026-04-25T02:07:00Z",
+      "completed_at": "2026-04-25T02:25:00Z",
+      "status": "completed",
+      "completed_steps": ["01-gate-integridade", "nf-02-validar-requisito", "nf-03-verificar-docs", "nf-04-spec", "nf-05-checkpoint-aprovacao", "nf-06-versionar", "nf-07-handoff", "nf-08-criar-tarefas"],
+      "current_step": null,
+      "suspended_at": null
+    }
+  }
+}
