@@ -1,0 +1,96 @@
+name: "Feature Development"
+description: "Investigação → Arquitetura → Planejamento → Execução guiada por ADRs. Checkpoint consolidado antes de iniciar a execução."
+version: "2.0.0"
+
+# Arquivos de sessão gerados neste pipeline.
+# Salvos em: docs/.squads/sessions/{feature-slug}/
+# O pipeline-runner injeta automaticamente esses arquivos
+# no contexto de todos os steps subsequentes.
+session_files:
+  context: context.md
+  architecture: architecture.md
+  plan: plan.md
+
+# v2.0: Checkpoints intermediários (pós-contexto, pós-arquitetura, pós-plano)
+# foram consolidados em um único checkpoint final antes da execução.
+steps:
+  - id: 01-gate-integridade
+    name: "Verificação de Integridade"
+    execution: checkpoint
+    gate: GATE-0
+    file: pipeline/steps/01-gate.md
+
+  - id: 02-preparacao
+    name: "Preparação"
+    agent: leo-engenheiro
+    execution: inline
+    model_tier: fast
+    file: pipeline/steps/02-preparacao.md
+    depends_on: [01-gate-integridade]
+
+  - id: 03-investigacao
+    name: "Investigação"
+    agent: leo-engenheiro
+    execution: inline
+    model_tier: powerful
+    file: pipeline/steps/03-investigacao.md
+    depends_on: [02-preparacao]
+    output_files:
+      - context.md
+    veto_conditions:
+      - "context.md sem seção de Motivação preenchida"
+      - "context.md sem Meta mensurável"
+      - "context.md sem seção de ADRs Relevantes"
+      - "Questões críticas não respondidas pelo humano antes de salvar"
+
+  - id: 05-arquitetura
+    name: "Estruturação Arquitetural"
+    agent: leo-engenheiro
+    execution: subagent
+    model_tier: powerful
+    file: pipeline/steps/05-arquitetura.md
+    depends_on: [03-investigacao]
+    output_files:
+      - architecture.md
+    veto_conditions:
+      - "architecture.md sem seção de Verificação de Consistência"
+      - "architecture.md sem lista de ADRs Aplicadas"
+      - "architecture.md sem lista de arquivos a modificar/criar"
+      - "Decisão técnica tomada sem apresentar como [DECISÃO PENDENTE] ao humano"
+
+  - id: 07-planejamento
+    name: "Planejamento de Execução"
+    agent: leo-engenheiro
+    execution: subagent
+    model_tier: powerful
+    file: pipeline/steps/07-planejamento.md
+    depends_on: [05-arquitetura]
+    output_files:
+      - plan.md
+    veto_conditions:
+      - "plan.md sem agents/skills atribuídos por fase"
+      - "Alguma fase excede estimativa de 2h sem justificativa"
+      - "Dependências sequenciais/paralelas não documentadas"
+      - "plan.md sem referência a context.md e architecture.md"
+
+  - id: 08-checkpoint-final
+    name: "Aprovação Consolidada (Contexto + Arquitetura + Plano)"
+    execution: checkpoint
+    gate: GATE-ADR
+    file: pipeline/steps/checkpoint-final.md
+    depends_on: [07-planejamento]
+
+  - id: 09-execucao
+    name: "Execução por Fases"
+    agent: leo-engenheiro
+    execution: inline
+    model_tier: powerful
+    file: pipeline/steps/09-execucao.md
+    depends_on: [08-checkpoint-final]
+    gate: GATE-5
+
+  - id: update-task
+    name: "Atualizar Tarefa no Linear"
+    execution: checkpoint
+    file: ../../core/shared-steps/update-task.md
+    depends_on: [09-execucao]

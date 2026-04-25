@@ -1,0 +1,27 @@
+name: produto-001
+domain: produto
+displayName: "Squad de Produto"
+description: "Plataforma Educacional e Serviços de TI com Impacto Social — Portal Nexora"
+status: active
+mode: alta
+execution_mode: complete
+created_at: 2026-04-25
+feature: portal-nexora
+session: docs/.squads/sessions/portal-nexora
+roles:
+  - Product Manager
+  - Analista de Negócio
+  - Tech Writer
+agents:
+  - priscila-produto
+  - ana-analise
+  - tania-tecnica
+pipeline:
+  default: nova-feature
+  file: pipeline/pipeline.yaml
+project_context:
+  company: docs/_memory/company.md
+  docs_business: docs/business/
+  docs_tech: docs/tech/
+  docs_context: docs/tech-context/
+  session: docs/.squads/sessions/portal-nexora

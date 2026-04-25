@@ -1,0 +1,187 @@
+# Decisão Arquitetural: Migração HTML → Next.js App Router
+
+**Data:** 2026-04-25
+**Agent:** Ana Arquitetura
+
+---
+
+## Entendimento da Task
+
+Converter as páginas estáticas legadas (`index.html` e `eventos.html` + `assets/css/estilo.css` + `assets/js/script.js`) para o stack atual do Portal Nexora: Next.js 16 App Router, React 19, Tailwind CSS v4 e Shadcn/UI. As páginas são majoritariamente estáticas (sem formulários, sem server state), com exceção do menu hambúrguer responsivo que requer interatividade client-side.
+
+---
+
+## Mapeamento de Rotas
+
+| Arquivo legado | Rota Next.js |
+|---|---|
+| `index.html` | `src/app/page.tsx` |
+| `eventos.html` | `src/app/eventos/page.tsx` |
+
+---
+
+## Estrutura de Componentes
+
+```
+src/
+├── app/
+│   ├── layout.tsx                  ← já existe — adicionar Header e Footer
+│   ├── page.tsx                    ← Server Component — home page
+│   └── eventos/
+│       └── page.tsx                ← Server Component — eventos
+│
+├── components/
+│   └── layout/
+│       ├── Header/
+│       │   ├── Header.tsx          ← Client Component (menu toggle)
+│       │   └── index.ts
+│       └── Footer/
+│           ├── Footer.tsx          ← Server Component
+│           └── index.ts
+│
+└── _features/
+    ├── home/
+    │   ├── view.tsx                ← Client Component (se precisar de interatividade futura)
+    │   ├── HeroSection.tsx         ← Server Component
+    │   ├── CursosDestaque.tsx      ← Server Component
+    │   ├── ProjetosSociais.tsx     ← Server Component
+    │   ├── ImpactoSection.tsx      ← Server Component
+    │   └── ParceirosCTA.tsx        ← Server Component
+    └── eventos/
+        ├── HeroEventos.tsx         ← Server Component
+        ├── ProximosEventos.tsx     ← Server Component
+        └── EventosGravados.tsx     ← Server Component
+```
+
+---
+
+## Decisões de Estado
+
+| Estado | Tipo | Justificativa |
+|--------|------|---------------|
+| Menu mobile (aberto/fechado) | `useState` local no `Header` | UI local, sem compartilhamento, sem persistência |
+| Conteúdo de cursos | Static — hardcoded no componente | Não há API ainda; dados mudam raramente |
+| Conteúdo de eventos | Static — hardcoded no componente | Igual — futuramente virá de Supabase |
+
+> [RESPEITADA] **ADR-001:** `page.tsx` é Server Component em ambas as rotas — lógica de interatividade (menu toggle) foi isolada no `Header.tsx` como Client Component.
+
+---
+
+## Contratos dos Componentes Principais
+
+```typescript
+// Header.tsx — Client Component
+// Sem props externas; autocontido
+
+// HeroSection.tsx
+type HeroSectionProps = {
+  title: string
+  subtitle: string
+  primaryCta: { label: string; href: string }
+  secondaryCta: { label: string; href: string }
+}
+
+// CursosDestaque.tsx
+type Curso = {
+  id: string
+  title: string
+  description: string
+  href: string
+}
+
+type CursosDestaqueProps = {
+  cursos: Curso[]
+}
+
+// ProjetosSociais.tsx
+type Projeto = {
+  id: string
+  title: string
+  description: string
+}
+
+type ProjetosSociaisProps = {
+  projetos: Projeto[]
+}
+
+// ImpactoSection.tsx
+type ImpactoItem = {
+  id: string
+  value: string
+  label: string
+}
+
+type ImpactoSectionProps = {
+  items: ImpactoItem[]
+}
+
+// EventoCard.tsx (compartilhado entre ProximosEventos e EventosGravados)
+type EventoCard = {
+  id: string
+  title: string
+  description: string
+  imageUrl: string
+  imageAlt: string
+  youtubeUrl: string
+  date?: string
+  time?: string
+}
+```
+
+---
+
+## ADRs Aplicadas
+
+### ADR-FE-001: Separação Client/Server no Layout
+
+**Contexto:** O Header precisa de `useState` para o menu mobile, mas `layout.tsx` é Server Component.
+
+**Decisão:** Criar `Header.tsx` como Client Component separado e importá-lo no `layout.tsx`. O layout permanece Server Component.
+
+**Alternativas rejeitadas:**
+- Tornar `layout.tsx` client component: rejeitado — perde os benefícios de SSR e viola ADR-001
+- Usar URL search params para controlar menu: rejeitado — causa re-render da página inteira, má UX
+
+**Consequências:**
+✅ `layout.tsx` permanece Server Component
+✅ Interatividade do menu isolada num componente pequeno e testável
+⚠ Hidratação necessária apenas para o Header, não para o restante da página
+
+---
+
+## Arquivos a Modificar/Criar
+
+- `src/app/layout.tsx` — adicionar `<Header />` e `<Footer />`
+- `src/app/page.tsx` — home page (criar ou substituir)
+- `src/app/eventos/page.tsx` — página de eventos (criar)
+- `src/components/layout/Header/Header.tsx` — criar
+- `src/components/layout/Header/index.ts` — criar
+- `src/components/layout/Footer/Footer.tsx` — criar
+- `src/components/layout/Footer/index.ts` — criar
+- `src/_features/home/HeroSection.tsx` — criar
+- `src/_features/home/CursosDestaque.tsx` — criar
+- `src/_features/home/ProjetosSociais.tsx` — criar
+- `src/_features/home/ImpactoSection.tsx` — criar
+- `src/_features/home/ParceirosCTA.tsx` — criar
+- `src/_features/eventos/HeroEventos.tsx` — criar
+- `src/_features/eventos/ProximosEventos.tsx` — criar
+- `src/_features/eventos/EventosGravados.tsx` — criar
+- `public/imagens/` — mover imagens de `imagens/` para cá
+
+---
+
+## Pontos de Atenção para o Dev
+
+1. **Imagens:** Os HTMLs referenciam `imagens/Loo_whiteBgColor.png`, `imagens/live_segurança.jpeg`, `imagens/PALESTRA*.jpg/jpeg/png`. Mover para `public/imagens/` — Next.js serve arquivos estáticos de `public/`. Usar `<Image>` do Next.js para otimização automática.
+
+2. **Links entre páginas:** `href="eventos.html"` → `href="/eventos"`, `href="index.html"` → `href="/"`.
+
+3. **Menu mobile:** O `script.js` toggle provavelmente usa `classList.toggle`. Substituir por `useState(false)` no `Header.tsx`.
+
+4. **cn() obrigatório:** Todo `className` JSX deve usar `cn()` de `@/lib/utils` — ADR-007.
+
+5. **Sem interface:** Todos os tipos usam `type`, nunca `interface` — ADR-005.
+
+6. **Tailwind v4:** Não criar `tailwind.config.js`. Customizações vão em `globals.css` via `@theme` — ADR-003.
+
+7. **Logo:** A home usa `<img src="imagens/Loo_whiteBgColor.png">` e eventos usa texto "Nexora" como logo. Padronizar: usar a imagem em ambas.
