@@ -1,0 +1,27 @@
+name: frontend-001
+domain: frontend
+displayName: "Squad de Frontend"
+description: "Plataforma Educacional e Serviços de TI com Impacto Social — Portal Nexora"
+status: active
+mode: solo
+execution_mode: complete
+created_at: 2026-04-25
+feature: portal-nexora
+session: docs/.squads/sessions/portal-nexora
+roles:
+  - Arquiteta Frontend
+  - Dev Frontend
+  - Reviewer Frontend
+agents:
+  - ana-arquitetura-fe
+  - rodrigo-react
+  - renata-revisao-fe
+pipeline:
+  default: feature-development
+  file: pipeline/pipeline.yaml
+project_context:
+  company: docs/_memory/company.md
+  docs_business: docs/business/
+  docs_tech: docs/tech/
+  docs_context: docs/tech-context/
+  session: docs/.squads/sessions/portal-nexora

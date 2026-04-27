@@ -1,0 +1,91 @@
+name: produto
+displayName: "Squad de Produto"
+icon: "📋"
+version: "2.2.0"
+description: "Refina e versiona a documentação de produto. Requer docs/business/ criada pelo /setup:build-business. Nunca sobrescreve — apenas versiona."
+
+agents:
+  base:
+    - id: priscila-produto
+      file: agents/priscila-produto.agent.md
+      displayName: "Priscila Produto"
+      icon: "📋"
+      role: "Product Manager"
+    - id: ana-analise
+      file: agents/ana-analise.agent.md
+      displayName: "Ana Análise"
+      icon: "📊"
+      role: "Analista de Negócio"
+    - id: tania-tecnica
+      file: agents/tania-tecnica.agent.md
+      displayName: "Tânia Técnica"
+      icon: "✍️"
+      role: "Tech Writer"
+  optional:
+    - id: leo-engenheiro
+      file: ../engineer/agents/leo-engenheiro.agent.md
+      displayName: "Leo Engenheiro"
+      icon: "🧠"
+      role: "Lead Engineer — Investigação e Arquitetura"
+    - id: paulo-pesquisa
+      file: agents/paulo-pesquisa.agent.md
+      displayName: "Paulo Pesquisa"
+      icon: "🔍"
+      role: "Pesquisador"
+    - id: eduardo-estrategia
+      file: agents/eduardo-estrategia.agent.md
+      displayName: "Eduardo Estratégia"
+      icon: "🎯"
+      role: "Estrategista"
+    - id: ursula-ux
+      file: agents/ursula-ux.agent.md
+      displayName: "Úrsula UX"
+      icon: "🎨"
+      role: "UX Researcher"
+
+pre_pipeline:
+  available: true
+  file: ../../core/pipelines/pre-execution.yaml
+  agent: priscila-produto
+
+pipelines:
+  default: nova-feature
+  available:
+    - id: nova-feature
+      name: "Nova Feature"
+      description: "Valida requisito → verifica docs → gera spec versionada → handoff para dev"
+      file: pipelines/nova-feature.yaml
+    - id: refinar-docs
+      name: "Refinar Docs"
+      description: "Versiona um doc existente em docs/business/ preservando o original"
+      file: pipelines/refinar-docs.yaml
+    - id: discovery-spec-handoff
+      name: "Discovery → Spec → Handoff"
+      description: "Fluxo completo de discovery: pesquisa de mercado, personas, spec completa e handoff para dev"
+      file: pipelines/discovery-spec-handoff.yaml
+    - id: quick-spec
+      name: "Spec Rápida"
+      description: "Fluxo direto para features bem definidas: contexto → spec → requisitos → handoff"
+      file: pipelines/quick-spec.yaml
+    - id: quick-fix
+      name: "Quick Fix"
+      description: "Decisão ou ajuste pontual de produto — contexto → decisão → registro"
+      file: pipelines/quick-fix.yaml
+
+performance_modes:
+  alta:
+    description: "Verificação aprofundada de restrições, spec completa com todos os campos, handoff detalhado"
+    docs:
+      - docs/specs/{feature-slug}-v1.md
+      - docs/specs/{feature-slug}-handoff.md
+      - docs/business/index.md        # append
+      - docs/CHANGELOG.md             # append
+  economico:
+    description: "Spec essencial com RFs, critérios de aceite e handoff mínimo"
+    docs:
+      - docs/specs/{feature-slug}-v1.md
+      - docs/CHANGELOG.md             # append
+  solo:
+    description: "Para dev solo — sem checkpoints de aprovação, decisões diretas documentadas"
+    docs:
+      - docs/specs/{feature-slug}-v1.md
