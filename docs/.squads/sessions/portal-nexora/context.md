@@ -14,3 +14,18 @@ O projeto iniciou com protótipos HTML estáticos. A migração garante que todo
 ## Decisões
 
 (a ser preenchido durante execução do pipeline)
+
+---
+
+## Sessão 2026-04-30 — CMS Admin
+
+### O que é
+Fluxo de CMS (Content Management System) para o Portal Nexora: página de login split-layout, logout, cadastro de admin, sidebar/navbar, e conexão com Supabase Auth.
+
+### Por que existe
+O CMS será acessado por admins, criadores de conteúdo e professores. Precisa de autenticação robusta com controle de roles e uma interface administrativa isolada das páginas públicas.
+
+### Roles de usuário
+- `admin` — acesso total
+- `content_creator` — criação e edição de conteúdo
+- `professor` — gestão de cursos e aulas próprias

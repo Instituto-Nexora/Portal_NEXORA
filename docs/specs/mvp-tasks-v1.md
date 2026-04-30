@@ -139,3 +139,45 @@ Time de Desenvolvimento NEXORA — responsável pela implementação técnica.
 - Catálogo de features: `docs/business/features/catalog.md`
 - Contexto de negócio: `docs/business/business-context.md`
 - Visão de produto: `docs/business/product-vision.md`
+
+---
+
+## Segurança — Tarefas de proteção do CMS
+
+### Arquitetura de Domínio
+
+| Domínio | Projeto Vercel | Código | Rotas |
+|---|---|---|---|
+| Site público | `portal-nexora` | mesmo repo, root `./` | `/`, `/eventos`, `/vendas`... |
+| CMS Admin | `portal-nexora-cms` | mesmo repo, root `./` | `/cms/login`, `/cms/dashboard`... |
+
+**Mesmos arquivos, 2 deploys** com environment variables diferentes.
+
+### Bloqueio de Cross-Domain
+
+| Acesso | Com hostname check | Sem hostname check |
+|---|---|---|
+| `nexora.com/cms/*` | Redirect para `/` | Redirect para `/cms/login` |
+| `admin.nexora.com/cms/*` | Funciona normal | Funciona normal |
+
+### Sub-tarefas de Segurança
+
+**Epic:** Proteger acesso ao CMS
+
+- [ ] Configurar dois projetos na Vercel (`portal-nexora` + `portal-nexora-cms`)
+- [ ] Apontar `admin.nexora.com` no projeto CMS
+- [ ] Adicionar `SUPABASE_SERVICE_ROLE_KEY` **apenas** no projeto CMS (não no público)
+- [ ] Implementar hostname check no `proxy.ts` (bloquear `nexora.com/cms/*`)
+- [ ] Criar tabela `admin_profiles` no Supabase com RLS
+- [ ] Adicionar headers de segurança (`X-Frame-Options`, `X-Content-Type-Options`, etc.)
+- [ ] Adicionar rate limiting no proxy (20 req/min por IP)
+- [ ] Testar: acessar `nexora.com/cms/dashboard` deve redirecionar para `/`
+- [ ] Testar: acessar `admin.nexora.com/cms/dashboard` deve exigir login
+
+### Documentação
+
+| Arquivo | Descrição |
+|---|---|
+| `docs/tech/security/cms-domain-architecture.md` | Arquitetura de domínios e proteção |
+| `docs/tech/adr/008-supabase-ssr-auth.md` | Estratégia de auth Supabase SSR |
+| `docs/tech/adr/010-proxy-route-protection.md` | Proteção de rotas via proxy |

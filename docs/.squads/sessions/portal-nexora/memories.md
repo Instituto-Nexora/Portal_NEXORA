@@ -11,6 +11,38 @@
 <!-- /SUMMARY -->
 
 <!-- RECENTES -->
+## Sessão 2026-04-30 (run 2)
+Task: CMS — Segurança, domínios e proteção
+Decisões documentadas em docs/tech/security/cms-domain-architecture.md
+- Mesmos arquivos, 2 deploys Vercel (portal-nexora + portal-nexora-cms)
+- hostname check no proxy.ts bloqueia nexora.com/cms/*
+- RLS no Supabase protege admin_profiles
+- Service role key só no projeto CMS
+
+## Sessão 2026-04-30 (run 1)
+Task: Criar fluxo CMS — Login/Logout admin, cadastro de admin, sidebar/navbar, schema de roles (admin, content_creator, professor), conexão Supabase
+Issue: —
+Arquivos criados: 21 arquivos (lib/supabase/*, app/(cms)/cms/*, components/cms/*)
+Build: ✓ Compiled successfully — sem erros TypeScript
+Review: Renata Revisão — ✅ Aprovado para merge
+
+## [frontend-001 · rodrigo-react] — 2026-04-30
+Task: Implementar CMS auth completo conforme architecture.md
+Decisões tomadas:
+- `proxy.ts` (renomeado de middleware.ts para evitar conflito com Next.js 16) protege /cms/* exceto /cms/login e /cms/register
+- Tabela `admin_profiles` para profiles (roles: admin, content_creator, professor)
+- Dashboard layout verifica sessão + busca profile — profile null é aceitável se não existir ainda
+
+## [frontend-001 · renata-revisao-fe] — 2026-04-30
+Review do CMS:
+- [BLOCKER] Nenhum encontrado
+- [SUGGESTION] Considerar next/image no SidebarUserMenu (img tag com eslint-disable)
+- [QUESTION] Profile pode ser null se não existir em admin_profiles — garantir via RLS
+- [PRAISE] cn() em todos className, type-only, RHF + Zod, proteção dupla (proxy + layout)
+
+## Sessão 2026-04-25
+Task: Converter HTML/CSS/JS legado para Next.js App Router + Tailwind v4
+
 ## Sessão 2026-04-25
 Task: Converter HTML/CSS/JS legado para Next.js App Router + Tailwind v4
 Issue: —

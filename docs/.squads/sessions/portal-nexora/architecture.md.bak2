@@ -1,0 +1,73 @@
+# Decisão Arquitetural: UI/UX Redesign com Shadcn/UI
+
+**Data:** 2026-04-25
+**Agent:** Ana Arquitetura
+**Baseado em:** migração HTML → Next.js (run 1)
+
+---
+
+## Entendimento da Task
+
+Aplicar componentes Shadcn/UI sobre os componentes já migrados para elevar a qualidade visual e de UX. Componentes instalados: `Card`, `Badge`, `Sheet`, `Separator`, `Button`. O objetivo é transformar o layout de "HTML direto" para uma interface com qualidade de produto.
+
+---
+
+## Estratégia
+
+**Não reescrever — atualizar.** Os componentes existentes recebem Shadcn por composição:
+- `Card` substitui `<div class="card">`
+- `Sheet` substitui o menu hambúrguer CSS
+- `Badge` para datas e categorias de eventos
+- `Button` do Shadcn para todos os CTAs
+- Brand colors (`blue-900`, `emerald-500`) mantidas via `className` — sem alterar globals.css
+
+---
+
+## Mapa de Mudanças por Componente
+
+| Componente | Mudança |
+|---|---|
+| `Header.tsx` | Sheet (drawer mobile) + Button "Entrar" |
+| `HeroSection.tsx` | Button variant="default" e variant="outline" |
+| `CursosDestaque.tsx` | Card + CardHeader + CardContent + CardFooter + Button |
+| `ProjetosSociais.tsx` | Card + CardHeader + CardContent |
+| `ImpactoSection.tsx` | Layout refinado, Separator entre stats |
+| `ParceirosCTA.tsx` | Button + layout melhorado |
+| `ProximosEventos.tsx` | Card + Badge para data/horário |
+| `EventosGravados.tsx` | Card com aspect-ratio fixo nas imagens |
+
+---
+
+## Contratos (sem mudança de props)
+
+Todos os componentes mantêm as mesmas props da run anterior. Apenas o JSX interno muda para usar Shadcn.
+
+---
+
+## ADR-FE-002: Sheet para menu mobile
+
+**Contexto:** O menu hambúrguer atual usa `useState` + classes Tailwind condicionais. Funciona mas não tem animação, trap de foco ou semântica de dialog.
+
+**Decisão:** Usar `Sheet` do Shadcn para o menu mobile. O `Sheet` provê: animação de slide, foco trapped, `aria-modal`, fechamento por ESC/overlay. Header desktop permanece sem mudança.
+
+**Alternativas rejeitadas:**
+- Manter CSS hack: funciona mas má acessibilidade (sem foco trapped, sem ESC)
+- `NavigationMenu` Shadcn: overkill para esta estrutura simples de links planos
+
+**Consequências:**
+✅ Acessibilidade mobile drasticamente melhorada (trap de foco, ESC, overlay)
+✅ Animação de slide suave out-of-the-box
+⚠ Sheet é Client Component — Header permanece `"use client"` (já estava)
+
+---
+
+## Arquivos a Modificar/Criar
+
+- `src/components/layout/Header/Header.tsx`
+- `src/_features/home/HeroSection.tsx`
+- `src/_features/home/CursosDestaque.tsx`
+- `src/_features/home/ProjetosSociais.tsx`
+- `src/_features/home/ImpactoSection.tsx`
+- `src/_features/home/ParceirosCTA.tsx`
+- `src/_features/eventos/ProximosEventos.tsx`
+- `src/_features/eventos/EventosGravados.tsx`
