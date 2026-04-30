@@ -1,8 +1,9 @@
+
 import type { Metadata } from "next"
 import { Outfit, JetBrains_Mono } from "next/font/google"
 import { Footer } from "@/components/layout/Footer"
 import { Header } from "@/components/layout/Header"
-import "./globals.css"
+import "../components/layout/globals.css"
 
 const outfit = Outfit({
   variable: "--font-sans",
@@ -27,9 +28,7 @@ export default function RootLayout({
   return (
     <html lang="pt-BR" className={`${outfit.variable} ${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Header />
         {children}
-        <Footer />
       </body>
     </html>
   )
