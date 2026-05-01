@@ -143,3 +143,79 @@ O Footer agora tem descrição da marca, links de navegação e copyright — al
 **Aprovado. Zero BLOCKERs.**
 
 O redesign Shadcn está bem executado. A SUGGESTION de documentar o padrão `render` não bloqueia nada.
+
+---
+
+# Review Notes — CMS: Criar Novos Administradores
+
+**Data:** 2026-04-30
+**Reviewer:** Renata Revisão
+
+## Resumo
+- BLOCKERs: 1
+- SUGGESTIONs: 2
+- QUESTIONs: 1
+- PRASEs: 3
+
+## Comentários
+
+---
+
+[BLOCKER] `actions.ts` — usuário auth órfão se inserção de profile falhar
+
+Por que é um problema: `auth.admin.createUser()` é chamado primeiro e tem sucesso. Se o `.insert()` em `admin_profiles` falhar em seguida (constraint, timeout, permissão), o usuário existe em `auth.users` mas sem profile. Na próxima tentativa de login, `dashboard/layout.tsx` recebe `profile: null` — o usuário entra no sistema sem role. Além disso, a mesma conta não pode ser criada novamente pois o e-mail já existe no Auth.
+
+Fix sugerido:
+```typescript
+if (profileError) {
+  // limpar o usuário auth para manter consistência
+  await adminClient.auth.admin.deleteUser(authData.user.id)
+  return { message: 'Erro ao criar administrador. Tente novamente.' }
+}
+```
+
+---
+
+[SUGGESTION] `view.tsx` — `<select>` nativo pode ter background branco em alguns navegadores
+
+`bg-transparent` no `<select>` nativo não é respeitado de forma consistente em todos os browsers (especialmente Safari e Windows). Pode exibir fundo branco dentro de um contexto dark mode. Não é crítico agora (sem dark mode confirmado), mas sinalizo para quando o tema for implementado.
+
+---
+
+[SUGGESTION] `actions.ts` — mensagem de erro genérica do Supabase pode vazar informação
+
+`authError?.message` do Supabase pode retornar strings em inglês como `"User already registered"`. Considerar mapear para mensagens em português antes de retornar:
+```typescript
+const isEmailTaken = authError?.message?.includes('already registered')
+return { message: isEmailTaken ? 'Este e-mail já está em uso.' : 'Erro ao criar conta.' }
+```
+
+---
+
+[QUESTION] `viewModel.tsx` — `router.back()` no cancelar
+
+Se o usuário acessar `/cms/dashboard/admins/novo` diretamente (ex: via bookmark), `router.back()` vai navegar para fora do CMS. Isso é comportamento esperado, ou deveria haver um fallback para `/cms/dashboard`?
+
+---
+
+[PRAISE] Separação view / viewModel executada corretamente pela primeira vez no CMS
+
+Esta é a primeira feature do CMS a usar `viewModel.tsx` separado, seguindo o ADR-004 na íntegra. O `view.tsx` é puro JSX + Shadcn — zero lógica. O `viewModel.tsx` encapsula `useActionState`, `useForm`, `useRouter` e `handleCancel`. Vai servir de referência para refatorar as features existentes (`/cms/register`, `/cms/login`).
+
+---
+
+[PRAISE] `ROLE_OPTIONS as const` + `key={opt.value}` — padrão correto para listas estáticas
+
+Array de opções definido como `as const` fora do componente (não recriado a cada render) com `key` estável usando `opt.value`. Pequeno detalhe, mas revela atenção ao desempenho mesmo em listas pequenas.
+
+---
+
+[PRAISE] `criarAdmin` com validação Zod server-side antes de tocar no Supabase
+
+O Server Action valida o FormData com Zod antes de qualquer chamada ao banco. Mesmo que o cliente quebre a validação (JS desativado, request manual), os dados nunca chegam ao Supabase sem passar pelo schema. Defesa em profundidade aplicada corretamente.
+
+---
+
+## Decisão
+
+**Requer correção do BLOCKER** — usuário auth órfão é um problema de consistência de dados real.

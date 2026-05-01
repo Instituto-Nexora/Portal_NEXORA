@@ -11,6 +11,18 @@
 <!-- /SUMMARY -->
 
 <!-- RECENTES -->
+## [frontend-001 · ana-arquitetura-fe] — 2026-04-30
+
+[DECISÃO CRÍTICA] Padrões aprovados — CMS Criar Admin:
+- `createAdminClient()` em `src/lib/supabase/admin.ts` (service role, sem cookies) — separado de `createClient()`
+- `auth.admin.createUser` + rollback `deleteUser` se profile falhar — padrão de consistência para criações em dois passos
+- `flatten((issue) => issue.message)` é o padrão Zod v4 (sem args está depreciado)
+- `viewModel.tsx` separado de `view.tsx` é o padrão correto (ADR-004) — features CMS antigas não seguem, esta é a referência
+
+## Sessão 2026-04-30 (run 3)
+Task: CMS — Formulário de cadastro de novos administradores seguindo ADRs
+Issue: —
+
 ## Sessão 2026-04-30 (run 2)
 Task: CMS — Segurança, domínios e proteção
 Decisões documentadas em docs/tech/security/cms-domain-architecture.md

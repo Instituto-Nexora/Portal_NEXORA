@@ -17,6 +17,16 @@ O projeto iniciou com protótipos HTML estáticos. A migração garante que todo
 
 ---
 
+## Sessão 2026-04-30 — CMS: Cadastro de Administradores
+
+### O que é
+Formulário de cadastro de novos administradores no CMS do Portal Nexora, seguindo os ADRs do projeto (MVVM em `_features/`, RHF + Zod, type-only, cn()).
+
+### Por que existe
+O CMS já possui login e dashboard para admins existentes, mas não há fluxo para criar novos administradores a partir da interface. O cadastro deve integrar com Supabase Auth e inserir o profile na tabela `admin_profiles` com o role adequado.
+
+---
+
 ## Sessão 2026-04-30 — CMS Admin
 
 ### O que é
