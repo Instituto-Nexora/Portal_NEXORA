@@ -86,13 +86,52 @@ Visitante → Landing Page → Checkout (Stripe)
 - [ADR 001](adr/001-app-router.md) — Next.js App Router
 - [ADR 002](adr/002-supabase-baas.md) — Supabase como BaaS
 - [ADR 003](adr/003-tailwind-v4.md) — Tailwind CSS v4
+- [ADR 004](adr/004-mvvm-page-architecture.md) — Arquitetura MVVM de páginas
+- [ADR 005](adr/005-type-only-convention.md) — Type-only convention
+- [ADR 006](adr/006-utils-reusable-functions.md) — Funções reutilizáveis em `src/utils/`
+- [ADR 007](adr/007-cn-classname-utility.md) — `cn()` para todo `className` em JSX
+- [ADR 008](adr/008-visual-identity.md) — Identidade Visual: Deep Teal + Amber
+
+---
+
+## Sistema de Design
+
+### Identidade Visual
+
+Paleta **Deep Teal + Warm Amber**, definida em `src/components/layout/globals.css` via CSS custom properties.
+
+| Papel | Token / Tailwind | Hex | Uso |
+|---|---|---|---|
+| Primary | `--brand-primary` / `teal-700` | `#0F766E` | Botões, ícones, `--primary` Shadcn |
+| Hero/Header/Footer bg | `--brand-teal-hero` / `teal-900` | `#0D3D37` | Dark surfaces |
+| CTA / Accent | `--brand-accent` / `amber-500` | `#F59E0B` | Ações primárias, destaques |
+| Heading claro | `slate-900` | `#0F172A` | H1/H2 em fundo branco |
+| Body claro | `slate-600` | `#475569` | Parágrafos em fundo branco |
+
+> Ver [ADR-008](adr/008-visual-identity.md) para regras completas de uso.
+
+### Estrutura de Layout (Páginas Públicas)
+
+```
+PublicsLayout (layout.tsx)
+├── Header       — bg-teal-900, nav links, CTA amber
+├── {page}       — conteúdo da rota
+└── Footer       — bg-teal-900, links teal-300
+```
+
+### Home Page — Ordem das Seções
+
+```
+HeroSection → ImpactoSection → CursosDestaque → ProjetosSociais → TestimonialsSection → ParceirosCTA
+```
 
 ---
 
 ## Estado Atual do Codebase
 
-O projeto está na fase de estrutura base. Nenhuma lógica de domínio foi implementada ainda:
-- Sem modelos de banco de dados
-- Sem rotas de API
-- Sem autenticação
-- Apenas: layout base, página inicial (template), componente Button do Shadcn
+- **Home:** Identidade visual implementada (teal/amber), 6 seções, TestimonialsSection novo
+- **CMS:** Auth completo (login, register, logout), dashboard, cadastro de admins, proteção de rotas via `proxy.ts`
+- **Eventos:** Página de listagem implementada
+- **Auth pública:** Issues GitHub abertas (#26–#33)
+- **Banco de dados:** Supabase planejado — ainda sem migrations
+- **Pagamentos:** Stripe planejado — ainda não implementado

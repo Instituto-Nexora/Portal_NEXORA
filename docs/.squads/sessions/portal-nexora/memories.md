@@ -77,4 +77,22 @@ Task: Criar tarefas no GitHub Projects para MVP
 Issues criadas: #6 (Landing Page+Checkout), #7 (Módulo Cursos), #8 (Autenticação), #9 (Eventos)
 Repositório: Instituto-Nexora/Portal_NEXORA
 Labels criadas: feature:landing-page, feature:modulo-cursos, feature:autenticacao, feature:eventos, P0, P1
+## Sessão 2026-05-02
+Task: Criar identidade visual para o Portal Nexora — redesign completo da home como protótipo. Análise de concorrentes (Udemy, Alura, Hotmart). Úrsula UI lidera o design system e layout.
+Issue: —
+
+## [frontend-001 · ana-arquitetura-fe + ursula-ui] — 2026-05-02
+
+[DECISÃO CRÍTICA] Identidade Visual NEXORA aprovada:
+- Primary: Deep Teal — `--brand-primary: oklch(0.45 0.12 175)` (~teal-700 #0F766E) — remapeia `--primary` do Shadcn
+- Hero bg: `--brand-teal-hero: oklch(0.20 0.07 175)` (~teal-900 #0D3D37) — background escuro sólido, sem gradiente
+- CTAs: Amber — `--brand-accent: oklch(0.75 0.16 85)` (~amber-500 #F59E0B) — cor de ação primária
+- Tokens definidos em `src/components/layout/globals.css` no `:root`
+- `--primary` Shadcn remapeado para teal — afeta todos os componentes que usam `bg-primary`
+
+[DECISÃO CRÍTICA] Estrutura de seções da home (ordem aprovada):
+HeroSection → ImpactoSection → CursosDestaque → ProjetosSociais → TestimonialsSection → ParceirosCTA
+
+Novo componente: `TestimonialsSection.tsx` — dados estáticos hardcoded em page.tsx (3 depoimentos)
+HeroSection: recebe `stats` como prop — split layout desktop, stack mobile
 <!-- /RECENTES -->
