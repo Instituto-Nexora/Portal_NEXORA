@@ -1,48 +1,37 @@
-# Feature Notes: Migração HTML → Next.js App Router
+# Feature Notes: CMS — Criar Novos Administradores
 
-**Data:** 2026-04-25
+**Data:** 2026-04-30
 **Squad:** frontend-001
-
----
 
 ## O que foi implementado
 
-- **2 rotas Next.js App Router**: `src/app/page.tsx` (home) e `src/app/eventos/page.tsx` substituem `index.html` e `eventos.html`
-- **Layout compartilhado** (`src/app/layout.tsx`) atualizado com `<Header>` e `<Footer>` globais, metadata em pt-BR
-- **Header responsivo** (`src/components/layout/Header/`) como Client Component com menu hambúrguer via `useState` — único ponto de interatividade client-side
-- **10 componentes de feature** em `src/_features/home/` e `src/_features/eventos/` mapeando cada seção das páginas legadas; todos Server Components exceto o Header
-- **Imagens migradas** de `imagens/` para `public/images/` e servidas via `<Image>` do Next.js com `alt` descritivo em todas
-
----
+- `src/lib/supabase/admin.ts` — `createAdminClient()` com service role key (sem cookie handling), separado do client padrão
+- `src/app/(cms)/cms/dashboard/admins/novo/page.tsx` — Server Component puro com metadata, sem lógica
+- `_features/NovoAdmin/schema.ts` — Zod schema com refinamento de confirmação de senha e enum de roles
+- `_features/NovoAdmin/viewModel.tsx` — `useActionState` + `useForm` + `useRouter` encapsulados, sem JSX
+- `_features/NovoAdmin/view.tsx` — UI pura com Shadcn + `<select>` nativo estilizado; zero lógica
+- `_features/NovoAdmin/actions.ts` — Server Action usando `auth.admin.createUser` + rollback via `deleteUser` se o profile falhar
 
 ## Decisões técnicas tomadas
 
-- **Dados hardcoded nas páginas por ora**: `cursos`, `projetos`, `impacto` e `eventos` declarados como constantes em `page.tsx` e `eventos/page.tsx`. Decisão consciente — sem API Supabase ainda. Quando vier o backend, extrair para `data.ts` ou server actions.
-- **`_features/` sem `view.tsx`/`viewModel.tsx`**: as páginas são estáticas sem formulários ou lógica de negócio, então o padrão MVVM completo (ADR-004) foi simplificado para componentes diretos. Qualquer página que ganhar formulário ou estado complexo deve migrar para MVVM completo.
-- **Sem `tailwind.config.js`**: cores da marca (`blue-900`, `emerald-500`, `gray-100`) usam classes utilitárias padrão do Tailwind v4 que correspondem visualmente ao CSS legado (`#1e3a8a`, `#10b981`, `#f3f4f6`). Se a paleta mudar, criar variáveis em `globals.css` via `@theme`.
-
----
+- **`<select>` nativo** em vez de Shadcn Select (não instalado). Estilizado com classes Tailwind compatíveis com a altura/border do `<Input>`.
+- **`flatten((issue) => issue.message)`** — Zod v4 deprecou a assinatura zero-argumento de `.flatten()`. A forma correta em v4 é passar um mapper.
+- **Rollback explícito**: se a inserção em `admin_profiles` falhar após `createUser`, o auth user é deletado imediatamente. Mantém consistência sem depender de triggers ou jobs externos.
+- **`router.back()` no cancelar**: decisão deliberada — o comportamento padrão é voltar na história do browser. Se acessado diretamente, navega para fora do CMS (comportamento aceitável; listagem de admins está fora do escopo desta task).
 
 ## Pontos de atenção para manutenção futura
 
-1. **`/login` ainda não existe**: o botão "Entrar" no Header aponta para `/login` — retorna 404. Criar a rota ou mudar para `href="#"` enquanto não implementada.
-2. **`live_segurança.jpeg`**: nome do arquivo com `ç` pode causar problemas em deploys Linux/Vercel. Renomear para `live_seguranca.jpeg` e atualizar o `imageUrl` em `eventos/page.tsx`.
-3. **Dados estáticos**: conteúdo de cursos, projetos e eventos está hardcoded. Quando o Supabase for integrado, mover para Server Actions ou `generateStaticParams`.
-4. **`_features/` não é roteado**: a pasta `_features/` usa `_` para ficar invisível ao App Router do Next.js. Manter esse padrão.
-
----
+1. **`SUPABASE_SERVICE_ROLE_KEY`** deve existir em `.env.local` (e nas variáveis de ambiente do Vercel). A ausência faz `createAdminClient()` criar um client com chave `undefined`, e `auth.admin.*` retorna 401 silenciosamente.
+2. **`auth.admin.createUser`** requer que o projeto Supabase tenha Auth habilitado e que a service role key tenha permissão de admin. Verificar no dashboard Supabase se a key é a correta.
+3. **Rota `/cms/dashboard/admins/novo`** está protegida pelo `proxy.ts` herdado do `(cms)/layout.tsx`. Não precisa de proteção adicional na page.tsx.
+4. **`select` nativo no dark mode** pode exibir fundo branco em alguns browsers. Se o projeto implementar dark mode, considerar trocar por Shadcn Select ou uma lib de select acessível.
+5. **Mensagem de erro do Supabase** (`authError?.message`) pode vir em inglês. Mapear para pt-BR antes de expor ao usuário é uma melhoria futura pendente.
 
 ## BLOCKERs resolvidos do review
 
-- **[BLOCKER] URL duplicada em `eventos/page.tsx`**: "Desenvolvendo com Segurança" apontava para o mesmo `youtubeUrl` do evento seguinte (`IZyad7yAiOk`). Corrigido para `watch?v=Wwet0QK8yJU` conforme o link da imagem original no HTML legado.
-
----
+- **[BLOCKER] Usuário auth órfão**: corrigido adicionando `await adminClient.auth.admin.deleteUser(authData.user.id)` antes do `return` de erro no profile. O banco retorna a um estado consistente em caso de falha parcial.
 
 ## SUGGESTIONs pendentes (débito técnico)
 
-| Sugestão | Prioridade | Motivo de adiar |
-|---|---|---|
-| Refatorar padrão de visibilidade do `<nav>` no Header | Baixa | Funciona corretamente; melhoria de legibilidade apenas |
-| Mover dados hardcoded para `data.ts` em `_features/` | Média | Aguardando integração com Supabase para definir estrutura final |
-| Renomear `live_segurança.jpeg` para remover `ç` | Média | Não bloqueia localmente; risco no deploy Vercel |
-| Criar rota `/login` ou ajustar href do Header | Alta | Depende de decisão de produto sobre o fluxo de auth |
+- **`select` nativo / bg-transparent**: cosmético, a tratar quando dark mode for implementado
+- **Mensagem de erro do Supabase em inglês**: mapear `authError?.message` para pt-BR na próxima iteração do CMS
