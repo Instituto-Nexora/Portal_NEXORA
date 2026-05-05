@@ -13,21 +13,21 @@ type ImpactoSectionProps = {
 export function ImpactoSection({ items }: ImpactoSectionProps) {
   return (
     <section
-      className={cn("py-20 px-6 bg-gradient-to-r from-blue-900 to-blue-800 text-white")}
+      className={cn("py-16 px-6 bg-teal-50")}
       aria-labelledby="impacto-title"
     >
       <div className={cn("max-w-4xl mx-auto text-center")}>
-        <h2 id="impacto-title" className={cn("text-3xl font-bold mb-3")}>
-          Nosso Impacto
+        <h2 id="impacto-title" className={cn("text-3xl font-bold text-slate-900 mb-2")}>
+          Nosso Impacto em Números
         </h2>
-        <p className={cn("text-blue-200 mb-14 max-w-md mx-auto")}>
-          Números que mostram a diferença que fazemos juntos.
+        <p className={cn("text-slate-500 mb-12 max-w-md mx-auto")}>
+          Resultados concretos de quem transforma vidas com tecnologia.
         </p>
-        <div className={cn("flex flex-wrap justify-center divide-x divide-white/20")}>
+        <div className={cn("flex flex-wrap justify-center divide-x divide-teal-200")}>
           {items.map((item) => (
-            <div key={item.id} className={cn("flex flex-col items-center gap-2 px-10 py-4")}>
-              <span className={cn("text-5xl font-bold text-emerald-400")}>{item.value}</span>
-              <span className={cn("text-sm text-blue-200 font-medium")}>{item.label}</span>
+            <div key={item.id} className={cn("flex flex-col items-center gap-2 px-12 py-4")}>
+              <span className={cn("text-6xl font-black text-teal-700")}>{item.value}</span>
+              <span className={cn("text-sm text-slate-600 font-medium")}>{item.label}</span>
             </div>
           ))}
         </div>

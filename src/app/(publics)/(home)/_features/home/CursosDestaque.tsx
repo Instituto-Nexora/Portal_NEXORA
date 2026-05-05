@@ -19,13 +19,13 @@ type CursosDestaqueProps = {
 
 export function CursosDestaque({ cursos }: CursosDestaqueProps) {
   return (
-    <section className={cn("py-20 px-6 bg-gray-50")} id="cursos" aria-labelledby="cursos-title">
+    <section className={cn("py-20 px-6 bg-slate-50")} id="cursos" aria-labelledby="cursos-title">
       <div className={cn("max-w-5xl mx-auto")}>
         <div className={cn("text-center mb-12")}>
-          <h2 id="cursos-title" className={cn("text-3xl font-bold text-blue-900 mb-3")}>
+          <h2 id="cursos-title" className={cn("text-3xl font-bold text-slate-900 mb-3")}>
             Cursos em Destaque
           </h2>
-          <p className={cn("text-gray-500 max-w-md mx-auto")}>
+          <p className={cn("text-slate-500 max-w-md mx-auto")}>
             Capacitação profissional acessível para transformar sua carreira em TI.
           </p>
         </div>
@@ -34,28 +34,28 @@ export function CursosDestaque({ cursos }: CursosDestaqueProps) {
             <li key={curso.id} className={cn("flex")}>
               <Card
                 className={cn(
-                  "flex flex-col flex-1 border-l-4 border-l-emerald-500",
-                  "hover:shadow-lg hover:-translate-y-1 transition-all duration-300",
+                  "flex flex-col flex-1 border border-slate-200",
+                  "hover:shadow-md hover:-translate-y-1 transition-all duration-300",
                 )}
               >
                 <CardHeader>
                   <div className={cn("flex items-center gap-2 mb-2")}>
-                    <Badge variant="outline" className={cn("border-emerald-200 bg-emerald-50 text-emerald-700 gap-1")}>
-                      <BookOpen className="size-3" />
+                    <Badge variant="outline" className={cn("border-teal-200 bg-teal-100 text-teal-700 gap-1 border-0")}>
+                      <BookOpen className={cn("size-3")} />
                       Curso
                     </Badge>
                   </div>
-                  <CardTitle className={cn("text-blue-900")}>{curso.title}</CardTitle>
+                  <CardTitle className={cn("text-slate-900")}>{curso.title}</CardTitle>
                 </CardHeader>
                 <CardContent className={cn("flex-1")}>
-                  <CardDescription className={cn("text-gray-600 text-sm leading-relaxed")}>
+                  <CardDescription className={cn("text-slate-600 text-sm leading-relaxed")}>
                     {curso.description}
                   </CardDescription>
                 </CardContent>
                 <CardFooter>
                   <Button
                     size="sm"
-                    className={cn("bg-emerald-500 hover:bg-emerald-600 text-white border-0 w-full")}
+                    className={cn("bg-teal-700 hover:bg-teal-600 text-white border-0 w-full")}
                     render={<Link href={curso.href} />}
                   >
                     Saiba Mais

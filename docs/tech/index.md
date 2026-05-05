@@ -21,11 +21,12 @@
 | [adr/005-type-only-convention.md](adr/005-type-only-convention.md) | ADR: Usar apenas `type` (nunca `interface`) |
 | [adr/006-utils-reusable-functions.md](adr/006-utils-reusable-functions.md) | ADR: Funções reutilizáveis em `src/utils/` |
 | [adr/007-cn-classname-utility.md](adr/007-cn-classname-utility.md) | ADR: `cn()` para todo `className` em JSX |
+| [adr/008-visual-identity.md](adr/008-visual-identity.md) | ADR: Sistema de Identidade Visual — Deep Teal + Amber |
 
 ---
 
 ## Status
 
-- **Estágio:** MVP inicial
-- **Última atualização:** 2026-04-25
-- **Domínio implementado:** Nenhum ainda — apenas estrutura base
+- **Estágio:** MVP em desenvolvimento
+- **Última atualização:** 2026-05-02
+- **Implementado:** Home (identidade visual), CMS (auth, cadastro de admins), Eventos

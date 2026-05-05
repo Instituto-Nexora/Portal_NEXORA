@@ -219,3 +219,40 @@ O Server Action valida o FormData com Zod antes de qualquer chamada ao banco. Me
 ## Decisão
 
 **Requer correção do BLOCKER** — usuário auth órfão é um problema de consistência de dados real.
+
+---
+
+# Review Notes — Identidade Visual + Redesign da Home
+
+**Data:** 2026-05-02
+**Reviewer:** Renata Revisão
+
+## Resumo
+- BLOCKERs: 0
+- SUGGESTIONs: 4
+- QUESTIONs: 0
+- PRASEs: 5
+
+## Comentários
+
+[SUGGESTION] `HeroSection.tsx` — SVG placeholder usa hex `#5EEAD4` hardcoded nos atributos SVG. Como é decorativo e `aria-hidden="true"`, não bloqueia. Candidato a `currentColor` em iteração futura.
+
+[SUGGESTION] `page.tsx` — `heroStats` e `impactoItems` duplicam os mesmos valores (500/30/15) em estruturas diferentes. Não é bug, mas é candidato a uma fonte única de dados quando vier de Supabase.
+
+[SUGGESTION] `TestimonialsSection.tsx` — stars usam `key={i}` (índice) em uma lista estática imutável de exatamente 5 elementos. É aceitável aqui pois a lista nunca muda de ordem ou tamanho, mas deveria ter um comentário para evitar confusão em reviews futuros.
+
+[SUGGESTION] `TestimonialsSection.tsx` — `footer` dentro de `blockquote` é válido mas pode ser interpretado como "rodapé de seção" por alguns screen readers. Alternativa semântica mais clara: `figure`/`figcaption`. Não bloqueante.
+
+[PRAISE] `page.tsx` permanece Server Component puro — ADR-004 respeitada impecavelmente mesmo com a adição de 3 novos blocos de dados.
+
+[PRAISE] `TestimonialsSection` usa `<article>` para cada depoimento — semântica HTML5 correta para conteúdo independente e potencialmente sindicável.
+
+[PRAISE] `role="img"` + `aria-label="5 estrelas"` no container das estrelas — tratamento proativo de acessibilidade para ícones que comunicam informação.
+
+[PRAISE] `aria-hidden="true"` consistente em todos os elementos decorativos (SVG hero, avatar initials).
+
+[PRAISE] Build `npm run build` passou limpo — zero erros TypeScript. Requisito mínimo atendido.
+
+## Decisão
+
+**Aprovado. Zero BLOCKERs.**

@@ -18,15 +18,15 @@ const navLinks = [
 
 export function Header() {
   return (
-    <header className={cn("bg-blue-900 text-white px-6 py-3 flex items-center justify-between gap-4")}>
+    <header className={cn("bg-teal-900 text-white px-6 py-3 flex items-center justify-between gap-4")}>
       <Link href="/" aria-label="Ir para a página inicial" className={cn("shrink-0")}>
         <Image
-          src="/images/Loo_whiteBgColor.png"
+          src="/images/logo.png"
           alt="Logo Nexora"
-          width={120}
+          width={180}
           height={50}
           priority
-          className={cn("h-11 w-auto")}
+          className={cn(" w-auto")}
         />
       </Link>
 
@@ -36,7 +36,7 @@ export function Header() {
             key={link.href}
             href={link.href}
             className={cn(
-              "px-3 py-1.5 rounded text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors",
+              "px-3 py-1.5 rounded text-sm font-medium text-teal-100 hover:text-white hover:bg-white/10 transition-colors",
             )}
           >
             {link.label}
@@ -46,7 +46,7 @@ export function Header() {
 
       <div className={cn("hidden md:flex items-center gap-3 shrink-0")}>
         <Button
-          className={cn("bg-emerald-500 hover:bg-emerald-600 text-white border-0 h-8 px-4")}
+          className={cn("bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 h-8 px-4 transition-colors")}
           render={<Link href="/login" />}
         >
           Entrar
@@ -60,10 +60,10 @@ export function Header() {
           )}
           aria-label="Abrir menu de navegação"
         >
-          <Menu className="size-5" />
+          <Menu className={cn("size-5")} />
         </SheetTrigger>
-        <SheetContent side="left" className={cn("bg-blue-900 text-white border-r border-blue-700 w-72 p-0")}>
-          <SheetHeader className={cn("border-b border-blue-700 p-5")}>
+        <SheetContent side="left" className={cn("bg-teal-900 text-white border-r border-teal-700 w-72 p-0")}>
+          <SheetHeader className={cn("border-b border-teal-700 p-5")}>
             <SheetTitle className={cn("text-white text-base")}>Nexora</SheetTitle>
           </SheetHeader>
           <nav className={cn("p-4")} aria-label="Menu mobile">
@@ -76,7 +76,7 @@ export function Header() {
                       <Link
                         href={link.href}
                         className={cn(
-                          "block px-3 py-2.5 rounded text-sm font-medium text-white/80 hover:text-white hover:bg-white/10 transition-colors",
+                          "block px-3 py-2.5 rounded text-sm font-medium text-teal-100 hover:text-white hover:bg-white/10 transition-colors",
                         )}
                       />
                     }
@@ -87,9 +87,9 @@ export function Header() {
               ))}
             </ul>
           </nav>
-          <div className={cn("p-4 mt-auto border-t border-blue-700")}>
+          <div className={cn("p-4 mt-auto border-t border-teal-700")}>
             <Button
-              className={cn("w-full bg-emerald-500 hover:bg-emerald-600 text-white border-0")}
+              className={cn("w-full bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 transition-colors")}
               render={<Link href="/login" />}
             >
               Entrar
