@@ -256,3 +256,90 @@ O Server Action valida o FormData com Zod antes de qualquer chamada ao banco. Me
 ## Decisão
 
 **Aprovado. Zero BLOCKERs.**
+
+---
+
+# Review Notes — Fluxo de Eventos (CMS + Plataforma)
+
+**Data:** 2026-05-06
+**Reviewer:** Renata Revisão
+
+## Resumo
+- BLOCKERs: 1
+- SUGGESTIONs: 4
+- QUESTIONs: 1
+- PRASEs: 6
+
+## Comentários
+
+---
+
+[BLOCKER] `formatDate` / `formatTime` duplicadas em 3 arquivos — CONFLITO ADR-006
+
+Por que é um problema: `formatDate` aparece em `EventosList/view.tsx:33`, `ProximosEventos.tsx:19` e `EventoDetalhe/view.tsx:12`. `formatTime` aparece em `ProximosEventos.tsx:27` e `EventoDetalhe/view.tsx:20`. ADR-006 exige extração para `src/utils/` após a segunda duplicação (Rule of Three atingido). Qualquer mudança de formatação exige editar 3 arquivos.
+
+Fix sugerido:
+```typescript
+// src/utils/formatDate.ts
+export function formatDate(iso: string): string {
+  return new Date(iso).toLocaleDateString("pt-BR", {
+    day: "2-digit", month: "2-digit", year: "numeric",
+  })
+}
+export function formatTime(iso: string): string {
+  return new Date(iso).toLocaleTimeString("pt-BR", {
+    hour: "2-digit", minute: "2-digit",
+  })
+}
+```
+Importar via `@/utils/formatDate` nos 3 arquivos. `EventoDetalhe/view.tsx` usa `month: "long"` — criar `formatDateLong` ou unificar.
+
+---
+
+[SUGGESTION] Páginas públicas usando `createAdminClient()` (service role)
+
+`eventos/page.tsx` e `eventos/[slug]/page.tsx` públicas usam `createAdminClient()`. Correto é `createClient()` (anon key + RLS) para dados públicos. A policy `events_public_read` já filtra `status = 'published'` — o `.eq("status", "published")` manual ficaria redundante. Service role deve ser reservado ao CMS.
+
+---
+
+[SUGGESTION] `EventoDetalheView` usa classes `prose` — verificar plugin typography
+
+`eventos/[slug]/_features/EventoDetalhe/view.tsx:91` usa `prose prose-slate`. Sem `@tailwindcss/typography` no projeto, as classes são ignoradas silenciosamente. Verificar `package.json`; se ausente, remover as classes `prose`.
+
+---
+
+[SUGGESTION] `slugify.ts` — regex com caracteres Unicode literais
+
+`src/utils/slugify.ts:4` usa `/[̀-ͯ]/g` com chars reais. Substituir por `/[̀-ͯ]/g` para clareza e segurança de encoding.
+
+---
+
+[SUGGESTION] `DeleteEventoDialog` usa `window.confirm()` — acessibilidade limitada
+
+OK para MVP. Para iteração futura: substituir por dialog Shadcn com foco gerenciado.
+
+---
+
+[QUESTION] Slug regenerado ao editar título?
+
+`editarEvento` action não atualiza o slug quando o título muda. A ADR-FE-002 mencionou o risco de URLs quebrarem. Confirmar comportamento esperado: slug imutável após criação, ou regenerar?
+
+---
+
+[PRAISE] `useTransition` para exclusão — padrão correto. UI responsiva durante o request sem bloquear a página.
+
+[PRAISE] `generateMetadata` + `notFound()` nas rotas dinâmicas — zero chance de render com dados `undefined`.
+
+[PRAISE] Filtro server-side no CMS — eventos `draft` nunca chegam ao client bundle.
+
+[PRAISE] Schema compartilhado entre Criar e Editar — `EditarEvento/schema.ts` importa e reexporta sem duplicar.
+
+[PRAISE] Zod refinement condicional para `scheduled_at` — validação robusta server-side para campo obrigatório apenas em `ao_vivo`.
+
+[PRAISE] MVVM consistente em 100% das features novas — `view.tsx` sem lógica, `viewModel.tsx` sem JSX, em todos os formulários.
+
+---
+
+## Decisão
+
+**Requer correção do BLOCKER** — `formatDate`/`formatTime` duplicadas violam ADR-006. Fix simples: `src/utils/formatDate.ts` + importar nos 3 arquivos afetados.

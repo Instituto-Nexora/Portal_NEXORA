@@ -1,3 +1,5 @@
+import { Toaster } from "@/components/ui/sonner";
+import { TooltipProvider } from "@/components/ui/tooltip";
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { Sidebar } from "./Sidebar";
@@ -10,14 +12,17 @@ type Props = {
 
 export function CMSShell({ user, children }: Props) {
   return (
-    <div className={cn("flex h-screen overflow-hidden")}>
-      <Sidebar user={user} className={cn("sticky top-0 h-screen")} />
+    <TooltipProvider>
+      <div className={cn("flex h-screen overflow-hidden")}>
+        <Sidebar user={user} className={cn("sticky top-0 h-screen")} />
 
-      <div className={cn("flex flex-1 flex-col overflow-hidden")}>
-        <TopBar />
+        <div className={cn("flex flex-1 flex-col overflow-hidden")}>
+          <TopBar />
 
-        <main className={cn("flex-1 overflow-y-auto p-6")}>{children}</main>
+          <main className={cn("flex-1 overflow-y-auto p-6")}>{children}</main>
+        </div>
       </div>
-    </div>
+      <Toaster richColors closeButton />
+    </TooltipProvider>
   );
 }

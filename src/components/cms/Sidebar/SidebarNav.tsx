@@ -1,15 +1,37 @@
 "use client";
 
-import { BookOpen, FileText, LayoutDashboard, ShieldCheck } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  FileText,
+  LayoutDashboard,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", href: "/cms/dashboard", icon: LayoutDashboard, exact: true },
+  {
+    label: "Dashboard",
+    href: "/cms/dashboard",
+    icon: LayoutDashboard,
+    exact: true,
+  },
   { label: "Conteúdos", href: "/cms/contents", icon: FileText, exact: false },
   { label: "Cursos", href: "/cms/courses", icon: BookOpen, exact: false },
-  { label: "Administradores", href: "/cms/dashboard/admins", icon: ShieldCheck, exact: false },
+  {
+    label: "Administradores",
+    href: "/cms/dashboard/admins",
+    icon: ShieldCheck,
+    exact: false,
+  },
+  {
+    label: "Eventos",
+    href: "/cms/dashboard/eventos",
+    icon: CalendarDays,
+    exact: false,
+  },
 ];
 
 export function SidebarNav() {

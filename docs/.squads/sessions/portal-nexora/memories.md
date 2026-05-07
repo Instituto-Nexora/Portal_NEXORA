@@ -11,6 +11,9 @@
 <!-- /SUMMARY -->
 
 <!-- RECENTES -->
+## Sessão 2026-05-06
+Task: Fluxo de eventos — CRUD completo (CMS) + listagem/detalhe (plataforma pública). Issues #34–40.
+Issue: #34, #35, #39, #40 (feature:eventos)
 ## [frontend-001 · ana-arquitetura-fe] — 2026-04-30
 
 [DECISÃO CRÍTICA] Padrões aprovados — CMS Criar Admin:
@@ -95,4 +98,13 @@ HeroSection → ImpactoSection → CursosDestaque → ProjetosSociais → Testim
 
 Novo componente: `TestimonialsSection.tsx` — dados estáticos hardcoded em page.tsx (3 depoimentos)
 HeroSection: recebe `stats` como prop — split layout desktop, stack mobile
+## [frontend-001 · ana-arquitetura-fe] — 2026-05-06
+
+[DECISÃO CRÍTICA] Padrões aprovados — Fluxo de Eventos:
+- `src/utils/formatDate.ts` é o utilitário canônico para formatação de datas pt-BR — não duplicar em componentes
+- `slugify()` em `src/utils/slugify.ts` é o padrão para geração de slug server-side (ADR-FE-002)
+- Schema Zod sem `.transform()` para campos numéricos de formulário — converter manualmente na Server Action
+- `.url()` do Zod v4 está depreciado — usar `z.string().optional()` + `type="url"` no input HTML
+- `createAdminClient()` é exclusivo do CMS; páginas públicas devem usar `createClient()` (anon + RLS)
+- Padrão de delete sem form: `useTransition` + Server Action chamada direto no handler
 <!-- /RECENTES -->
