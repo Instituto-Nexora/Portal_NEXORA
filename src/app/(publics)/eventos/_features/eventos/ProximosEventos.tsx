@@ -1,49 +1,66 @@
-import { CalendarDays, Clock, Video } from "lucide-react"
-import Image from "next/image"
+import { CalendarDays, Clock, Video } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { Badge } from "@/components/ui/badge";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import type { Event } from "@/lib/supabase/types";
+import { cn } from "@/lib/utils";
+import { formatDate, formatTime } from "@/utils/formatDate";
 
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { cn } from "@/lib/utils"
+type Props = {
+  eventos: Event[];
+};
 
-type ProximoEvento = {
-  id: string
-  title: string
-  date: string
-  time: string
-  description: string
-  imageUrl: string
-  imageAlt: string
-  youtubeUrl: string
-}
-
-type ProximosEventosProps = {
-  eventos: ProximoEvento[]
-}
-
-export function ProximosEventos({ eventos }: ProximosEventosProps) {
+export function ProximosEventos({ eventos }: Props) {
   if (eventos.length === 0) {
     return (
-      <section className={cn("py-20 px-6 bg-white")} aria-labelledby="proximos-title">
+      <section
+        className={cn("py-20 px-6 bg-white")}
+        aria-labelledby="proximos-title"
+      >
         <div className={cn("max-w-5xl mx-auto text-center")}>
-          <h2 id="proximos-title" className={cn("text-3xl font-bold text-slate-900 mb-4")}>
+          <h2
+            id="proximos-title"
+            className={cn("text-3xl font-bold text-slate-900 mb-4")}
+          >
             Próximos Eventos
           </h2>
-          <p className={cn("text-slate-500")}>Nenhum evento programado no momento. Fique de olho!</p>
+          <p className={cn("text-slate-500")}>
+            Nenhum evento programado no momento. Fique de olho!
+          </p>
         </div>
       </section>
-    )
+    );
   }
 
   return (
-    <section className={cn("py-20 px-6 bg-white")} aria-labelledby="proximos-title">
+    <section
+      className={cn("py-20 px-6 bg-white")}
+      aria-labelledby="proximos-title"
+    >
       <div className={cn("max-w-5xl mx-auto")}>
         <div className={cn("text-center mb-12")}>
-          <h2 id="proximos-title" className={cn("text-3xl font-bold text-slate-900 mb-3")}>
+          <h2
+            id="proximos-title"
+            className={cn("text-3xl font-bold text-slate-900 mb-3")}
+          >
             Próximos Eventos
           </h2>
-          <p className={cn("text-slate-500")}>Inscreva-se e participe ao vivo.</p>
+          <p className={cn("text-slate-500")}>
+            Inscreva-se e participe ao vivo.
+          </p>
         </div>
-        <ul className={cn("grid gap-6 sm:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0")}>
+        <ul
+          className={cn(
+            "grid gap-6 sm:grid-cols-2 lg:grid-cols-3 list-none p-0 m-0",
+          )}
+        >
           {eventos.map((evento) => (
             <li key={evento.id} className={cn("flex")}>
               <Card
@@ -54,8 +71,10 @@ export function ProximosEventos({ eventos }: ProximosEventosProps) {
               >
                 <div className={cn("relative")}>
                   <Image
-                    src={evento.imageUrl}
-                    alt={evento.imageAlt}
+                    src={
+                      evento.thumbnail_url ?? "/images/event-placeholder.jpg"
+                    }
+                    alt={evento.title}
                     width={400}
                     height={220}
                     className={cn("w-full h-48 object-cover")}
@@ -63,36 +82,53 @@ export function ProximosEventos({ eventos }: ProximosEventosProps) {
                 </div>
                 <CardHeader>
                   <div className={cn("flex gap-2 flex-wrap mb-1")}>
-                    <Badge className={cn("bg-teal-100 text-teal-700 border-0 gap-1")}>
-                      <CalendarDays className={cn("size-3")} aria-hidden="true" />
-                      {evento.date}
-                    </Badge>
-                    <Badge variant="outline" className={cn("gap-1")}>
-                      <Clock className={cn("size-3")} aria-hidden="true" />
-                      {evento.time}
-                    </Badge>
-                    <Badge className={cn("bg-amber-500 text-white border-0 gap-1")}>
+                    {evento.scheduled_at && (
+                      <>
+                        <Badge
+                          className={cn(
+                            "bg-teal-100 text-teal-700 border-0 gap-1",
+                          )}
+                        >
+                          <CalendarDays
+                            className={cn("size-3")}
+                            aria-hidden="true"
+                          />
+                          {formatDate(evento.scheduled_at)}
+                        </Badge>
+                        <Badge variant="outline" className={cn("gap-1")}>
+                          <Clock className={cn("size-3")} aria-hidden="true" />
+                          {formatTime(evento.scheduled_at)}
+                        </Badge>
+                      </>
+                    )}
+                    <Badge
+                      className={cn("bg-amber-500 text-white border-0 gap-1")}
+                    >
                       <Video className={cn("size-3")} aria-hidden="true" />
                       Ao Vivo
                     </Badge>
                   </div>
-                  <CardTitle className={cn("text-slate-900 text-base")}>{evento.title}</CardTitle>
+                  <CardTitle className={cn("text-slate-900 text-base")}>
+                    {evento.title}
+                  </CardTitle>
                 </CardHeader>
-                <CardContent className={cn("flex-1 text-sm text-slate-600 leading-relaxed")}>
+                <CardContent
+                  className={cn(
+                    "flex-1 text-sm text-slate-600 leading-relaxed",
+                  )}
+                >
                   {evento.description}
                 </CardContent>
                 <CardFooter>
-                  <a
-                    href={evento.youtubeUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    href={`/eventos/${evento.slug}`}
                     className={cn(
                       "inline-flex items-center justify-center rounded-lg bg-amber-500 text-teal-900 text-sm font-bold h-8 gap-1.5 px-3 w-full",
                       "hover:bg-amber-400 transition-colors",
                     )}
                   >
-                    Participar ao Vivo
-                  </a>
+                    {evento.youtube_url ? "Participar ao Vivo" : "Saiba mais"}
+                  </Link>
                 </CardFooter>
               </Card>
             </li>
@@ -100,5 +136,5 @@ export function ProximosEventos({ eventos }: ProximosEventosProps) {
         </ul>
       </div>
     </section>
-  )
+  );
 }

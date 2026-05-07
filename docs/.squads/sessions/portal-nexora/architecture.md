@@ -1,347 +1,290 @@
-# Decisão Arquitetural: Identidade Visual + Redesign da Home
+# Decisão Arquitetural: Fluxo de Eventos (CMS + Plataforma)
 
-**Data:** 2026-05-02
-**Agent:** Ana Arquitetura + Úrsula UI
-**Squad:** frontend-001
+**Data:** 2026-05-06
+**Agent:** Ana Arquitetura
 
 ---
 
 ## Entendimento da Task
 
-Redesign completo da home page do Portal Nexora como protótipo de identidade visual.
-Análise de concorrentes (Udemy, Alura, Hotmart) para extrair melhores práticas de UI/UX.
-Foco em posicionamento diferenciado: plataforma educacional de impacto social — nem tão corporativa quanto Udemy, nem tão técnica quanto Alura, mais calorosa que Hotmart.
-
----
-
-## Análise Competitiva — Insights Extraídos
-
-### Udemy
-- **O que funciona:** Paleta neutra (branco/cinza) com accent vibrante que faz o CTA "saltar". Cards com thumbnail, social proof (N alunos). Navbar com busca proeminente.
-- **O que evitar:** Densidade visual excessiva, sensação de marketplace genérico sem personalidade.
-
-### Alura
-- **O que funciona:** Identidade visual forte (fundo navy escuro + tema "oceânico"). Destaque enorme nos números (2.212 cursos, 120k comunidade). CTAs duplos (explorar + matricular). Seção interativa de carreiras.
-- **O que evitar:** Dark background exige muito cuidado de contraste — peso visual alto.
-
-### Hotmart
-- **O que funciona:** Social proof com números enormes (50B+ em vendas, 4.6★ com 200k avaliações) **acima do fold**. Gradiente energético. CTA repetido estrategicamente. Espaçamento generoso.
-- **O que evitar:** Foco em produtor/vendedor não se aplica ao posicionamento social de NEXORA.
-
-### Síntese — O que NEXORA deve incorporar
-
-| Prática | Origem | Aplicação |
-|---|---|---|
-| Social proof numérico no hero | Hotmart | Stats (+500 alunos, +30 projetos, +15 parceiros) no próprio hero |
-| Accent vibrante em CTAs | Udemy | Amber `#F59E0B` como cor de ação primária |
-| Identidade de cor forte e própria | Alura | Deep Teal como primary — diferente dos 3 concorrentes |
-| Espaçamento generoso entre seções | Hotmart | `py-20` mínimo, `py-28` no hero |
-| Depoimentos com foto + contexto | Alura | Nova seção TestimonialsSection |
-| Hero split-layout | Todos | Texto à esquerda, visual/stats à direita (desktop) |
-
----
-
-## Sistema de Design — Identidade Visual NEXORA
-
-### ADR-VIS-001: Paleta de Cores da Marca
-
-**Contexto:** `globals.css` atual usa tokens Shadcn padrão (preto/branco), sem identidade de marca. Os componentes usam classes Tailwind hardcoded (`blue-900`, `emerald-500`) sem sistema coeso.
-
-**Decisão:** Definir identidade **Deep Teal + Warm Amber** no `globals.css` via CSS custom properties, remapeando os tokens `--primary` e `--accent` do Shadcn.
-
-**Alternativas rejeitadas:**
-- Manter `blue-900`/`emerald-500` inline — sem coesão, difícil manutenção e sem diferenciação
-- Roxo (Udemy) — já ocupado pelos líderes de mercado
-- Laranja (Hotmart) — transmite venda agressiva, não impacto social
-
-**Paleta definida (valores oklch compatíveis com Tailwind v4):**
-
-```
-NEXORA Brand Colors
-─────────────────────────────────────────────────────────────
-Role              Nome           OKLCH aprox.   Hex equiv.
-─────────────────────────────────────────────────────────────
---brand-primary   Deep Teal      oklch(0.45 0.12 175)  #0F766E  → confiança+tech+social
---brand-primary-d Dark Teal      oklch(0.38 0.11 175)  #0D5E57  → hover states
---brand-primary-l Light Teal     oklch(0.96 0.04 175)  #CCFBF1  → bg suave, badges
---brand-teal-hero Hero BG Teal   oklch(0.20 0.07 175)  #0D3D37  → hero dark bg
---brand-accent    Warm Amber     oklch(0.75 0.16 85)   #F59E0B  → CTAs, destaques
---brand-accent-d  Deep Amber     oklch(0.65 0.16 85)   #D97706  → hover do CTA
---brand-heading   Slate 900      oklch(0.13 0.02 240)  #0F172A  → headings
---brand-body      Slate 600      oklch(0.42 0.03 240)  #475569  → body text
---brand-bg-alt    Slate 50       oklch(0.98 0.01 240)  #F8FAFC  → fundos alternados
-─────────────────────────────────────────────────────────────
-```
-
-**Tokens Shadcn remapeados:**
-```
---primary              → brand-primary  (teal-700)
---primary-foreground   → white
-```
-
-**Consequências:**
-✅ Identidade única — Deep Teal não existe nos 3 concorrentes analisados
-✅ Teal = saúde + educação + tecnologia na psicologia das cores
-✅ Amber = calor, acessibilidade, missão social, otimismo
-⚠ `--primary` remapeado afeta todos os componentes Shadcn que usam `bg-primary` — validar CMS após implementação
-
----
-
-### ADR-VIS-002: Tipografia
-
-**Decisão:** Inter (já carregado pelo sistema/Shadcn) sem adicionar dependência nova.
-
-```
-Display (H1):  Inter Black 900,   48–60px desktop / 36px mobile
-Heading (H2):  Inter Bold 700,    32–36px
-Sub-heading:   Inter SemiBold 600, 20–24px
-Body:          Inter Regular 400,  16px, line-height 1.6
-Small/Caption: Inter Medium 500,   14px
-Badge/Label:   Inter SemiBold 600, 12px, letter-spacing 0.08em, UPPERCASE
-```
-
----
-
-### ADR-VIS-003: Reestruturação das Seções
-
-**Contexto:** Ordem atual não segue boas práticas de landing page de conversão.
-
-**Mudança de ordem:**
-
-```
-ANTES                    DEPOIS
-──────────────────────   ──────────────────────────────────────
-1. HeroSection           1. HeroSection        (split + stats inline)
-2. CursosDestaque        2. ImpactoSection     (movida para cima — social proof)
-3. ProjetosSociais       3. CursosDestaque     (cards redesenhados)
-4. ImpactoSection        4. ProjetosSociais    (nova paleta)
-5. ParceirosCTA          5. TestimonialsSection (NOVO — depoimentos)
-                         6. ParceirosCTA        (redesign — mais impacto)
-```
-
-**Justificativa:** Social proof deve aparecer antes dos cursos. Depoimentos antes do CTA final é prática universal de alta conversão (validado pelos 3 concorrentes).
+Implementar CRUD completo de eventos no CMS admin (`/cms/dashboard/eventos/`) seguindo o padrão MVVM já estabelecido no módulo de admins. Na plataforma pública, refatorar a listagem `/eventos` de dados hardcoded para busca via Supabase e criar a página de detalhe `/eventos/[slug]` como rota dinâmica nova.
 
 ---
 
 ## Estrutura de Componentes
 
+### CMS — Gestão de Eventos
+
 ```
-src/app/(publics)/(home)/
-├── page.tsx                                    ← reordenar + adicionar Testimonials
-└── _features/home/
-    ├── HeroSection.tsx                         ← redesign: split layout, teal dark bg, amber CTA
-    ├── CursosDestaque.tsx                      ← nova paleta, cards sem border-l colorida
-    ├── ProjetosSociais.tsx                     ← nova paleta teal/amber
-    ├── ImpactoSection.tsx                      ← fundo teal-50 (não dark), stats maiores
-    ├── ParceirosCTA.tsx                        ← dark teal bg, amber CTA large
-    └── TestimonialsSection.tsx                 ← NOVO: 3 cards de depoimento
+src/app/(cms)/cms/dashboard/eventos/
+├── page.tsx                                    ← Server Component: busca lista + passa props
+├── _features/EventosList/
+│   └── view.tsx                                ← Client: tabela com filtros status/tipo + link editar + delete inline
+├── novo/
+│   ├── page.tsx                                ← Server Component puro
+│   └── _features/NovoEvento/
+│       ├── view.tsx                            ← Client: formulário completo (RHF)
+│       ├── viewModel.tsx                       ← Client: useActionState, handlers de form
+│       ├── schema.ts                           ← Zod: eventoSchema
+│       └── actions.ts                          ← Server Action: criarEvento()
+└── [id]/
+    ├── page.tsx                                ← Server Component: busca evento por id + passa props
+    ├── _features/EditarEvento/
+    │   ├── view.tsx                            ← Client: mesmo form de criar, pré-populado
+    │   ├── viewModel.tsx                       ← Client: useActionState, handlers
+    │   ├── schema.ts                           ← reusar eventoSchema do novo/ (importar)
+    │   └── actions.ts                          ← Server Actions: editarEvento() + excluirEvento()
+    └── _features/DeleteEventoDialog/
+        └── view.tsx                            ← Client: confirmação inline com useTransition
 ```
 
-### Novo type (TestimonialsSection)
+### Plataforma Pública — Eventos
 
-```typescript
-type Testimonial = {
-  id: string
-  quote: string
-  author: string
-  role: string
-  avatarInitials: string
-}
+```
+src/app/(publics)/eventos/
+├── page.tsx                                    ← Server Component: busca eventos do Supabase + passa props
+├── _features/eventos/
+│   ├── HeroEventos.tsx                         ← mantido, sem alteração
+│   ├── ProximosEventos.tsx                     ← recebe Event[] do Supabase (type unificado)
+│   └── EventosGravados.tsx                     ← recebe Event[] do Supabase (type unificado)
+└── [slug]/
+    ├── page.tsx                                ← Server Component: busca evento por slug + generateMetadata
+    └── _features/EventoDetalhe/
+        └── view.tsx                            ← Client: layout de detalhe (hero, descrição, CTA)
 ```
 
 ---
 
-## Especificação Visual por Seção (Úrsula UI)
+## Schema do Banco de Dados (Supabase)
 
-### 1. HeroSection — Split Layout
+```sql
+create table public.events (
+  id          uuid primary key default gen_random_uuid(),
+  slug        text not null unique,                     -- gerado a partir do title, ex: "live-seguranca-digital"
+  title       text not null,
+  description text not null,
+  long_description text,                                -- conteúdo rico para página de detalhe
+  type        text not null check (type in ('ao_vivo', 'gravado')),
+  status      text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  scheduled_at timestamptz,                             -- null para eventos gravados
+  duration_minutes int,                                 -- duração estimada (ao vivo) ou real (gravado)
+  thumbnail_url text,                                   -- URL da imagem de capa (Storage ou externa)
+  youtube_url  text,                                    -- URL do YouTube (ao vivo ou gravado)
+  created_by  uuid references auth.users(id),
+  created_at  timestamptz not null default now(),
+  updated_at  timestamptz not null default now()
+);
 
-**Desktop layout:**
-```
-┌────────────────────────────────────────────────────────────┐
-│  bg: teal-900 (#0D3D37)                py-28               │
-├────────────────────────────┬───────────────────────────────┤
-│ col-span 55%               │ col-span 45%                  │
-│                            │                               │
-│  [PLATAFORMA EDUCACIONAL]  │   [Ilustração / placeholder   │
-│  badge amber-400           │    SVG ou imagem hero]        │
-│                            │                               │
-│  H1: Tecnologia que        │   ┌───────────────────────┐  │
-│  conecta, educa e          │   │  +500    +30    +15   │  │
-│  transforma vidas          │   │ Alunos  Proj.  Parc.  │  │
-│                            │   └───────────────────────┘  │
-│  P: Projetos sociais,      │                               │
-│  cursos profission.        │                               │
-│  e impacto real.           │                               │
-│                            │                               │
-│  [Ver Cursos ▶] [Parceiro] │                               │
-└────────────────────────────┴───────────────────────────────┘
-```
+-- RLS: leitura pública para published; escrita só para autenticados
+alter table public.events enable row level security;
 
-**Estados e especificações:**
-- Background: `bg-[var(--brand-teal-hero)]` ou `bg-teal-900`
-- Badge: `text-amber-400 text-xs font-semibold tracking-widest uppercase`
-- H1: `text-5xl md:text-6xl font-black text-white leading-[1.1]`
-- Subtitle: `text-teal-200 text-lg leading-relaxed`
-- CTA primário: `bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold h-11 px-7 transition-colors`
-- CTA secundário: `border border-teal-600 text-white hover:bg-teal-800 h-11 px-7 transition-colors`
-- Stats — número: `text-amber-400 text-4xl font-black`
-- Stats — label: `text-teal-300 text-xs font-medium`
-- Divisores stats: `border-r border-teal-700`
-- Mobile: single column, visual oculto (`hidden md:block`)
+create policy "events_public_read"
+  on public.events for select
+  using (status = 'published');
 
-**Acessibilidade:**
-- `aria-labelledby="hero-title"` mantido
-- Contraste H1 (white over teal-900): > 10:1 ✅
-- Contraste amber-400 over teal-900: ~4.7:1 ✅ AA
-
----
-
-### 2. ImpactoSection — Fundo Claro
-
-**Especificações:**
-- Background: `bg-teal-50` (não dark como antes)
-- Número: `text-6xl font-black text-teal-700`
-- Label: `text-slate-600 text-sm font-medium mt-1`
-- Divisores: `border-r border-teal-200`
-- Padding: `py-16`
-
----
-
-### 3. CursosDestaque — Cards Redesenhados
-
-**Cards:**
-- Remover `border-l-4 border-l-emerald-500`
-- Adicionar `border border-slate-200 shadow-sm hover:shadow-md hover:-translate-y-1`
-- Tag de categoria: `bg-teal-100 text-teal-700 border-0`
-- Title: `text-slate-900 font-semibold`
-- CTA card: `bg-teal-700 hover:bg-teal-600 text-white w-full` (teal, não emerald)
-- Background seção: `bg-slate-50`
-
----
-
-### 4. ProjetosSociais — Nova Paleta
-
-- Background: `bg-white`
-- Border card: `border-l-4 border-l-teal-600` (manter padrão lateral, trocar cor)
-- Icon container: `bg-teal-100` → ícone `text-teal-600`
-- Title cards: `text-slate-900`
-
----
-
-### 5. TestimonialsSection — Novo Componente
-
-**Layout:**
-```
-┌────────────────────────────────────────────────────────────┐
-│  bg-white    "O que nossos alunos dizem"   py-20           │
-│  ┌──────────────────┐ ┌──────────────────┐ ┌─────────────┐│
-│  │ ★★★★★            │ │ ★★★★★            │ │ ★★★★★       ││
-│  │ "Quote do aluno  │ │ "Quote do aluno  │ │ "Quote..."  ││
-│  │  em itálico"     │ │  em itálico"     │ │             ││
-│  │                  │ │                  │ │             ││
-│  │ [AB] Nome        │ │ [CD] Nome        │ │ [EF] Nome   ││
-│  │ Curso cursado    │ │ Curso cursado    │ │ Curso       ││
-│  └──────────────────┘ └──────────────────┘ └─────────────┘│
-└────────────────────────────────────────────────────────────┘
+create policy "events_cms_write"
+  on public.events for all
+  using (auth.role() = 'authenticated');
 ```
 
-**Especificações:**
-- Background seção: `bg-white`
-- Cards: `bg-slate-50 border border-slate-200 rounded-xl p-6`
-- Stars: `text-amber-400` (5 ícones `Star` do lucide, `fill-amber-400`)
-- Quote: `text-slate-700 italic text-base leading-relaxed`
-- Avatar: `size-10 rounded-full bg-teal-700 text-white flex items-center justify-center text-sm font-bold`
-- Author name: `text-slate-900 font-semibold text-sm`
-- Role: `text-teal-600 text-xs`
-
-**Acessibilidade:**
-- Contraste quote (slate-700 over slate-50): ~6.7:1 ✅ AA
-- Avatar é decorativo — `aria-hidden="true"` no div
-
----
-
-### 6. ParceirosCTA — Dark e Imponente
-
-**Especificações:**
-- Background: `bg-teal-900` com subtle dot pattern via `bg-[radial-gradient(circle,_rgba(255,255,255,0.05)_1px,_transparent_1px)] [background-size:24px_24px]`
-- Título: `text-white text-4xl font-black`
-- Subtitle: `text-teal-200 text-lg`
-- CTA: `bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold h-14 px-10 text-lg transition-colors`
-- Padding: `py-28`
-
----
-
-## Tokens CSS a adicionar em globals.css
-
-```css
-/* Adicionar no :root — Brand NEXORA */
---brand-primary: oklch(0.45 0.12 175);
---brand-primary-dark: oklch(0.38 0.11 175);
---brand-primary-light: oklch(0.96 0.04 175);
---brand-teal-hero: oklch(0.20 0.07 175);
---brand-accent: oklch(0.75 0.16 85);
---brand-accent-dark: oklch(0.65 0.16 85);
---brand-heading: oklch(0.13 0.02 240);
---brand-body: oklch(0.42 0.03 240);
---brand-bg-alt: oklch(0.98 0.01 240);
-
-/* Remapear Shadcn para brand */
---primary: var(--brand-primary);
---primary-foreground: oklch(1 0 0);
-```
+**Notas:**
+- `slug` é gerado no server action a partir do `title` (slugify) e garantido único via constraint
+- `thumbnail_url` aceita path do Supabase Storage ou URL externa (YouTube thumbnail como fallback)
+- `updated_at` atualizado via trigger padrão Supabase
+- A coluna `type` (`ao_vivo` | `gravado`) substitui os dois arrays hardcoded atuais da página
 
 ---
 
 ## Decisões de Estado
 
-| Estado | Tipo | Componente | Justificativa |
-|---|---|---|---|
-| testimonials | prop estática | TestimonialsSection | Dados hardcoded no page.tsx — MVP, sem fetch |
-| cursos | prop estática | CursosDestaque | Já é estático — manter |
-| projetos | prop estática | ProjetosSociais | Já é estático — manter |
-| impacto items | prop estática | ImpactoSection | Já é estático — manter |
-
-> Nenhum estado reativo — page.tsx permanece Server Component puro, sem hooks. ✅ ADR-004.
-
----
-
-## ADR Compliance
-
-- [RESPEITADA] ADR-001: App Router — page.tsx Server Component, sem 'use client'
-- [RESPEITADA] ADR-003: Tailwind v4 — tokens via `@theme` em globals.css, sem tailwind.config.js
-- [RESPEITADA] ADR-004: MVVM — sem lógica nos Server Components (dados como props)
-- [RESPEITADA] ADR-005: Type-only — todos os novos types usarão `type`, não `interface`
-- [RESPEITADA] ADR-006: Utils reutilizáveis — sem lógica duplicada
-- [RESPEITADA] ADR-007: cn() obrigatório em todos os className JSX
-- [NÃO APLICÁVEL] ADR-002: Supabase — home pública não tem integração com banco
+| Estado | Tipo | Localização | Justificativa |
+|--------|------|-------------|---------------|
+| Lista de eventos (plataforma pública) | Fetch servidor | `eventos/page.tsx` | RSC busca do Supabase com `createServerClient()` — sem hidratação no cliente |
+| Lista de eventos (CMS) | Fetch servidor | `cms/.../eventos/page.tsx` | Mesmo padrão de `admins/page.tsx` — adminClient, dados como props |
+| Filtros de status/tipo (CMS) | URL search params | `EventosList/view.tsx` | `useSearchParams()` + `router.push()` — state persistido na URL, compartilhável |
+| Formulário (criar/editar) | RHF + Zod | `view.tsx` + `viewModel.tsx` | ADR crítica: proibido `useState` para campos |
+| Action state (criar/editar) | `useActionState` | `viewModel.tsx` | Padrão estabelecido em `NovoAdmin/viewModel.tsx` |
+| Confirmação de exclusão | `useState<boolean>` | `DeleteEventoDialog/view.tsx` | Controla visibilidade do confirm inline — não é campo de form, `useState` permitido |
+| Evento de detalhe (plataforma) | Fetch servidor | `eventos/[slug]/page.tsx` | RSC com `notFound()` se slug inválido |
 
 ---
 
-## Arquivos a Modificar / Criar
+## Contratos dos Componentes Principais
+
+```typescript
+// src/lib/supabase/types.ts — adicionar
+
+type EventType = 'ao_vivo' | 'gravado'
+type EventStatus = 'draft' | 'published' | 'archived'
+
+type Event = {
+  id: string
+  slug: string
+  title: string
+  description: string
+  long_description: string | null
+  type: EventType
+  status: EventStatus
+  scheduled_at: string | null      // ISO string
+  duration_minutes: number | null
+  thumbnail_url: string | null
+  youtube_url: string | null
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+// Props dos componentes de lista pública (substituem os types locais atuais)
+type ProximosEventosProps = {
+  eventos: Event[]
+}
+
+type EventosGravadosProps = {
+  eventos: Event[]
+}
+
+// CMS list view
+type EventosListViewProps = {
+  eventos: Event[]
+}
+
+// Detalhe público
+type EventoDetalheViewProps = {
+  evento: Event
+}
+
+// Formulário (criar e editar compartilham o mesmo schema shape)
+type EventoFormData = {
+  title: string
+  description: string
+  long_description: string
+  type: EventType
+  status: EventStatus
+  scheduled_at: string          // input datetime-local → string ISO no server action
+  duration_minutes: number | ''
+  thumbnail_url: string
+  youtube_url: string
+}
+
+// ActionState (reusar o existente de src/lib/supabase/types.ts)
+// type ActionState = { errors?: Record<string, string[]>; message?: string } | undefined
+```
+
+---
+
+## Server Actions
+
+```typescript
+// cms/.../eventos/novo/_features/NovoEvento/actions.ts
+'use server'
+async function criarEvento(
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState>
+// → valida com eventoSchema, gera slug, insere via adminClient, redirect para /cms/dashboard/eventos
+
+// cms/.../eventos/[id]/_features/EditarEvento/actions.ts
+'use server'
+async function editarEvento(
+  id: string,
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState>
+// → valida com eventoSchema, regenera slug se title mudou, update via adminClient, redirect
+
+async function excluirEvento(id: string): Promise<ActionState>
+// → delete via adminClient, redirect para /cms/dashboard/eventos
+// chamado pelo DeleteEventoDialog com useTransition
+
+// src/utils/slugify.ts — função pura nova
+function slugify(text: string): string
+// → lowercase, remove acentos, troca espaços e especiais por "-"
+// usada em criarEvento e editarEvento
+```
+
+---
+
+## ADRs
+
+### ADR-FE-002: Slug gerado server-side, não pelo usuário
+
+**Contexto:** Eventos têm URL pública `/eventos/[slug]`. O slug precisa ser único e amigável para SEO. Expor um campo `slug` editável no formulário adiciona complexidade de UX (validação de unicidade em tempo real, sanitização) sem benefício claro para o MVP.
+
+**Decisão:** O slug é gerado automaticamente no server action a partir do `title` via `slugify()` em `src/utils/slugify.ts`. Em caso de colisão (slug já existe), o server action acrescenta um sufixo numérico (`-2`, `-3` etc.) antes de inserir.
+
+**Alternativas rejeitadas:**
+- Campo slug editável no form — UX desnecessariamente complexa para MVP
+- UUID como rota pública — péssimo para SEO e legibilidade
+
+**Consequências:**
+- `slugify()` vai em `src/utils/` (ADR-006) — reutilizável entre CMS e testes
+- Se o admin editar o título de um evento já publicado, o slug é regenerado — URLs antigas quebram. Aceitável no MVP; nota para documentar ao produto.
+
+---
+
+### ADR-FE-003: Filtros de lista CMS via URL search params (não useState)
+
+**Contexto:** A listagem de eventos do CMS precisa de filtros por `status` e `type`. Armazenar em `useState` perde o estado no refresh e impede compartilhamento de link com filtro aplicado.
+
+**Decisão:** `EventosList/view.tsx` usa `useSearchParams()` para ler os filtros ativos e `useRouter().push()` (ou `<Link>` com query) para alterá-los. O `page.tsx` lê os `searchParams` e filtra os dados antes de passar como props, ou passa todos os eventos e delega o filtro ao client — preferência: filtro server-side para não expor eventos `draft` desnecessariamente via client.
+
+**Alternativas rejeitadas:**
+- `useState` para filtros — perde estado no refresh, não compartilhável
+- Filtro só client-side — exporia todos os registros ao client, incluindo `draft`
+
+**Consequências:**
+- `page.tsx` recebe `searchParams` como prop (padrão Next.js App Router)
+- Navegação entre filtros não causa loading completo (RSC partial rendering)
+
+---
+
+## Arquivos a Modificar/Criar
 
 ```
 MODIFICAR:
-- src/components/layout/globals.css
-- src/app/(publics)/(home)/page.tsx
-- src/app/(publics)/(home)/_features/home/HeroSection.tsx
-- src/app/(publics)/(home)/_features/home/CursosDestaque.tsx
-- src/app/(publics)/(home)/_features/home/ProjetosSociais.tsx
-- src/app/(publics)/(home)/_features/home/ImpactoSection.tsx
-- src/app/(publics)/(home)/_features/home/ParceirosCTA.tsx
+- src/app/(publics)/eventos/page.tsx
+  → remover arrays hardcoded; buscar eventos do Supabase; passar Event[] para componentes
+- src/app/(publics)/eventos/_features/eventos/ProximosEventos.tsx
+  → trocar type local ProximoEvento por Event de @/lib/supabase/types
+- src/app/(publics)/eventos/_features/eventos/EventosGravados.tsx
+  → trocar type local EventoGravado por Event de @/lib/supabase/types
+- src/lib/supabase/types.ts
+  → adicionar Event, EventType, EventStatus
 
 CRIAR:
-- src/app/(publics)/(home)/_features/home/TestimonialsSection.tsx
+- src/utils/slugify.ts
+- src/app/(publics)/eventos/[slug]/page.tsx
+- src/app/(publics)/eventos/[slug]/_features/EventoDetalhe/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/page.tsx
+- src/app/(cms)/cms/dashboard/eventos/_features/EventosList/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/page.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/viewModel.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/schema.ts
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/actions.ts
+- src/app/(cms)/cms/dashboard/eventos/[id]/page.tsx
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/EditarEvento/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/EditarEvento/viewModel.tsx
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/EditarEvento/actions.ts
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/DeleteEventoDialog/view.tsx
 ```
 
 ---
 
-## Pontos de Atenção para o Dev (Rodrigo React)
+## Pontos de Atenção para o Dev
 
-1. **CSS tokens OKLCH:** globals.css usa `oklch()` — todos os tokens novos devem seguir o mesmo formato. Não misturar hex diretamente.
-2. **Tailwind v4 com CSS vars:** para usar as vars como utilities Tailwind, adicionar ao `@theme inline` em globals.css (ex: `--color-brand-primary: var(--brand-primary)`). Se não, usar `bg-[var(--brand-primary)]`.
-3. **TestimonialsSection é estático:** dados mocados no page.tsx com 3 depoimentos placeholder de qualidade realista.
-4. **HeroSection split:** usar `grid grid-cols-1 md:grid-cols-[3fr_2fr] gap-12` — decisão de implementação do Rodrigo, mas o resultado deve ser split em desktop, stack em mobile.
-5. **Avatar initials:** `avatarInitials` é 2 chars (ex: "MS") — não usar `<img>` sem src válido.
-6. **`Button render` prop:** padrão deste projeto é `render={<Link href="..." />}` no Shadcn Button (Next.js 16 — ver CursosDestaque.tsx existente).
-7. **`--primary` remapeado:** verificar que o CMS ainda funciona visualmente após a mudança. O dark teal é mais escuro que o preto padrão — pode afetar sidebar do CMS.
-8. **`npm run build` obrigatório** ao final — zero erros TypeScript.
+1. **`scheduled_at` no formulário:** usar `<input type="datetime-local" />` — o valor retorna string `"2026-05-14T15:00"`. O server action deve converter para ISO completo com timezone antes de inserir: `new Date(value).toISOString()`. Validar que o campo é obrigatório apenas quando `type === 'ao_vivo'` (refinement Zod).
+
+2. **Filtro server-side no CMS:** `page.tsx` de eventos recebe `searchParams: { status?: string; type?: string }` e filtra via `.eq()` no Supabase antes de passar para `EventosListView`. Não passar dados `draft` para o client na plataforma pública.
+
+3. **`excluirEvento` com `useTransition`:** o botão de excluir no `DeleteEventoDialog` deve usar `useTransition` para mostrar estado de loading sem bloquear UI. Padrão: `const [isPending, startTransition] = useTransition()` + `startTransition(() => excluirEvento(id))`.
+
+4. **`generateMetadata` no detalhe público:** `eventos/[slug]/page.tsx` deve exportar `generateMetadata` usando `title` e `description` do evento. Se slug não existe, chamar `notFound()` antes de chegar no render.
+
+5. **`thumbnail_url` nulo:** `ProximosEventos` e `EventosGravados` usam `next/image` — se `thumbnail_url` for `null`, usar imagem placeholder (`/images/event-placeholder.jpg`) para evitar erro de `src` vazio. Adicionar domínios do Supabase Storage em `next.config.ts` (seção `images.remotePatterns`).
+
+6. **Sidebar do CMS:** adicionar item "Eventos" no `SidebarNav.tsx` apontando para `/cms/dashboard/eventos`. Não esquecer o ícone adequado do lucide (`CalendarDays`).
+
+7. **Schema compartilhado entre criar e editar:** `EditarEvento/schema.ts` deve importar e reexportar `eventoSchema` de `novo/_features/NovoEvento/schema.ts` — não duplicar a definição (ADR-006).
+
+8. **`npm run build` obrigatório** ao final de cada subtask — zero erros TypeScript antes de marcar como feito.

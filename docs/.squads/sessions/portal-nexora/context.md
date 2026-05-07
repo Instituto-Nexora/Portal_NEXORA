@@ -17,6 +17,20 @@ O projeto iniciou com protótipos HTML estáticos. A migração garante que todo
 
 ---
 
+## Sessão 2026-05-06 — Fluxo de Eventos (CMS + Plataforma)
+
+### O que é
+CRUD completo de eventos: cadastro, edição, exclusão e listagem — tanto no CMS (área administrativa) quanto na plataforma pública. Cobre issues #34–40 (feature:eventos).
+
+### Por que existe
+O Portal Nexora realiza eventos presenciais e online (workshops, lives, meetups). A gestão desses eventos precisa de interface administrativa no CMS e de páginas públicas na plataforma para listagem e detalhe.
+
+### Escopo
+- **CMS:** listagem de eventos com filtros, formulário de criação, edição e exclusão (com confirmação)
+- **Plataforma pública:** `/eventos` (listagem) e `/eventos/[slug]` (detalhe) — estas são server pages, sem formulário de inscrição nesta sessão
+
+---
+
 ## Sessão 2026-04-30 — CMS: Cadastro de Administradores
 
 ### O que é

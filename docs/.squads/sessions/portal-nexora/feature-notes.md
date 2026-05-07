@@ -38,6 +38,46 @@
 
 ---
 
+# Feature Notes: Fluxo de Eventos (CMS + Plataforma)
+
+**Data:** 2026-05-06
+**Squad:** frontend-001
+
+## O que foi implementado
+
+- Tipos `Event`, `EventType`, `EventStatus` adicionados em `src/lib/supabase/types.ts` — modelo unificado consumido por CMS e plataforma pública
+- CRUD completo de eventos no CMS: listagem com filtros server-side, criação, edição e exclusão (`/cms/dashboard/eventos/*`)
+- Rota pública `/eventos` refatorada de dados hardcoded para Supabase, com componentes `ProximosEventos` e `EventosGravados` adaptados ao tipo unificado
+- Rota pública `/eventos/[slug]` com `generateMetadata`, `notFound()` e view de detalhe do evento
+- Utilitários `slugify()` (`src/utils/slugify.ts`) e `formatDate`/`formatDateLong`/`formatTime` (`src/utils/formatDate.ts`) extraídos como funções puras reutilizáveis
+
+## Decisões técnicas tomadas
+
+- **Schema Zod sem `.transform()`** em `duration_minutes`: conversão string→number feita manualmente na Server Action (`Number(parsed.data.duration_minutes)`) para manter compatibilidade com `useForm<EventoFormData>` (inferência de tipo quebra com transform)
+- **`.url()` do Zod v4 depreciado**: substituído por `z.string().optional()` nos campos de URL; validação HTML5 via `type="url"` no input cuida do lado cliente
+- **`formatDate`/`formatTime` extraídas** durante review (3ª duplicação atingida = BLOCKER ADR-006) — `src/utils/formatDate.ts` é agora o utilitário canônico para datas pt-BR
+- **`DeleteEventoDialog` sem form**: padrão `useTransition` + Server Action chamada diretamente no handler do botão, sem `<form>`
+
+## Pontos de atenção para manutenção futura
+
+1. Páginas públicas `/eventos` e `/eventos/[slug]` usam `createAdminClient()` (service role) em vez de `createClient()` (anon key + RLS) — funcionalmente correto para MVP, mas semanticamente errado; migrar para `createClient()` quando RLS de leitura estiver configurado
+2. `EventoDetalhe/view.tsx` usa classes `prose prose-slate` — verificar se `@tailwindcss/typography` está instalado; se não, remover as classes para evitar estilos órfãos
+3. Slug não é regenerado ao editar título — comportamento esperado para MVP, mas quebra URLs existentes se o admin alterar o título de um evento publicado; implementar redirect ou campo slug editável em iteração futura
+4. `DeleteEventoDialog` usa `window.confirm()` — substituir por dialog Shadcn em iteração futura para manter consistência de UI
+
+## BLOCKERs resolvidos do review
+
+- **[BLOCKER] ADR-006 — 3ª duplicação de `formatDate`/`formatTime`**: funções extraídas para `src/utils/formatDate.ts`; todos os pontos de uso atualizados para importar do utilitário canônico
+
+## SUGGESTIONs pendentes (débito técnico)
+
+1. **(Alta)** Migrar `createAdminClient()` nas rotas públicas para `createClient()` com anon key + RLS configurado no Supabase
+2. **(Média)** Verificar e resolver dependência `@tailwindcss/typography` para as classes `prose` em `EventoDetalhe/view.tsx`
+3. **(Baixa)** Substituir `window.confirm()` no `DeleteEventoDialog` por `<AlertDialog>` do Shadcn
+4. **(Baixa)** Avaliar estratégia de slug imutável vs. redirect ao editar título de evento publicado
+
+---
+
 # Feature Notes — Identidade Visual + Redesign da Home
 
 **Data:** 2026-05-02
