@@ -9,6 +9,17 @@ type AdminProfile = {
   created_at: string
 }
 
+type student_profiles = {
+  id: string
+  full_name: string
+  email: string
+  avatar_url: string | null
+}
+
+type Tables = {
+  student_profiles: student_profiles
+}
+
 type SessionUser = {
   id: string
   email: string
@@ -20,4 +31,4 @@ type ActionState = {
   message?: string
 } | undefined
 
-export type { AdminRole, AdminProfile, SessionUser, ActionState }
+export type { AdminRole, AdminProfile, Tables, SessionUser, ActionState }
