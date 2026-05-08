@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { useLoginViewModel } from "./viewModel";
 import Link from "next/link";
 
-export default function LoginView() {
+export default function LoginView({ resetSuccess }: { resetSuccess?: boolean }) {
   const { form, onSubmit, status, isPending } = useLoginViewModel();
 
   const isLoading = isPending || form.formState.isSubmitting;
@@ -50,6 +50,12 @@ export default function LoginView() {
             <p className={cn("text-sm text-destructive")}>{form.formState.errors.password.message}</p>
           )}
         </div>
+
+        {resetSuccess && !status && (
+          <div className={cn("p-3 rounded-md bg-teal-50 text-teal-800")}>
+            <p className={cn("text-sm font-medium text-center")}>Senha redefinida com sucesso! Faça login.</p>
+          </div>
+        )}
 
         {status && (
           <div className={cn("p-3 rounded-md", status.success ? "bg-teal-50 text-teal-800" : "bg-red-50 text-red-800")}>
