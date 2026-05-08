@@ -42,6 +42,18 @@ type Event = {
   updated_at: string;
 };
 
+type Curso = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail_url: string | null;
+  price_cents: number | null;
+  is_published: boolean;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
 export type {
   AdminRole,
   AdminProfile,
@@ -50,4 +62,5 @@ export type {
   EventType,
   EventStatus,
   Event,
+  Curso,
 };

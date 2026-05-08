@@ -19,7 +19,7 @@ const NAV_ITEMS = [
     exact: true,
   },
   { label: "Conteúdos", href: "/cms/contents", icon: FileText, exact: false },
-  { label: "Cursos", href: "/cms/courses", icon: BookOpen, exact: false },
+  { label: "Cursos", href: "/cms/dashboard/cursos", icon: BookOpen, exact: false },
   {
     label: "Administradores",
     href: "/cms/dashboard/admins",
