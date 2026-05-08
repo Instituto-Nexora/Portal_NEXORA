@@ -1,0 +1,17 @@
+{
+  "feature": "fix-update-fluxo-criar-eventos",
+  "created_at": "2026-05-08T00:00:00Z",
+  "updated_at": "2026-05-08T00:00:00Z",
+  "squads": {
+    "frontend-001": {
+      "domain": "frontend",
+      "pipeline": "bug-fix",
+      "started_at": "2026-05-08T00:00:00Z",
+      "completed_at": "2026-05-08T00:00:00Z",
+      "status": "completed",
+      "completed_steps": ["01-gate-integridade", "bf-02-diagnostico", "bf-03-fix", "bf-04-review"],
+      "current_step": null,
+      "suspended_at": null
+    }
+  }
+}

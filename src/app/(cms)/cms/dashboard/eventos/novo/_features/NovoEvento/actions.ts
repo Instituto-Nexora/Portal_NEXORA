@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionState } from "@/lib/supabase/types";
@@ -30,11 +31,15 @@ export async function criarEvento(
     };
   }
 
+  const thumbnailFile = formData.get("thumbnail_file") as File | null;
+  if (!thumbnailFile || thumbnailFile.size === 0) {
+    return { errors: { thumbnail_file: ["Thumbnail é obrigatória"] } };
+  }
+
   const adminClient = createAdminClient();
 
   let thumbnail_url: string | null = null;
-  const thumbnailFile = formData.get("thumbnail_file") as File | null;
-  if (thumbnailFile && thumbnailFile.size > 0) {
+  if (thumbnailFile.size > 0) {
     const ext = thumbnailFile.name.split(".").pop() ?? "jpg";
     const path = `eventos/${Date.now()}.${ext}`;
     const { data: uploadData, error: uploadError } = await adminClient.storage
@@ -68,5 +73,6 @@ export async function criarEvento(
     return { message: "Erro ao criar evento. Tente novamente." };
   }
 
+  revalidatePath("/eventos");
   redirect("/cms/dashboard/eventos");
 }
