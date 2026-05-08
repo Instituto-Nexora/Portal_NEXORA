@@ -1,4 +1,4 @@
-import { PlayCircle, Video } from "lucide-react";
+import { Camera, PlayCircle, Video } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -71,22 +71,35 @@ export function EventosGravados({ eventos }: Props) {
                     aria-label={`Ver detalhes: ${evento.title}`}
                     className={cn("relative block overflow-hidden aspect-video")}
                   >
-                    <Image
-                      src={evento.thumbnail_url ?? "/images/event-placeholder.jpg"}
-                      alt={evento.title}
-                      fill
-                      className={cn(
-                        "object-cover group-hover:scale-105 transition-transform duration-300",
-                      )}
-                    />
-                    <div
-                      className={cn(
-                        "absolute inset-0 bg-teal-900/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200",
-                      )}
-                      aria-hidden="true"
-                    >
-                      <PlayCircle className={cn("size-12 text-white")} />
-                    </div>
+                    {evento.thumbnail_url ? (
+                      <>
+                        <Image
+                          src={evento.thumbnail_url}
+                          alt={evento.title}
+                          fill
+                          className={cn(
+                            "object-cover group-hover:scale-105 transition-transform duration-300",
+                          )}
+                        />
+                        <div
+                          className={cn(
+                            "absolute inset-0 bg-teal-900/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200",
+                          )}
+                          aria-hidden="true"
+                        >
+                          <PlayCircle className={cn("size-12 text-white")} />
+                        </div>
+                      </>
+                    ) : (
+                      <div
+                        className={cn(
+                          "w-full h-full bg-slate-100 flex items-center justify-center",
+                        )}
+                        aria-hidden="true"
+                      >
+                        <Camera className={cn("size-10 text-slate-300")} />
+                      </div>
+                    )}
                   </Link>
                   <CardHeader>
                     <div className={cn("flex items-center gap-2 mb-1")}>

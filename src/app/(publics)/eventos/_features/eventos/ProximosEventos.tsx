@@ -1,4 +1,4 @@
-import { CalendarDays, Clock, Video } from "lucide-react";
+import { CalendarDays, Camera, Clock, Video } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { Badge } from "@/components/ui/badge";
@@ -70,15 +70,24 @@ export function ProximosEventos({ eventos }: Props) {
                 )}
               >
                 <div className={cn("relative")}>
-                  <Image
-                    src={
-                      evento.thumbnail_url ?? "/images/event-placeholder.jpg"
-                    }
-                    alt={evento.title}
-                    width={400}
-                    height={220}
-                    className={cn("w-full h-48 object-cover")}
-                  />
+                  {evento.thumbnail_url ? (
+                    <Image
+                      src={evento.thumbnail_url}
+                      alt={evento.title}
+                      width={400}
+                      height={220}
+                      className={cn("w-full h-48 object-cover")}
+                    />
+                  ) : (
+                    <div
+                      className={cn(
+                        "w-full h-48 bg-slate-100 flex items-center justify-center",
+                      )}
+                      aria-hidden="true"
+                    >
+                      <Camera className={cn("size-10 text-slate-300")} />
+                    </div>
+                  )}
                 </div>
                 <CardHeader>
                   <div className={cn("flex gap-2 flex-wrap mb-1")}>

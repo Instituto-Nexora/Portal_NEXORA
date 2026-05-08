@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 import { useNovoEventoViewModel } from "./viewModel";
 
 export function NovoEventoView() {
-  const { form, formAction, isPending, state, handleCancel } =
+  const { form, formRef, handleSubmit, isPending, state, handleCancel } =
     useNovoEventoViewModel();
   const {
     register,
@@ -36,7 +36,7 @@ export function NovoEventoView() {
         do título.
       </p>
 
-      <form action={formAction} className={cn("space-y-6")}>
+      <form ref={formRef} onSubmit={handleSubmit} className={cn("space-y-6")}>
         {/* Informações básicas */}
         <Card>
           <CardHeader>
@@ -243,8 +243,13 @@ export function NovoEventoView() {
           </CardHeader>
           <CardContent className={cn("space-y-4")}>
             <div className={cn("space-y-1.5")}>
-              <Label>Thumbnail (opcional)</Label>
+              <Label>Thumbnail</Label>
               <ThumbnailUpload />
+              {state?.errors?.thumbnail_file && (
+                <p className={cn("text-xs text-destructive")}>
+                  {state.errors.thumbnail_file[0]}
+                </p>
+              )}
             </div>
 
             <div className={cn("space-y-1.5")}>
