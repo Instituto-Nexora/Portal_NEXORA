@@ -11,6 +11,21 @@
 <!-- /SUMMARY -->
 
 <!-- RECENTES -->
+## Sessão 2026-05-06
+Task: Fluxo de eventos — CRUD completo (CMS) + listagem/detalhe (plataforma pública). Issues #34–40.
+Issue: #34, #35, #39, #40 (feature:eventos)
+## [frontend-001 · ana-arquitetura-fe] — 2026-04-30
+
+[DECISÃO CRÍTICA] Padrões aprovados — CMS Criar Admin:
+- `createAdminClient()` em `src/lib/supabase/admin.ts` (service role, sem cookies) — separado de `createClient()`
+- `auth.admin.createUser` + rollback `deleteUser` se profile falhar — padrão de consistência para criações em dois passos
+- `flatten((issue) => issue.message)` é o padrão Zod v4 (sem args está depreciado)
+- `viewModel.tsx` separado de `view.tsx` é o padrão correto (ADR-004) — features CMS antigas não seguem, esta é a referência
+
+## Sessão 2026-04-30 (run 3)
+Task: CMS — Formulário de cadastro de novos administradores seguindo ADRs
+Issue: —
+
 ## Sessão 2026-04-30 (run 2)
 Task: CMS — Segurança, domínios e proteção
 Decisões documentadas em docs/tech/security/cms-domain-architecture.md
@@ -65,4 +80,31 @@ Task: Criar tarefas no GitHub Projects para MVP
 Issues criadas: #6 (Landing Page+Checkout), #7 (Módulo Cursos), #8 (Autenticação), #9 (Eventos)
 Repositório: Instituto-Nexora/Portal_NEXORA
 Labels criadas: feature:landing-page, feature:modulo-cursos, feature:autenticacao, feature:eventos, P0, P1
+## Sessão 2026-05-02
+Task: Criar identidade visual para o Portal Nexora — redesign completo da home como protótipo. Análise de concorrentes (Udemy, Alura, Hotmart). Úrsula UI lidera o design system e layout.
+Issue: —
+
+## [frontend-001 · ana-arquitetura-fe + ursula-ui] — 2026-05-02
+
+[DECISÃO CRÍTICA] Identidade Visual NEXORA aprovada:
+- Primary: Deep Teal — `--brand-primary: oklch(0.45 0.12 175)` (~teal-700 #0F766E) — remapeia `--primary` do Shadcn
+- Hero bg: `--brand-teal-hero: oklch(0.20 0.07 175)` (~teal-900 #0D3D37) — background escuro sólido, sem gradiente
+- CTAs: Amber — `--brand-accent: oklch(0.75 0.16 85)` (~amber-500 #F59E0B) — cor de ação primária
+- Tokens definidos em `src/components/layout/globals.css` no `:root`
+- `--primary` Shadcn remapeado para teal — afeta todos os componentes que usam `bg-primary`
+
+[DECISÃO CRÍTICA] Estrutura de seções da home (ordem aprovada):
+HeroSection → ImpactoSection → CursosDestaque → ProjetosSociais → TestimonialsSection → ParceirosCTA
+
+Novo componente: `TestimonialsSection.tsx` — dados estáticos hardcoded em page.tsx (3 depoimentos)
+HeroSection: recebe `stats` como prop — split layout desktop, stack mobile
+## [frontend-001 · ana-arquitetura-fe] — 2026-05-06
+
+[DECISÃO CRÍTICA] Padrões aprovados — Fluxo de Eventos:
+- `src/utils/formatDate.ts` é o utilitário canônico para formatação de datas pt-BR — não duplicar em componentes
+- `slugify()` em `src/utils/slugify.ts` é o padrão para geração de slug server-side (ADR-FE-002)
+- Schema Zod sem `.transform()` para campos numéricos de formulário — converter manualmente na Server Action
+- `.url()` do Zod v4 está depreciado — usar `z.string().optional()` + `type="url"` no input HTML
+- `createAdminClient()` é exclusivo do CMS; páginas públicas devem usar `createClient()` (anon + RLS)
+- Padrão de delete sem form: `useTransition` + Server Action chamada direto no handler
 <!-- /RECENTES -->

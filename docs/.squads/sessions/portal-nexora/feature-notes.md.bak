@@ -1,0 +1,37 @@
+# Feature Notes: CMS — Criar Novos Administradores
+
+**Data:** 2026-04-30
+**Squad:** frontend-001
+
+## O que foi implementado
+
+- `src/lib/supabase/admin.ts` — `createAdminClient()` com service role key (sem cookie handling), separado do client padrão
+- `src/app/(cms)/cms/dashboard/admins/novo/page.tsx` — Server Component puro com metadata, sem lógica
+- `_features/NovoAdmin/schema.ts` — Zod schema com refinamento de confirmação de senha e enum de roles
+- `_features/NovoAdmin/viewModel.tsx` — `useActionState` + `useForm` + `useRouter` encapsulados, sem JSX
+- `_features/NovoAdmin/view.tsx` — UI pura com Shadcn + `<select>` nativo estilizado; zero lógica
+- `_features/NovoAdmin/actions.ts` — Server Action usando `auth.admin.createUser` + rollback via `deleteUser` se o profile falhar
+
+## Decisões técnicas tomadas
+
+- **`<select>` nativo** em vez de Shadcn Select (não instalado). Estilizado com classes Tailwind compatíveis com a altura/border do `<Input>`.
+- **`flatten((issue) => issue.message)`** — Zod v4 deprecou a assinatura zero-argumento de `.flatten()`. A forma correta em v4 é passar um mapper.
+- **Rollback explícito**: se a inserção em `admin_profiles` falhar após `createUser`, o auth user é deletado imediatamente. Mantém consistência sem depender de triggers ou jobs externos.
+- **`router.back()` no cancelar**: decisão deliberada — o comportamento padrão é voltar na história do browser. Se acessado diretamente, navega para fora do CMS (comportamento aceitável; listagem de admins está fora do escopo desta task).
+
+## Pontos de atenção para manutenção futura
+
+1. **`SUPABASE_SERVICE_ROLE_KEY`** deve existir em `.env.local` (e nas variáveis de ambiente do Vercel). A ausência faz `createAdminClient()` criar um client com chave `undefined`, e `auth.admin.*` retorna 401 silenciosamente.
+2. **`auth.admin.createUser`** requer que o projeto Supabase tenha Auth habilitado e que a service role key tenha permissão de admin. Verificar no dashboard Supabase se a key é a correta.
+3. **Rota `/cms/dashboard/admins/novo`** está protegida pelo `proxy.ts` herdado do `(cms)/layout.tsx`. Não precisa de proteção adicional na page.tsx.
+4. **`select` nativo no dark mode** pode exibir fundo branco em alguns browsers. Se o projeto implementar dark mode, considerar trocar por Shadcn Select ou uma lib de select acessível.
+5. **Mensagem de erro do Supabase** (`authError?.message`) pode vir em inglês. Mapear para pt-BR antes de expor ao usuário é uma melhoria futura pendente.
+
+## BLOCKERs resolvidos do review
+
+- **[BLOCKER] Usuário auth órfão**: corrigido adicionando `await adminClient.auth.admin.deleteUser(authData.user.id)` antes do `return` de erro no profile. O banco retorna a um estado consistente em caso de falha parcial.
+
+## SUGGESTIONs pendentes (débito técnico)
+
+- **`select` nativo / bg-transparent**: cosmético, a tratar quando dark mode for implementado
+- **Mensagem de erro do Supabase em inglês**: mapear `authError?.message` para pt-BR na próxima iteração do CMS

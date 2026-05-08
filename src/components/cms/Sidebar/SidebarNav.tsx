@@ -1,15 +1,37 @@
 "use client";
 
-import { BookOpen, FileText, LayoutDashboard, Users } from "lucide-react";
+import {
+  BookOpen,
+  CalendarDays,
+  FileText,
+  LayoutDashboard,
+  ShieldCheck,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
-  { label: "Dashboard", href: "/cms/dashboard", icon: LayoutDashboard },
-  { label: "Conteúdos", href: "/cms/contents", icon: FileText },
-  { label: "Cursos", href: "/cms/courses", icon: BookOpen },
-  { label: "Usuários", href: "/cms/users", icon: Users },
+  {
+    label: "Dashboard",
+    href: "/cms/dashboard",
+    icon: LayoutDashboard,
+    exact: true,
+  },
+  { label: "Conteúdos", href: "/cms/contents", icon: FileText, exact: false },
+  { label: "Cursos", href: "/cms/courses", icon: BookOpen, exact: false },
+  {
+    label: "Administradores",
+    href: "/cms/dashboard/admins",
+    icon: ShieldCheck,
+    exact: false,
+  },
+  {
+    label: "Eventos",
+    href: "/cms/dashboard/eventos",
+    icon: CalendarDays,
+    exact: false,
+  },
 ];
 
 export function SidebarNav() {
@@ -17,8 +39,8 @@ export function SidebarNav() {
 
   return (
     <nav className={cn("flex flex-col gap-1 px-2")}>
-      {NAV_ITEMS.map(({ label, href, icon: Icon }) => {
-        const active = pathname.startsWith(href);
+      {NAV_ITEMS.map(({ label, href, icon: Icon, exact }) => {
+        const active = exact ? pathname === href : pathname.startsWith(href);
         return (
           <Link
             key={href}

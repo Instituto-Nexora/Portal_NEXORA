@@ -1,6 +1,6 @@
 import { redirect } from 'next/navigation'
-import { createClient } from '@/lib/supabase/server'
 import { CMSShell } from '@/components/cms/CMSShell'
+import { createClient } from '@/lib/supabase/server'
 
 export default async function DashboardLayout({
   children,
@@ -17,7 +17,7 @@ export default async function DashboardLayout({
   }
 
   const { data: profile } = await supabase
-    .from('admin_profiles')
+    .from('profiles')
     .select('*')
     .eq('user_id', user.id)
     .single()

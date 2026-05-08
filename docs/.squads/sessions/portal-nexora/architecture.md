@@ -1,442 +1,290 @@
-# CMS — Arquitetura do Fluxo de Autenticação e Painel Administrativo
+# Decisão Arquitetural: Fluxo de Eventos (CMS + Plataforma)
 
-> Produzido por Ana Arquitetura (ana-arquitetura-fe) — Squad frontend-001  
-> Data: 2026-04-30 | Status: Aprovado para implementação
-
----
-
-## 1. Entendimento da Task
-
-O objetivo é criar o fluxo completo de acesso ao CMS do Portal Nexora: autenticação via Supabase Auth (login/logout/cadastro), proteção de rotas, sidebar/navbar do painel e schema do banco para múltiplos perfis de acesso (admin, content_creator, professor). O CMS roda sob o route group `(cms)` e deve ser completamente isolado do site público.
+**Data:** 2026-05-06
+**Agent:** Ana Arquitetura
 
 ---
 
-## 2. Estrutura de Arquivos e Pastas
+## Entendimento da Task
+
+Implementar CRUD completo de eventos no CMS admin (`/cms/dashboard/eventos/`) seguindo o padrão MVVM já estabelecido no módulo de admins. Na plataforma pública, refatorar a listagem `/eventos` de dados hardcoded para busca via Supabase e criar a página de detalhe `/eventos/[slug]` como rota dinâmica nova.
+
+---
+
+## Estrutura de Componentes
+
+### CMS — Gestão de Eventos
 
 ```
-src/
-├── app/
-│   ├── (publics)/                         # site público (existente)
-│   ├── (cms)/                             # route group CMS — não gera segmento de URL
-│   │   ├── layout.tsx                     # CMS layout — valida sessão, renderiza Sidebar
-│   │   ├── login/
-│   │   │   ├── page.tsx                   # Server Component — sem lógica, sem hooks
-│   │   │   └── _features/login/
-│   │   │       ├── schema.ts              # Zod schema do formulário de login
-│   │   │       ├── view.tsx               # Client Component — formulário RHF
-│   │   │       └── actions.ts             # Server Actions — signIn, signOut
-│   │   ├── register/
-│   │   │   ├── page.tsx
-│   │   │   └── _features/register/
-│   │   │       ├── schema.ts
-│   │   │       ├── view.tsx
-│   │   │       └── actions.ts
-│   │   └── dashboard/
-│   │       ├── page.tsx                   # Dashboard principal (Server Component)
-│   │       └── _features/dashboard/
-│   │           └── view.tsx               # Conteúdo do dashboard
-│   ├── globals.css
-│   ├── favicon.ico
-│   └── layout.tsx                         # Root layout (existente)
-│
-├── components/
-│   ├── cms/                               # Componentes exclusivos do CMS
-│   │   ├── Sidebar/
-│   │   │   ├── index.tsx                  # Server Component — lê sessão e renderiza
-│   │   │   ├── SidebarNav.tsx             # Client Component — links ativos com usePathname
-│   │   │   └── SidebarUserMenu.tsx        # Client Component — avatar + logout
-│   │   ├── TopBar/
-│   │   │   └── index.tsx                  # Client Component — título da página + ações
-│   │   └── CMSShell.tsx                   # Layout shell: Sidebar + área de conteúdo
-│   ├── layout/                            # Header/Footer públicos (existente)
-│   └── ui/                               # Shadcn (existente)
-│
-├── lib/
-│   ├── utils.ts                           # cn() (existente)
-│   └── supabase/
-│       ├── client.ts                      # createBrowserClient — uso em Client Components
-│       ├── server.ts                      # createServerClient — uso em Server Components e Actions
-│       └── middleware.ts                  # createServerClient para uso no proxy
-│
-└── middleware.ts                          # Proxy Next.js — proteção de rotas CMS
+src/app/(cms)/cms/dashboard/eventos/
+├── page.tsx                                    ← Server Component: busca lista + passa props
+├── _features/EventosList/
+│   └── view.tsx                                ← Client: tabela com filtros status/tipo + link editar + delete inline
+├── novo/
+│   ├── page.tsx                                ← Server Component puro
+│   └── _features/NovoEvento/
+│       ├── view.tsx                            ← Client: formulário completo (RHF)
+│       ├── viewModel.tsx                       ← Client: useActionState, handlers de form
+│       ├── schema.ts                           ← Zod: eventoSchema
+│       └── actions.ts                          ← Server Action: criarEvento()
+└── [id]/
+    ├── page.tsx                                ← Server Component: busca evento por id + passa props
+    ├── _features/EditarEvento/
+    │   ├── view.tsx                            ← Client: mesmo form de criar, pré-populado
+    │   ├── viewModel.tsx                       ← Client: useActionState, handlers
+    │   ├── schema.ts                           ← reusar eventoSchema do novo/ (importar)
+    │   └── actions.ts                          ← Server Actions: editarEvento() + excluirEvento()
+    └── _features/DeleteEventoDialog/
+        └── view.tsx                            ← Client: confirmação inline com useTransition
 ```
 
-> **Nota de rota:** O route group `(cms)` isola o CMS sem prefixar URLs. As rotas resultantes são `/login`, `/register` e `/dashboard`. Se houver conflito com rotas públicas que usem os mesmos slugs, o route group deverá ser renomeado para `(cms-area)` e as rotas prefixadas: `/cms/login`, `/cms/dashboard`.
->
-> **Decisão adotada aqui:** Usar prefixo `/cms/*` via route group `(cms)` + pasta `cms/` dentro de `(cms)`. Rotas resultantes: `/cms/login`, `/cms/register`, `/cms/dashboard`.  
-> Estrutura revisada:
+### Plataforma Pública — Eventos
 
 ```
-src/app/
-└── (cms)/
-    └── cms/                               # gera o prefixo /cms na URL
-        ├── login/page.tsx                 → /cms/login
-        ├── register/page.tsx              → /cms/register
-        └── dashboard/page.tsx             → /cms/dashboard
+src/app/(publics)/eventos/
+├── page.tsx                                    ← Server Component: busca eventos do Supabase + passa props
+├── _features/eventos/
+│   ├── HeroEventos.tsx                         ← mantido, sem alteração
+│   ├── ProximosEventos.tsx                     ← recebe Event[] do Supabase (type unificado)
+│   └── EventosGravados.tsx                     ← recebe Event[] do Supabase (type unificado)
+└── [slug]/
+    ├── page.tsx                                ← Server Component: busca evento por slug + generateMetadata
+    └── _features/EventoDetalhe/
+        └── view.tsx                            ← Client: layout de detalhe (hero, descrição, CTA)
 ```
 
 ---
 
-## 3. Decisões de Estado
-
-| Contexto | Decisão | Justificativa |
-|---|---|---|
-| Dados da sessão autenticada | Lidos via `createServerClient` no Server Component/layout | Sem estado global no cliente — evita prop drilling e hydration mismatch |
-| Formulários de login/cadastro | `useActionState` + Server Actions | Padrão Next.js 16 App Router; sem fetch manual; sem `useState` para campos |
-| Rota ativa na Sidebar | `usePathname()` no `SidebarNav` (Client Component) | API de navegação só disponível no cliente |
-| Logout | Server Action com `supabase.auth.signOut()` + `redirect()` | Garante limpeza de cookies pelo servidor |
-| Dados do usuário logado para Sidebar | Passados como props do Server Component pai | Evita criar Context desnecessário; o volume de dados é mínimo (nome, role, avatar) |
-
----
-
-## 4. Contratos dos Componentes Principais
-
-```typescript
-// src/lib/supabase/types.ts
-
-type AdminRole = 'admin' | 'content_creator' | 'professor'
-
-type AdminProfile = {
-  id: string
-  user_id: string
-  full_name: string
-  role: AdminRole
-  avatar_url: string | null
-  created_at: string
-}
-
-type SessionUser = {
-  id: string
-  email: string
-  profile: AdminProfile
-}
-```
-
-```typescript
-// src/components/cms/Sidebar/index.tsx
-type SidebarProps = {
-  user: SessionUser
-}
-
-// src/components/cms/Sidebar/SidebarNav.tsx
-type NavItem = {
-  label: string
-  href: string
-  icon: React.ComponentType<{ className?: string }>
-}
-
-type SidebarNavProps = {
-  items: NavItem[]
-}
-
-// src/components/cms/Sidebar/SidebarUserMenu.tsx
-type SidebarUserMenuProps = {
-  user: SessionUser
-}
-
-// src/components/cms/CMSShell.tsx
-type CMSShellProps = {
-  user: SessionUser
-  children: React.ReactNode
-}
-```
-
-```typescript
-// src/app/(cms)/cms/login/_features/login/schema.ts
-import { z } from 'zod'
-
-export const loginSchema = z.object({
-  email: z.email({ error: 'Email inválido' }),
-  password: z.string().min(8, { error: 'Mínimo 8 caracteres' }),
-})
-
-export type LoginFormData = z.infer<typeof loginSchema>
-```
-
-```typescript
-// src/app/(cms)/cms/register/_features/register/schema.ts
-import { z } from 'zod'
-
-export const registerSchema = z.object({
-  full_name: z.string().min(2, { error: 'Nome obrigatório' }),
-  email: z.email({ error: 'Email inválido' }),
-  password: z.string().min(8, { error: 'Mínimo 8 caracteres' }),
-  role: z.enum(['admin', 'content_creator', 'professor']),
-})
-
-export type RegisterFormData = z.infer<typeof registerSchema>
-```
-
-```typescript
-// Tipo do estado de Server Actions (useActionState)
-type ActionState = {
-  errors?: Record<string, string[]>
-  message?: string
-} | undefined
-```
-
----
-
-## 5. Schema Supabase
-
-### SQL — tabela `profiles`
+## Schema do Banco de Dados (Supabase)
 
 ```sql
--- Executar no SQL Editor do Supabase
--- Depende da tabela auth.users gerenciada pelo Supabase Auth
-
-create type public.admin_role as enum (
-  'admin',
-  'content_creator',
-  'professor'
-);
-
-create table public.profiles (
+create table public.events (
   id          uuid primary key default gen_random_uuid(),
-  user_id     uuid not null references auth.users(id) on delete cascade,
-  full_name   text not null,
-  role        public.admin_role not null default 'content_creator',
-  avatar_url  text,
+  slug        text not null unique,                     -- gerado a partir do title, ex: "live-seguranca-digital"
+  title       text not null,
+  description text not null,
+  long_description text,                                -- conteúdo rico para página de detalhe
+  type        text not null check (type in ('ao_vivo', 'gravado')),
+  status      text not null default 'draft' check (status in ('draft', 'published', 'archived')),
+  scheduled_at timestamptz,                             -- null para eventos gravados
+  duration_minutes int,                                 -- duração estimada (ao vivo) ou real (gravado)
+  thumbnail_url text,                                   -- URL da imagem de capa (Storage ou externa)
+  youtube_url  text,                                    -- URL do YouTube (ao vivo ou gravado)
+  created_by  uuid references auth.users(id),
   created_at  timestamptz not null default now(),
-  updated_at  timestamptz not null default now(),
-
-  constraint profiles_user_id_unique unique (user_id)
+  updated_at  timestamptz not null default now()
 );
 
--- RLS obrigatório
-alter table public.profiles enable row level security;
+-- RLS: leitura pública para published; escrita só para autenticados
+alter table public.events enable row level security;
 
--- Admins veem todos os profiles
-create policy "admins_read_all_profiles"
-  on public.profiles for select
-  using (
-    exists (
-      select 1 from public.profiles p
-      where p.user_id = auth.uid()
-        and p.role = 'admin'
-    )
-  );
+create policy "events_public_read"
+  on public.events for select
+  using (status = 'published');
 
--- Usuário lê seu próprio profile
-create policy "user_read_own_profile"
-  on public.profiles for select
-  using (user_id = auth.uid());
-
--- Apenas admins criam profiles de outros usuários via service role
--- Inserção via service role no Server Action de registro (sem RLS bypass no cliente)
-
--- Trigger para atualizar updated_at
-create or replace function public.update_updated_at()
-returns trigger language plpgsql as $$
-begin
-  new.updated_at = now();
-  return new;
-end;
-$$;
-
-create trigger profiles_updated_at
-  before update on public.profiles
-  for each row execute function public.update_updated_at();
+create policy "events_cms_write"
+  on public.events for all
+  using (auth.role() = 'authenticated');
 ```
 
-### Variáveis de Ambiente necessárias
+**Notas:**
+- `slug` é gerado no server action a partir do `title` (slugify) e garantido único via constraint
+- `thumbnail_url` aceita path do Supabase Storage ou URL externa (YouTube thumbnail como fallback)
+- `updated_at` atualizado via trigger padrão Supabase
+- A coluna `type` (`ao_vivo` | `gravado`) substitui os dois arrays hardcoded atuais da página
 
-```bash
-# .env.local
-NEXT_PUBLIC_SUPABASE_URL=https://xxxx.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJ...          # cliente browser
-SUPABASE_SERVICE_ROLE_KEY=eyJ...              # NUNCA expor ao cliente
+---
+
+## Decisões de Estado
+
+| Estado | Tipo | Localização | Justificativa |
+|--------|------|-------------|---------------|
+| Lista de eventos (plataforma pública) | Fetch servidor | `eventos/page.tsx` | RSC busca do Supabase com `createServerClient()` — sem hidratação no cliente |
+| Lista de eventos (CMS) | Fetch servidor | `cms/.../eventos/page.tsx` | Mesmo padrão de `admins/page.tsx` — adminClient, dados como props |
+| Filtros de status/tipo (CMS) | URL search params | `EventosList/view.tsx` | `useSearchParams()` + `router.push()` — state persistido na URL, compartilhável |
+| Formulário (criar/editar) | RHF + Zod | `view.tsx` + `viewModel.tsx` | ADR crítica: proibido `useState` para campos |
+| Action state (criar/editar) | `useActionState` | `viewModel.tsx` | Padrão estabelecido em `NovoAdmin/viewModel.tsx` |
+| Confirmação de exclusão | `useState<boolean>` | `DeleteEventoDialog/view.tsx` | Controla visibilidade do confirm inline — não é campo de form, `useState` permitido |
+| Evento de detalhe (plataforma) | Fetch servidor | `eventos/[slug]/page.tsx` | RSC com `notFound()` se slug inválido |
+
+---
+
+## Contratos dos Componentes Principais
+
+```typescript
+// src/lib/supabase/types.ts — adicionar
+
+type EventType = 'ao_vivo' | 'gravado'
+type EventStatus = 'draft' | 'published' | 'archived'
+
+type Event = {
+  id: string
+  slug: string
+  title: string
+  description: string
+  long_description: string | null
+  type: EventType
+  status: EventStatus
+  scheduled_at: string | null      // ISO string
+  duration_minutes: number | null
+  thumbnail_url: string | null
+  youtube_url: string | null
+  created_by: string | null
+  created_at: string
+  updated_at: string
+}
+
+// Props dos componentes de lista pública (substituem os types locais atuais)
+type ProximosEventosProps = {
+  eventos: Event[]
+}
+
+type EventosGravadosProps = {
+  eventos: Event[]
+}
+
+// CMS list view
+type EventosListViewProps = {
+  eventos: Event[]
+}
+
+// Detalhe público
+type EventoDetalheViewProps = {
+  evento: Event
+}
+
+// Formulário (criar e editar compartilham o mesmo schema shape)
+type EventoFormData = {
+  title: string
+  description: string
+  long_description: string
+  type: EventType
+  status: EventStatus
+  scheduled_at: string          // input datetime-local → string ISO no server action
+  duration_minutes: number | ''
+  thumbnail_url: string
+  youtube_url: string
+}
+
+// ActionState (reusar o existente de src/lib/supabase/types.ts)
+// type ActionState = { errors?: Record<string, string[]>; message?: string } | undefined
 ```
 
 ---
 
-## 6. ADRs
+## Server Actions
 
-### ADR-008 — Estratégia de Auth: Supabase SSR via `@supabase/ssr`
+```typescript
+// cms/.../eventos/novo/_features/NovoEvento/actions.ts
+'use server'
+async function criarEvento(
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState>
+// → valida com eventoSchema, gera slug, insere via adminClient, redirect para /cms/dashboard/eventos
 
-**Data:** 2026-04-30 | **Status:** Aceita
+// cms/.../eventos/[id]/_features/EditarEvento/actions.ts
+'use server'
+async function editarEvento(
+  id: string,
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState>
+// → valida com eventoSchema, regenera slug se title mudou, update via adminClient, redirect
 
-**Contexto:** O Supabase Auth pode ser usado de três formas: (a) client-only com `@supabase/supabase-js` + `localStorage`; (b) `@supabase/auth-helpers-nextjs` (depreciado); (c) `@supabase/ssr` com cookies.
+async function excluirEvento(id: string): Promise<ActionState>
+// → delete via adminClient, redirect para /cms/dashboard/eventos
+// chamado pelo DeleteEventoDialog com useTransition
 
-**Decisão:** Usar `@supabase/ssr` com dois clients distintos:
-- `createBrowserClient` → Client Components (leitura de sessão no cliente)
-- `createServerClient` → Server Components, Server Actions e Proxy (leitura e escrita de cookies)
-
-**Trade-offs:**
-- ✅ Sessão disponível no servidor antes do render — sem flicker de autenticação
-- ✅ Cookies HttpOnly gerenciados pelo Supabase — sem exposição de tokens no `localStorage`
-- ✅ Compatível com Next.js App Router e Proxy (Node.js runtime)
-- ❌ Requer dois clients distintos — mais boilerplate
-- ❌ `@supabase/ssr` é o pacote correto; `@supabase/auth-helpers-nextjs` está depreciado e NÃO deve ser usado
-
-**Dependências a instalar:**
-```bash
-npm install @supabase/supabase-js @supabase/ssr
+// src/utils/slugify.ts — função pura nova
+function slugify(text: string): string
+// → lowercase, remove acentos, troca espaços e especiais por "-"
+// usada em criarEvento e editarEvento
 ```
 
 ---
 
-### ADR-009 — Estrutura do Route Group CMS
+## ADRs
 
-**Data:** 2026-04-30 | **Status:** Aceita
+### ADR-FE-002: Slug gerado server-side, não pelo usuário
 
-**Contexto:** O CMS precisa de layout próprio (com Sidebar) sem contaminar o layout do site público.
+**Contexto:** Eventos têm URL pública `/eventos/[slug]`. O slug precisa ser único e amigável para SEO. Expor um campo `slug` editável no formulário adiciona complexidade de UX (validação de unicidade em tempo real, sanitização) sem benefício claro para o MVP.
 
-**Decisão:** Route group `(cms)` com pasta `cms/` interna, gerando rotas `/cms/*`. O layout `(cms)/layout.tsx` envolve apenas as rotas do CMS.
+**Decisão:** O slug é gerado automaticamente no server action a partir do `title` via `slugify()` em `src/utils/slugify.ts`. Em caso de colisão (slug já existe), o server action acrescenta um sufixo numérico (`-2`, `-3` etc.) antes de inserir.
 
-**Trade-offs:**
-- ✅ Isolamento total de layout entre site público e CMS
-- ✅ Prefixo `/cms` semânticamente claro nas URLs
-- ✅ `page.tsx` dentro de `(cms)/cms/login/` → rota `/cms/login` sem segmento extra do route group
-- ❌ Nesting duplo `(cms)/cms/` é contra-intuitivo — documentar para o time
+**Alternativas rejeitadas:**
+- Campo slug editável no form — UX desnecessariamente complexa para MVP
+- UUID como rota pública — péssimo para SEO e legibilidade
 
-**Alternativa rejeitada:** Route group `(cms)` diretamente com `login/page.tsx` → rota `/login` colide com possível página de login futuro do site público.
-
----
-
-### ADR-010 — Proteção de Rotas: Proxy (middleware.ts) como camada primária
-
-**Data:** 2026-04-30 | **Status:** Aceita
-
-**Contexto:** Duas opções para proteger `/cms/*`:  
-(a) Verificar sessão no `layout.tsx` do CMS  
-(b) Usar o Proxy (`middleware.ts`) para redirecionar antes do render
-
-**Decisão:** Proxy (`src/middleware.ts`) como camada primária + verificação no layout como camada secundária.
-
-O Proxy faz verificação otimista lendo o cookie de sessão do Supabase (sem query ao banco). O layout faz verificação definitiva chamando `supabase.auth.getUser()`.
-
-```
-Request → Proxy (cookie check) → Layout (getUser()) → Page
-```
-
-**Trade-offs:**
-- ✅ Proxy evita render de páginas protegidas para usuários não autenticados
-- ✅ Layout como segunda linha de defesa — não depende apenas do cookie
-- ✅ Proxy não bloqueia rotas públicas (`/`, `/eventos`, etc.)
-- ❌ Lógica de auth em dois lugares — manter sincronizado
-- ❌ Proxy roda em todo request — manter lógica mínima (só leitura de cookie, sem DB)
-
-**Alternativa rejeitada:** Layout-only check — renderiza a página no servidor antes de redirecionar, causando flash e potencial leak de dados.
+**Consequências:**
+- `slugify()` vai em `src/utils/` (ADR-006) — reutilizável entre CMS e testes
+- Se o admin editar o título de um evento já publicado, o slug é regenerado — URLs antigas quebram. Aceitável no MVP; nota para documentar ao produto.
 
 ---
 
-### ADR-011 — Formulários CMS: React Hook Form + Zod + useActionState
+### ADR-FE-003: Filtros de lista CMS via URL search params (não useState)
 
-**Data:** 2026-04-30 | **Status:** Aceita
+**Contexto:** A listagem de eventos do CMS precisa de filtros por `status` e `type`. Armazenar em `useState` perde o estado no refresh e impede compartilhamento de link com filtro aplicado.
 
-**Contexto:** Formulários de login e cadastro precisam de validação client-side e server-side. Zod e RHF não estão instalados no projeto.
+**Decisão:** `EventosList/view.tsx` usa `useSearchParams()` para ler os filtros ativos e `useRouter().push()` (ou `<Link>` com query) para alterá-los. O `page.tsx` lê os `searchParams` e filtra os dados antes de passar como props, ou passa todos os eventos e delega o filtro ao client — preferência: filtro server-side para não expor eventos `draft` desnecessariamente via client.
 
-**Decisão:** Instalar Zod e React Hook Form. Usar o padrão:
-- Schema Zod em `schema.ts` — fonte única de validação
-- RHF com `resolver` Zod para validação client-side em tempo real
-- `useActionState` para receber erros do Server Action
-- Server Action valida com o mesmo schema Zod antes de chamar Supabase
+**Alternativas rejeitadas:**
+- `useState` para filtros — perde estado no refresh, não compartilhável
+- Filtro só client-side — exporia todos os registros ao client, incluindo `draft`
 
-**Dependências a instalar:**
-```bash
-npm install zod react-hook-form @hookform/resolvers
-```
-
-**Trade-offs:**
-- ✅ Validação consistente client e server com o mesmo schema
-- ✅ Sem `useState` para campos — conforme regra crítica do projeto
-- ✅ `type LoginFormData = z.infer<typeof loginSchema>` — sem duplicação de tipos
-- ❌ Mais dependências no projeto
-- ❌ RHF é Client Component — `view.tsx` precisa de `"use client"`
+**Consequências:**
+- `page.tsx` recebe `searchParams` como prop (padrão Next.js App Router)
+- Navegação entre filtros não causa loading completo (RSC partial rendering)
 
 ---
 
-## 7. Pontos de Atenção para o Dev
+## Arquivos a Modificar/Criar
 
-1. **`@supabase/auth-helpers-nextjs` está depreciado** — usar exclusivamente `@supabase/ssr`. Qualquer exemplo da internet que use `createClientComponentClient` ou `createServerComponentClient` está desatualizado.
+```
+MODIFICAR:
+- src/app/(publics)/eventos/page.tsx
+  → remover arrays hardcoded; buscar eventos do Supabase; passar Event[] para componentes
+- src/app/(publics)/eventos/_features/eventos/ProximosEventos.tsx
+  → trocar type local ProximoEvento por Event de @/lib/supabase/types
+- src/app/(publics)/eventos/_features/eventos/EventosGravados.tsx
+  → trocar type local EventoGravado por Event de @/lib/supabase/types
+- src/lib/supabase/types.ts
+  → adicionar Event, EventType, EventStatus
 
-2. **Proxy vs Middleware nomenclatura:** No Next.js 16, o arquivo é `middleware.ts` mas a doc interna chama de "Proxy". O arquivo fica na raiz do projeto (`src/middleware.ts`), não dentro de `app/`.
-
-3. **`cookies()` é assíncrono no Next.js 16** — sempre `await cookies()`, não `cookies()` síncrono.
-
-4. **`createServerClient` precisa de handler de cookies** — o server client do `@supabase/ssr` requer que você passe `get`/`set`/`remove` de cookies manualmente. Os três contextos (Server Component, Server Action, Proxy) têm implementações ligeiramente diferentes porque o objeto `cookies()` do Next.js se comporta diferente em cada contexto.
-
-5. **Inserção de profile após cadastro** — após `supabase.auth.signUp()`, inserir o registro em `public.profiles` usando o `service role client` (server-side) para contornar a RLS de inserção.
-
-6. **Login split-layout desktop-first** — o `view.tsx` do login usa grid `lg:grid-cols-2`. Em mobile, apenas o formulário é exibido; o painel com a logo é oculto com `hidden lg:flex`.
-
-7. **`SidebarNav` e `usePathname`** — `usePathname` só funciona em Client Components. O `SidebarNav` deve ter `"use client"` no topo. O `Sidebar/index.tsx` pai permanece Server Component e passa os itens como prop.
-
-8. **Zod v4 breaking change** — A versão atual do Zod usa `z.string().min(n, { error: '...' })` em vez de `{ message: '...' }`. Confirmar a versão instalada antes de escrever schemas.
-
-9. **`page.tsx` nunca recebe props de sessão** — a sessão é lida no `layout.tsx` (Server Component) e passada via props para o `CMSShell`, que repassa para `Sidebar` e `TopBar`. `page.tsx` permanece sem nenhuma lógica de auth.
+CRIAR:
+- src/utils/slugify.ts
+- src/app/(publics)/eventos/[slug]/page.tsx
+- src/app/(publics)/eventos/[slug]/_features/EventoDetalhe/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/page.tsx
+- src/app/(cms)/cms/dashboard/eventos/_features/EventosList/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/page.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/viewModel.tsx
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/schema.ts
+- src/app/(cms)/cms/dashboard/eventos/novo/_features/NovoEvento/actions.ts
+- src/app/(cms)/cms/dashboard/eventos/[id]/page.tsx
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/EditarEvento/view.tsx
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/EditarEvento/viewModel.tsx
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/EditarEvento/actions.ts
+- src/app/(cms)/cms/dashboard/eventos/[id]/_features/DeleteEventoDialog/view.tsx
+```
 
 ---
 
-## 8. Arquivos a Modificar/Criar
+## Pontos de Atenção para o Dev
 
-### Criar (novos)
+1. **`scheduled_at` no formulário:** usar `<input type="datetime-local" />` — o valor retorna string `"2026-05-14T15:00"`. O server action deve converter para ISO completo com timezone antes de inserir: `new Date(value).toISOString()`. Validar que o campo é obrigatório apenas quando `type === 'ao_vivo'` (refinement Zod).
 
-| Arquivo | Descrição |
-|---|---|
-| `src/middleware.ts` | Proxy — proteção de rotas `/cms/*` |
-| `src/lib/supabase/client.ts` | `createBrowserClient` |
-| `src/lib/supabase/server.ts` | `createServerClient` para Server Components/Actions |
-| `src/lib/supabase/middleware.ts` | `createServerClient` para uso no Proxy |
-| `src/lib/supabase/types.ts` | `AdminRole`, `AdminProfile`, `SessionUser` |
-| `src/app/(cms)/layout.tsx` | Layout CMS — verifica sessão, renderiza CMSShell |
-| `src/app/(cms)/cms/login/page.tsx` | Server Component — sem lógica |
-| `src/app/(cms)/cms/login/_features/login/schema.ts` | Zod schema login |
-| `src/app/(cms)/cms/login/_features/login/view.tsx` | Client Component — formulário RHF |
-| `src/app/(cms)/cms/login/_features/login/actions.ts` | Server Actions — signIn, signOut |
-| `src/app/(cms)/cms/register/page.tsx` | Server Component |
-| `src/app/(cms)/cms/register/_features/register/schema.ts` | Zod schema registro |
-| `src/app/(cms)/cms/register/_features/register/view.tsx` | Client Component — formulário RHF |
-| `src/app/(cms)/cms/register/_features/register/actions.ts` | Server Actions — signUp |
-| `src/app/(cms)/cms/dashboard/page.tsx` | Dashboard — Server Component |
-| `src/app/(cms)/cms/dashboard/_features/dashboard/view.tsx` | Conteúdo do dashboard |
-| `src/components/cms/CMSShell.tsx` | Shell com Sidebar + conteúdo |
-| `src/components/cms/Sidebar/index.tsx` | Server Component — container da sidebar |
-| `src/components/cms/Sidebar/SidebarNav.tsx` | Client Component — links com usePathname |
-| `src/components/cms/Sidebar/SidebarUserMenu.tsx` | Client Component — avatar + logout |
-| `src/components/cms/TopBar/index.tsx` | Client Component — topbar do CMS |
-| `docs/tech/adr/008-supabase-ssr-auth.md` | ADR-008 |
-| `docs/tech/adr/009-cms-route-group.md` | ADR-009 |
-| `docs/tech/adr/010-proxy-route-protection.md` | ADR-010 |
-| `docs/tech/adr/011-rhf-zod-cms-forms.md` | ADR-011 |
+2. **Filtro server-side no CMS:** `page.tsx` de eventos recebe `searchParams: { status?: string; type?: string }` e filtra via `.eq()` no Supabase antes de passar para `EventosListView`. Não passar dados `draft` para o client na plataforma pública.
 
-### Modificar (existentes)
+3. **`excluirEvento` com `useTransition`:** o botão de excluir no `DeleteEventoDialog` deve usar `useTransition` para mostrar estado de loading sem bloquear UI. Padrão: `const [isPending, startTransition] = useTransition()` + `startTransition(() => excluirEvento(id))`.
 
-| Arquivo | Motivo |
-|---|---|
-| `package.json` | Adicionar `@supabase/supabase-js`, `@supabase/ssr`, `zod`, `react-hook-form`, `@hookform/resolvers` |
-| `.env.local` | Adicionar variáveis Supabase |
-| `docs/tech/architecture.md` | Adicionar seção do fluxo CMS ao diagrama geral |
+4. **`generateMetadata` no detalhe público:** `eventos/[slug]/page.tsx` deve exportar `generateMetadata` usando `title` e `description` do evento. Se slug não existe, chamar `notFound()` antes de chegar no render.
 
----
+5. **`thumbnail_url` nulo:** `ProximosEventos` e `EventosGravados` usam `next/image` — se `thumbnail_url` for `null`, usar imagem placeholder (`/images/event-placeholder.jpg`) para evitar erro de `src` vazio. Adicionar domínios do Supabase Storage em `next.config.ts` (seção `images.remotePatterns`).
 
-## Diagrama de Fluxo de Auth
+6. **Sidebar do CMS:** adicionar item "Eventos" no `SidebarNav.tsx` apontando para `/cms/dashboard/eventos`. Não esquecer o ícone adequado do lucide (`CalendarDays`).
 
-```
-Browser → GET /cms/dashboard
-    ↓
-middleware.ts (Proxy)
-  └─ lê cookie sb-* do Supabase
-  └─ sem sessão → redirect /cms/login
-  └─ com sessão → next()
-    ↓
-(cms)/layout.tsx (Server Component)
-  └─ createServerClient → supabase.auth.getUser()
-  └─ sem user → redirect /cms/login
-  └─ com user → busca profile em public.profiles
-  └─ renderiza CMSShell com user + profile
-    ↓
-(cms)/cms/dashboard/page.tsx
-  └─ Server Component puro — sem lógica de auth
-```
+7. **Schema compartilhado entre criar e editar:** `EditarEvento/schema.ts` deve importar e reexportar `eventoSchema` de `novo/_features/NovoEvento/schema.ts` — não duplicar a definição (ADR-006).
 
-```
-Browser → POST /cms/login (via Server Action)
-    ↓
-actions.ts
-  └─ valida schema Zod server-side
-  └─ supabase.auth.signInWithPassword()
-  └─ erro → retorna { errors } para useActionState
-  └─ sucesso → redirect /cms/dashboard
-```
+8. **`npm run build` obrigatório** ao final de cada subtask — zero erros TypeScript antes de marcar como feito.

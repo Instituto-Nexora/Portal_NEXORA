@@ -12,11 +12,11 @@ const footerLinks = [
 
 export function Footer() {
   return (
-    <footer className={cn("bg-blue-900 text-white mt-auto")}>
+    <footer className={cn("bg-teal-900 text-white mt-auto")}>
       <div className={cn("max-w-5xl mx-auto px-6 py-10 flex flex-col sm:flex-row justify-between gap-8")}>
         <div className={cn("flex flex-col gap-2")}>
-          <span className={cn("text-lg font-bold")}>Nexora</span>
-          <p className={cn("text-blue-300 text-sm max-w-xs leading-relaxed")}>
+          <span className={cn("text-lg font-bold text-white")}>Nexora</span>
+          <p className={cn("text-teal-300 text-sm max-w-xs leading-relaxed")}>
             Tecnologia que conecta, educa e transforma vidas com impacto social real.
           </p>
         </div>
@@ -26,7 +26,7 @@ export function Footer() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={cn("text-sm text-blue-300 hover:text-white transition-colors")}
+                  className={cn("text-sm text-teal-300 hover:text-white transition-colors")}
                 >
                   {link.label}
                 </Link>
@@ -35,9 +35,9 @@ export function Footer() {
           </ul>
         </nav>
       </div>
-      <Separator className={cn("bg-blue-800")} />
+      <Separator className={cn("bg-teal-800")} />
       <div className={cn("max-w-5xl mx-auto px-6 py-4 text-center")}>
-        <p className={cn("text-xs text-blue-400")}>© 2026 Nexora — Todos os direitos reservados</p>
+        <p className={cn("text-xs text-teal-400")}>© 2026 Nexora — Todos os direitos reservados</p>
       </div>
     </footer>
   )

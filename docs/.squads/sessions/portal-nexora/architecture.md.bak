@@ -1,187 +1,171 @@
-# Decisão Arquitetural: Migração HTML → Next.js App Router
+# Decisão Arquitetural: Criar Novos Administradores (CMS)
 
-**Data:** 2026-04-25
-**Agent:** Ana Arquitetura
+**Data:** 2026-04-30
+**Agent:** Ana Arquitetura (ana-arquitetura-fe)
+**Status:** Aprovado para implementação
 
 ---
 
 ## Entendimento da Task
 
-Converter as páginas estáticas legadas (`index.html` e `eventos.html` + `assets/css/estilo.css` + `assets/js/script.js`) para o stack atual do Portal Nexora: Next.js 16 App Router, React 19, Tailwind CSS v4 e Shadcn/UI. As páginas são majoritariamente estáticas (sem formulários, sem server state), com exceção do menu hambúrguer responsivo que requer interatividade client-side.
+Formulário dentro do dashboard CMS que permite a um admin autenticado criar uma nova conta de usuário administrativo — escolhendo nome, e-mail, senha temporária e role (admin, content_creator, professor). Diferente de `/cms/register` (auto-cadastro de acesso livre), este fluxo é **protegido** e usa a Supabase Admin API (`auth.admin.createUser`) via service role key.
 
 ---
 
-## Mapeamento de Rotas
+## Contexto Existente
 
-| Arquivo legado | Rota Next.js |
-|---|---|
-| `index.html` | `src/app/page.tsx` |
-| `eventos.html` | `src/app/eventos/page.tsx` |
+O CMS já possui:
+- `/cms/login` e `/cms/register` — auto-cadastro público
+- `/cms/dashboard` — painel protegido por `proxy.ts` + `dashboard/layout.tsx`
+- Tabela `admin_profiles` com campo `role: 'admin' | 'content_creator' | 'professor'`
+- `CMSShell` com Sidebar e TopBar
+
+A nova feature se encaixa dentro do dashboard existente, sem tocar nas rotas de auth.
 
 ---
 
 ## Estrutura de Componentes
 
 ```
-src/
-├── app/
-│   ├── layout.tsx                  ← já existe — adicionar Header e Footer
-│   ├── page.tsx                    ← Server Component — home page
-│   └── eventos/
-│       └── page.tsx                ← Server Component — eventos
-│
-├── components/
-│   └── layout/
-│       ├── Header/
-│       │   ├── Header.tsx          ← Client Component (menu toggle)
-│       │   └── index.ts
-│       └── Footer/
-│           ├── Footer.tsx          ← Server Component
-│           └── index.ts
-│
-└── _features/
-    ├── home/
-    │   ├── view.tsx                ← Client Component (se precisar de interatividade futura)
-    │   ├── HeroSection.tsx         ← Server Component
-    │   ├── CursosDestaque.tsx      ← Server Component
-    │   ├── ProjetosSociais.tsx     ← Server Component
-    │   ├── ImpactoSection.tsx      ← Server Component
-    │   └── ParceirosCTA.tsx        ← Server Component
-    └── eventos/
-        ├── HeroEventos.tsx         ← Server Component
-        ├── ProximosEventos.tsx     ← Server Component
-        └── EventosGravados.tsx     ← Server Component
+src/app/(cms)/cms/dashboard/
+└── admins/
+    └── novo/
+        ├── page.tsx
+        └── _features/
+            └── NovoAdmin/
+                ├── view.tsx
+                ├── viewModel.tsx
+                ├── schema.ts
+                └── actions.ts
 ```
+
+> `_features/` com `_` prefix é invisível ao App Router — não gera rota.
+> Padrão conforme [DECISÃO CRÍTICA] em memories.md de 2026-04-25.
 
 ---
 
 ## Decisões de Estado
 
 | Estado | Tipo | Justificativa |
-|--------|------|---------------|
-| Menu mobile (aberto/fechado) | `useState` local no `Header` | UI local, sem compartilhamento, sem persistência |
-| Conteúdo de cursos | Static — hardcoded no componente | Não há API ainda; dados mudam raramente |
-| Conteúdo de eventos | Static — hardcoded no componente | Igual — futuramente virá de Supabase |
-
-> [RESPEITADA] **ADR-001:** `page.tsx` é Server Component em ambas as rotas — lógica de interatividade (menu toggle) foi isolada no `Header.tsx` como Client Component.
+|---|---|---|
+| Dados do formulário | React Hook Form | Obrigatório por ADR-004; sem useState por campo |
+| Erros de validação client | RHF + Zod resolver | Validação em tempo real no cliente |
+| Erros de servidor / feedback | `useActionState` | Padrão App Router; mantém estado do Server Action |
+| Loading do submit | `isPending` do `useActionState` | Nativo, sem estado extra |
+| Role selecionado | RHF field `role` | Campo controlado pelo form, sem estado separado |
 
 ---
 
-## Contratos dos Componentes Principais
+## Contratos dos Componentes
 
 ```typescript
-// Header.tsx — Client Component
-// Sem props externas; autocontido
+// schema.ts
+import { z } from 'zod'
 
-// HeroSection.tsx
-type HeroSectionProps = {
-  title: string
-  subtitle: string
-  primaryCta: { label: string; href: string }
-  secondaryCta: { label: string; href: string }
-}
+export const novoAdminSchema = z
+  .object({
+    full_name: z.string().min(2, 'Nome deve ter no mínimo 2 caracteres'),
+    email: z.string().email('E-mail inválido'),
+    password: z.string().min(8, 'Senha deve ter no mínimo 8 caracteres'),
+    confirm_password: z.string(),
+    role: z.enum(['admin', 'content_creator', 'professor'], {
+      error: 'Role inválido',
+    }),
+  })
+  .refine((data) => data.password === data.confirm_password, {
+    message: 'As senhas não coincidem',
+    path: ['confirm_password'],
+  })
 
-// CursosDestaque.tsx
-type Curso = {
-  id: string
-  title: string
-  description: string
-  href: string
-}
+export type NovoAdminFormData = z.infer<typeof novoAdminSchema>
+```
 
-type CursosDestaqueProps = {
-  cursos: Curso[]
+```typescript
+// viewModel.tsx — contrato de retorno
+type NovoAdminViewModel = {
+  form: UseFormReturn<NovoAdminFormData>
+  formAction: (payload: FormData) => void
+  isPending: boolean
+  state: ActionState
 }
+```
 
-// ProjetosSociais.tsx
-type Projeto = {
-  id: string
-  title: string
-  description: string
-}
-
-type ProjetosSociaisProps = {
-  projetos: Projeto[]
-}
-
-// ImpactoSection.tsx
-type ImpactoItem = {
-  id: string
-  value: string
-  label: string
-}
-
-type ImpactoSectionProps = {
-  items: ImpactoItem[]
-}
-
-// EventoCard.tsx (compartilhado entre ProximosEventos e EventosGravados)
-type EventoCard = {
-  id: string
-  title: string
-  description: string
-  imageUrl: string
-  imageAlt: string
-  youtubeUrl: string
-  date?: string
-  time?: string
-}
+```typescript
+// actions.ts — assinatura do Server Action
+async function criarAdmin(
+  _prevState: ActionState,
+  formData: FormData
+): Promise<ActionState>
 ```
 
 ---
 
-## ADRs Aplicadas
+## ADR-FE-001 — Admin API vs signUp para criação interna de contas
 
-### ADR-FE-001: Separação Client/Server no Layout
+**Contexto:** `supabase.auth.signUp()` envia e-mail de confirmação e não permite definir role no momento da criação. O dashboard precisa criar contas sem confirmação e com role explícito.
 
-**Contexto:** O Header precisa de `useState` para o menu mobile, mas `layout.tsx` é Server Component.
-
-**Decisão:** Criar `Header.tsx` como Client Component separado e importá-lo no `layout.tsx`. O layout permanece Server Component.
+**Decisão:** Usar `supabase.auth.admin.createUser()` no Server Action, com `email_confirm: true`. Inserir profile em `admin_profiles` com o role escolhido em seguida.
 
 **Alternativas rejeitadas:**
-- Tornar `layout.tsx` client component: rejeitado — perde os benefícios de SSR e viola ADR-001
-- Usar URL search params para controlar menu: rejeitado — causa re-render da página inteira, má UX
+- `signUp()` — envia e-mail de confirmação, sem controle de role imediato
 
 **Consequências:**
-✅ `layout.tsx` permanece Server Component
-✅ Interatividade do menu isolada num componente pequeno e testável
-⚠ Hidratação necessária apenas para o Header, não para o restante da página
+- ✅ Conta ativa imediatamente, sem e-mail pendente
+- ✅ Role definido no momento da criação
+- ✅ Service role key fica 100% server-side
+- ⚠ Requer `SUPABASE_SERVICE_ROLE_KEY` em `.env.local` — nunca expor ao cliente
+- ⚠ Criar `createAdminClient()` separado em `src/lib/supabase/admin.ts`
 
 ---
 
-## Arquivos a Modificar/Criar
+## ADR-FE-002 — Separação View / ViewModel (ADR-004 aplicado)
 
-- `src/app/layout.tsx` — adicionar `<Header />` e `<Footer />`
-- `src/app/page.tsx` — home page (criar ou substituir)
-- `src/app/eventos/page.tsx` — página de eventos (criar)
-- `src/components/layout/Header/Header.tsx` — criar
-- `src/components/layout/Header/index.ts` — criar
-- `src/components/layout/Footer/Footer.tsx` — criar
-- `src/components/layout/Footer/index.ts` — criar
-- `src/_features/home/HeroSection.tsx` — criar
-- `src/_features/home/CursosDestaque.tsx` — criar
-- `src/_features/home/ProjetosSociais.tsx` — criar
-- `src/_features/home/ImpactoSection.tsx` — criar
-- `src/_features/home/ParceirosCTA.tsx` — criar
-- `src/_features/eventos/HeroEventos.tsx` — criar
-- `src/_features/eventos/ProximosEventos.tsx` — criar
-- `src/_features/eventos/EventosGravados.tsx` — criar
-- `public/imagens/` — mover imagens de `imagens/` para cá
+**Contexto:** Features CMS existentes (`/cms/register`, `/cms/login`) têm lógica misturada em `view.tsx`, sem `viewModel.tsx`. A nova feature deve seguir ADR-004 corretamente.
+
+**Decisão:** Criar `viewModel.tsx` separado. Não refatorar os existentes (fora do escopo).
+
+**Consequências:**
+- ✅ `view.tsx` contém apenas JSX + Shadcn
+- ✅ `viewModel.tsx` encapsula `useActionState`, `useForm`, handlers
+- ✅ Serve de referência para refatoração futura dos existentes
+- ⚠ Inconsistência momentânea com features antigas — intencional
 
 ---
 
 ## Pontos de Atenção para o Dev
 
-1. **Imagens:** Os HTMLs referenciam `imagens/Loo_whiteBgColor.png`, `imagens/live_segurança.jpeg`, `imagens/PALESTRA*.jpg/jpeg/png`. Mover para `public/imagens/` — Next.js serve arquivos estáticos de `public/`. Usar `<Image>` do Next.js para otimização automática.
+1. **`createAdminClient()`** — usa `SUPABASE_SERVICE_ROLE_KEY`, sem cookie handling. Criar em `src/lib/supabase/admin.ts`, diferente de `createClient()`.
 
-2. **Links entre páginas:** `href="eventos.html"` → `href="/eventos"`, `href="index.html"` → `href="/"`.
+2. **Campo `role` com Shadcn `<Select>`** — não é input nativo; usar `Controller` do RHF, não `register`.
 
-3. **Menu mobile:** O `script.js` toggle provavelmente usa `classList.toggle`. Substituir por `useState(false)` no `Header.tsx`.
+3. **`cn()` obrigatório em todo `className`** — ADR-007, sem exceção.
 
-4. **cn() obrigatório:** Todo `className` JSX deve usar `cn()` de `@/lib/utils` — ADR-007.
+4. **`type` em vez de `interface`** — ADR-005. `NovoAdminFormData` derivado via `z.infer<>`.
 
-5. **Sem interface:** Todos os tipos usam `type`, nunca `interface` — ADR-005.
+5. **Comportamento pós-sucesso** — redirecionar para `/cms/dashboard` após criação (listagem de admins fora do escopo desta task). O Server Action chama `redirect('/cms/dashboard')`.
 
-6. **Tailwind v4:** Não criar `tailwind.config.js`. Customizações vão em `globals.css` via `@theme` — ADR-003.
+6. **Zod v4** — mensagens de erro como segundo arg string, não objeto `{ message }`. Confirmar versão instalada.
 
-7. **Logo:** A home usa `<img src="imagens/Loo_whiteBgColor.png">` e eventos usa texto "Nexora" como logo. Padronizar: usar a imagem em ambas.
+---
+
+## Arquivos a Criar/Modificar
+
+### Criar
+
+| Arquivo | Descrição |
+|---|---|
+| `src/app/(cms)/cms/dashboard/admins/novo/page.tsx` | Server Component — ponto de entrada |
+| `src/app/(cms)/cms/dashboard/admins/novo/_features/NovoAdmin/schema.ts` | Zod schema |
+| `src/app/(cms)/cms/dashboard/admins/novo/_features/NovoAdmin/viewModel.tsx` | Lógica + form |
+| `src/app/(cms)/cms/dashboard/admins/novo/_features/NovoAdmin/view.tsx` | UI pura |
+| `src/app/(cms)/cms/dashboard/admins/novo/_features/NovoAdmin/actions.ts` | Server Action |
+| `src/lib/supabase/admin.ts` | `createAdminClient()` com service role key |
+
+### Não modificar
+
+| Arquivo | Motivo |
+|---|---|
+| `src/app/(cms)/cms/register/*` | Auto-cadastro existente — fora do escopo |
+| `src/app/(cms)/cms/dashboard/layout.tsx` | Proteção já existente |
+| `src/proxy.ts` ou `src/middleware.ts` | Já cobre `/cms/dashboard/*` |
+| Tabela `admin_profiles` | Estrutura existente é suficiente |
