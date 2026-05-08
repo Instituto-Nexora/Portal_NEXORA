@@ -1,5 +1,6 @@
 "use server";
 
+import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { ActionState } from "@/lib/supabase/types";
@@ -51,7 +52,7 @@ export async function editarEvento(
     thumbnail_url = publicData.publicUrl;
   }
 
-  const { error } = await adminClient
+  const { data: updated, error } = await adminClient
     .from("events")
     .update({
       title: parsed.data.title,
@@ -65,17 +66,27 @@ export async function editarEvento(
       youtube_url: parsed.data.youtube_url || null,
       updated_at: new Date().toISOString(),
     })
-    .eq("id", id);
+    .eq("id", id)
+    .select("slug")
+    .single();
 
   if (error) {
     return { message: "Erro ao atualizar evento. Tente novamente." };
   }
 
+  revalidatePath("/eventos");
+  if (updated?.slug) revalidatePath(`/eventos/${updated.slug}`);
   redirect("/cms/dashboard/eventos");
 }
 
 export async function excluirEvento(id: string): Promise<ActionState> {
   const adminClient = createAdminClient();
+
+  const { data: evento } = await adminClient
+    .from("events")
+    .select("slug")
+    .eq("id", id)
+    .single();
 
   const { error } = await adminClient.from("events").delete().eq("id", id);
 
@@ -83,5 +94,7 @@ export async function excluirEvento(id: string): Promise<ActionState> {
     return { message: "Erro ao excluir evento. Tente novamente." };
   }
 
+  revalidatePath("/eventos");
+  if (evento?.slug) revalidatePath(`/eventos/${evento.slug}`);
   redirect("/cms/dashboard/eventos");
 }

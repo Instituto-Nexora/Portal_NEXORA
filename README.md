@@ -1,7 +1,28 @@
 # Portal NEXORA
 
-Portal NEXORA é o portal público e institucional do Instituto Nexora, focado em divulgação de eventos, iniciativas, conteúdos educacionais e informações da organização em um ambiente moderno, rápido e otimizado para SEO.  
+Portal NEXORA é o portal público e institucional do Instituto Nexora, focado em divulgação de eventos, iniciativas, conteúdos educacionais e informações da organização em um ambiente moderno, rápido e otimizado para SEO.
+
 O projeto é construído em cima do **Next.js** (App Router) e segue uma arquitetura opinativa voltada para escalabilidade, colaboração em squads e integração futura com um ecossistema mais amplo de produtos Nexora.
+
+---
+
+# Sumário
+
+Navegue livremente pela documentação clicando nas seções abaixo:
+
+- [Objetivo do projeto](#objetivo-do-projeto)
+- [Visão funcional](#visão-funcional)
+- [Arquitetura e estrutura de pastas](#arquitetura-e-estrutura-de-pastas)
+- [Tecnologias utilizadas](#tecnologias-utilizadas)
+- [Tecnologias planejadas / futuras integrações](#tecnologias-planejadas--futuras-integrações)
+- [Rotas importantes](#rotas-importantes)
+- [Funcionalidades já implementadas](#funcionalidades-já-implementadas)
+- [Funcionalidades pendentes / em desenvolvimento](#funcionalidades-pendentes--em-desenvolvimento)
+- [Funcionalidades em stand by](#funcionalidades-em-stand-by)
+- [Deploy](#deploy)
+- [Contribuição](#contribuição)
+- [Time e perfis de contribuição](#time-e-perfis-de-contribuição)
+- [Documentação complementar](#documentação-complementar)
 
 ---
 
@@ -160,20 +181,6 @@ Esses itens permanecem em stand by até serem priorizados formalmente no roadmap
 
 ---
 
-## Como rodar o projeto localmente
-
-Passos básicos conforme o template Next.js utilizado no repositório:
-
-1. Instalar dependências:  
-   - `npm install` ou `yarn install` ou `pnpm install` ou `bun install`.  
-2. Rodar o servidor de desenvolvimento:  
-   - `npm run dev` ou `yarn dev` ou `pnpm dev` ou `bun dev`.  
-3. Acessar em `http://localhost:3000` para visualizar o portal em ambiente local.  
-
-Para contribuições relacionadas a fluxo CMS e Supabase, é necessário configurar as variáveis de ambiente e credenciais conforme documentação interna (a ser detalhada em `docs/tech` e `docs/specs`).
-
----
-
 ## Deploy
 
 O Portal NEXORA é deployado na Vercel, com ambiente principal disponível em:  
@@ -188,7 +195,15 @@ A Vercel recebe builds diretamente do GitHub e utiliza a pipeline padrão do Nex
 ## Contribuição
 
 Antes de contribuir, é indispensável levar em conta que “This is NOT the Next.js you know”: esta versão possui breaking changes de APIs, convenções e estrutura de arquivos em relação à documentação clássica.  
-Contribuidores devem ler os guias específicos em `node_modules/next/dist/docs/` e seguir o protocolo CHANGE GUARD descrito em `docs/` para qualquer alteração relevante de fluxo, rota ou comportamento.
+
+Contribuidores devem seguir o protocolo CHANGE GUARD descrito em `docs/` para qualquer alteração relevante de fluxo, rota ou comportamento.
+
+Para contribuir com este projeto, siga rigorosamente as diretrizes dos arquivos:
+
+1. [PROJECT-INSTRUCTIONS.md](./PROJECT-INSTRUCTIONS.md)
+2. [GOVERNANCE-GUIDE.md](./GOVERNANCE-GUIDE.md)
+
+Esses documentos contêm todas as regras e processos obrigatórios para submissões.
 
 Recomendações gerais:
 
