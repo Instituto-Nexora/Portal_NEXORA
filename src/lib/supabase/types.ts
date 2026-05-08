@@ -33,4 +33,33 @@ type ActionState =
     }
   | undefined;
 
-export type { AdminRole, AdminProfile, Tables, SessionUser, ActionState }
+type EventType = "ao_vivo" | "gravado";
+type EventStatus = "draft" | "published" | "archived";
+
+type Event = {
+  id: string;
+  slug: string;
+  title: string;
+  description: string;
+  long_description: string | null;
+  type: EventType;
+  status: EventStatus;
+  scheduled_at: string | null;
+  duration_minutes: number | null;
+  thumbnail_url: string | null;
+  youtube_url: string | null;
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type {
+  AdminRole,
+  AdminProfile,
+  Tables,
+  SessionUser,
+  ActionState,
+  EventType,
+  EventStatus,
+  Event,
+};
