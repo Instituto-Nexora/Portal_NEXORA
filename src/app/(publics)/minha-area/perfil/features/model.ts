@@ -1,15 +1,13 @@
 import { z } from "zod";
 import { alterarSenhaSchema, perfilSchema } from "./schema";
-import { Tables } from "@/lib/supabase/types";
+import { StudentProfile, ActionState as BaseActionState } from "@/lib/supabase/types";
 
 export type PerfilFormData = z.infer<typeof perfilSchema>;
 export type AlterarSenhaFormData = z.infer<typeof alterarSenhaSchema>;
 
-export type ActionState = {
+export type ActionState = BaseActionState & {
   formId: "perfil" | "senha";
-  success: boolean;
-  message: string;
 };
 
 // Tipo para os dados iniciais do perfil, vindo do Server Component
-export type PerfilInitialData = Tables["student_profiles"];
+export type PerfilInitialData = StudentProfile;
