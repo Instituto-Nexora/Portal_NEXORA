@@ -1,17 +1,39 @@
 ---
-gerado: 2026-04-25
+gerado: 2026-05-09
 auto_detectado: false
 ---
+
+> Este arquivo mantém o contexto da stack tecnológica unificada para guiar os agentes e squads do projeto Portal NEXORA.
+
 # Stack do Projeto
 
 **Linguagem:** TypeScript 5
 **Runtime/Versão:** Node.js (Next.js runtime)
 **Framework:** Next.js 16.2.4 (App Router)
-**Package Manager:** npm (package-lock.json)
-**ORM / Banco:** não implementado — Supabase (PostgreSQL) planejado
-**Validação:** Zod (planejado, não instalado ainda)
-**Test Runner:** não detectado
-**Linter / Formatter:** Biome 2.2.0
+**UI Runtime:** React 19.2.4 (com React Compiler ativado)
+
+## Estilização & Componentes
+**Estilos:** Tailwind CSS v4 + PostCSS
+**Componentes Base:** Shadcn/UI + Base UI
+**Ícones:** Lucide React
+
+## Dados, Backend & Autenticação
+**BaaS:** Supabase
+**Banco de Dados:** PostgreSQL
+**Autenticação:** Supabase Auth (via `@supabase/ssr` cookies)
+
+## Formulários & Validação
+**Gerenciador de Formulários:** React Hook Form
+**Schema & Validação:** Zod
+**Mutations:** Server Actions com uso de `useActionState` nativo do React 19
+
+## Ferramentas de Qualidade
+**Linting e Formatação:** Biome (O projeto NÃO utiliza ESLint ou Prettier)
+
+## Padrões Arquiteturais Definidos
+**Padrão de UI:** Arquitetura MVVM (Model-View-ViewModel) estrita.
+**Componentização:** `page.tsx` sempre atua como Server Component (sem `"use client"`). Componentes interativos vivem em `_features/`.
+**Gerenciamento de Estado:** Sem hooks genéricos (`useState`) para formulários; delegar ao RHF + Zod.
 
 ## Estrutura de Pastas
 
@@ -46,6 +68,6 @@ public/               # Assets estáticos servidos pelo Next.js
 
 ## Notas
 
-> Gerado por /setup:discover em 2026-04-25.
+> Gerado por /setup:discover em 2026-05-29.
 > Agents usam este contexto para adaptar exemplos, imports e estruturas de pastas ao projeto real.
 > Para atualizar: edite este arquivo ou execute /setup:discover novamente.
