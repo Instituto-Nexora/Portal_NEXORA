@@ -64,7 +64,7 @@ export const CadastroView = () => {
             )}
           </div>
 
-          {state.message && (
+          {state?.message && (
             <p className={cn("text-sm p-3 rounded", state.success ? "bg-amber-100 text-amber-800" : "bg-red-100 text-red-800")}>
               {state.message}
             </p>
