@@ -5,7 +5,8 @@ import { useForm, type UseFormReturn, type SubmitHandler } from "react-hook-form
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginSchema } from "./schema";
 import { login } from "./actions";
-import type { ActionState, LoginFormData } from "./model";
+import type { LoginFormData } from "./model";
+import type { ActionState } from "@/lib/supabase/types";
 
 export type LoginViewModel = {
   form: UseFormReturn<LoginFormData>;
