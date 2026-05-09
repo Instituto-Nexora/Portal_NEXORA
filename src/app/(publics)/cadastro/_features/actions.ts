@@ -1,8 +1,9 @@
 'use server';
 
 import { redirect } from 'next/navigation';
-import { cadastroSchema, type ActionState } from './schema';
+import { cadastroSchema } from './schema';
 import { createClient } from '@/lib/supabase/server';
+import { ActionState } from '@/lib/supabase/types';
 
 export async function cadastrar(_prev: ActionState, formData: FormData): Promise<ActionState> {
   const supabase = await createClient();
