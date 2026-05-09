@@ -8,20 +8,18 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
-import type { Curso } from "@/lib/supabase/types";
+import type { Lesson } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
-import { DeleteCursoDialog } from "../DeleteCursoDialog/view";
-import { useEditarCursoViewModel } from "./viewModel";
+import { DeleteAulaDialog } from "../DeleteAulaDialog/view";
+import { useEditarAulaViewModel } from "./viewModel";
 
 type Props = {
-  curso: Curso;
+  aula: Lesson;
 };
 
-export function EditarCursoView({ curso }: Props) {
+export function EditarAulaView({ aula }: Props) {
   const { form, formAction, isPending, state, handleCancel } =
-    useEditarCursoViewModel(curso);
+    useEditarAulaViewModel(aula);
   const {
     register,
     control,
@@ -33,28 +31,22 @@ export function EditarCursoView({ curso }: Props) {
       <div className={cn("flex items-start justify-between mb-8")}>
         <div>
           <h1 className={cn("text-2xl font-bold tracking-tight mb-1")}>
-            Editar curso
+            Editar aula
           </h1>
         </div>
-        <DeleteCursoDialog cursoId={curso.id} cursoTitle={curso.title} />
+        <DeleteAulaDialog
+          aulaId={aula.id}
+          cursoId={aula.course_id}
+          aulaTitle={aula.title}
+        />
       </div>
 
-      <nav className={cn("flex gap-2 mb-6")}>
-        <Button
-          nativeButton={false}
-          variant="outline"
-          size="sm"
-          className={cn("shrink-0")}
-          render={<Link href={`/cms/dashboard/cursos/${curso.id}/aulas`} />}
-        >
-          Gerenciar aulas
-        </Button>
-      </nav>
-
       <form action={formAction} className={cn("space-y-6")}>
+        <input type="hidden" name="curso_id" value={aula.course_id} />
+
         <Card>
           <CardHeader>
-            <CardTitle>Informações básicas</CardTitle>
+            <CardTitle>Informações da aula</CardTitle>
           </CardHeader>
           <CardContent className={cn("space-y-4")}>
             <div className={cn("space-y-1.5")}>
@@ -75,53 +67,38 @@ export function EditarCursoView({ curso }: Props) {
             </div>
 
             <div className={cn("space-y-1.5")}>
-              <Label htmlFor="description">Descrição</Label>
-              <Textarea
-                id="description"
-                rows={3}
-                {...register("description")}
+              <Label htmlFor="video_url">URL do vídeo (opcional)</Label>
+              <Input
+                id="video_url"
+                type="url"
+                {...register("video_url")}
                 className={cn({
                   "border-destructive":
-                    errors.description || state?.errors?.description,
+                    errors.video_url || state?.errors?.video_url,
                 })}
               />
-              {(errors.description || state?.errors?.description) && (
+              {(errors.video_url || state?.errors?.video_url) && (
                 <p className={cn("text-xs text-destructive")}>
-                  {errors.description?.message ??
-                    state?.errors?.description?.[0]}
+                  {errors.video_url?.message ?? state?.errors?.video_url?.[0]}
                 </p>
               )}
             </div>
-          </CardContent>
-        </Card>
 
-        <Separator />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Preço</CardTitle>
-          </CardHeader>
-          <CardContent className={cn("space-y-4")}>
             <div className={cn("space-y-1.5")}>
-              <Label htmlFor="price_cents">Preço (em centavos)</Label>
+              <Label htmlFor="material_url">URL do material (opcional)</Label>
               <Input
-                id="price_cents"
-                type="number"
-                min={0}
-                step={1}
-                {...register("price_cents")}
+                id="material_url"
+                type="url"
+                {...register("material_url")}
                 className={cn({
                   "border-destructive":
-                    errors.price_cents || state?.errors?.price_cents,
+                    errors.material_url || state?.errors?.material_url,
                 })}
               />
-              <p className={cn("text-xs text-muted-foreground")}>
-                Valor em centavos. Ex: 4990 = R$ 49,90
-              </p>
-              {(errors.price_cents || state?.errors?.price_cents) && (
+              {(errors.material_url || state?.errors?.material_url) && (
                 <p className={cn("text-xs text-destructive")}>
-                  {errors.price_cents?.message ??
-                    state?.errors?.price_cents?.[0]}
+                  {errors.material_url?.message ??
+                    state?.errors?.material_url?.[0]}
                 </p>
               )}
             </div>
@@ -154,33 +131,7 @@ export function EditarCursoView({ curso }: Props) {
                   </>
                 )}
               />
-              <Label htmlFor="is_published">Curso publicado</Label>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Separator />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Thumbnail</CardTitle>
-          </CardHeader>
-          <CardContent className={cn("space-y-4")}>
-            <div className={cn("space-y-1.5")}>
-              <Label htmlFor="thumbnail_file">
-                Nova imagem de capa (opcional)
-              </Label>
-              <Input
-                id="thumbnail_file"
-                name="thumbnail_file"
-                type="file"
-                accept="image/*"
-              />
-              {curso.thumbnail_url && (
-                <p className={cn("text-xs text-muted-foreground")}>
-                  Atual: {curso.thumbnail_url}
-                </p>
-              )}
+              <Label htmlFor="is_published">Aula publicada</Label>
             </div>
           </CardContent>
         </Card>

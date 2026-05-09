@@ -6,9 +6,9 @@ status: active
 mode: economico
 execution_mode: complete
 created_at: 2026-05-02
-updated_at: 2026-05-08T15:46:57Z
-feature: criar-crud-de-cursos-admin
-session: docs/.squads/sessions/criar-crud-de-cursos-admin
+updated_at: 2026-05-09T00:00:00Z
+feature: crud-aulas-admin
+session: docs/.squads/sessions/crud-aulas-admin
 roles:
   - Arquiteta Frontend
   - Dev Frontend

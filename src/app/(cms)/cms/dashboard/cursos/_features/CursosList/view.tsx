@@ -72,6 +72,7 @@ export function CursosListView({ cursos }: Props) {
                 <TableHead className={cn("hidden md:table-cell")}>Preço</TableHead>
                 <TableHead className={cn("hidden md:table-cell")}>Criado em</TableHead>
                 <TableHead className={cn("w-16")} />
+                <TableHead className={cn("w-16")} />
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -105,6 +106,17 @@ export function CursosListView({ cursos }: Props) {
                       </TooltipTrigger>
                       <TooltipContent>Editar "{curso.title}"</TooltipContent>
                     </Tooltip>
+                  </TableCell>
+                  <TableCell className={cn("text-right")}>
+                    <Button
+                      nativeButton={false}
+                      variant="outline"
+                      size="sm"
+                      className={cn("shrink-0")}
+                      render={<Link href={`/cms/dashboard/cursos/${curso.id}/aulas`} />}
+                    >
+                      Aulas
+                    </Button>
                   </TableCell>
                 </TableRow>
               ))}

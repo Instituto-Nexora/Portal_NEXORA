@@ -8,20 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import Link from "next/link";
-import type { Curso } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
-import { DeleteCursoDialog } from "../DeleteCursoDialog/view";
-import { useEditarCursoViewModel } from "./viewModel";
+import { useNovaAulaViewModel } from "./viewModel";
 
 type Props = {
-  curso: Curso;
+  cursoId: string;
 };
 
-export function EditarCursoView({ curso }: Props) {
-  const { form, formAction, isPending, state, handleCancel } =
-    useEditarCursoViewModel(curso);
+export function NovaAulaView({ cursoId }: Props) {
+  const { form, formRef, handleSubmit, isPending, state, handleCancel } =
+    useNovaAulaViewModel(cursoId);
   const {
     register,
     control,
@@ -30,31 +26,17 @@ export function EditarCursoView({ curso }: Props) {
 
   return (
     <div className={cn("mx-auto max-w-2xl py-8 px-4")}>
-      <div className={cn("flex items-start justify-between mb-8")}>
-        <div>
-          <h1 className={cn("text-2xl font-bold tracking-tight mb-1")}>
-            Editar curso
-          </h1>
-        </div>
-        <DeleteCursoDialog cursoId={curso.id} cursoTitle={curso.title} />
-      </div>
+      <h1 className={cn("text-2xl font-bold tracking-tight mb-1")}>
+        Nova aula
+      </h1>
+      <p className={cn("text-sm text-muted-foreground mb-8")}>
+        Preencha os dados da aula. A posição será atribuída automaticamente.
+      </p>
 
-      <nav className={cn("flex gap-2 mb-6")}>
-        <Button
-          nativeButton={false}
-          variant="outline"
-          size="sm"
-          className={cn("shrink-0")}
-          render={<Link href={`/cms/dashboard/cursos/${curso.id}/aulas`} />}
-        >
-          Gerenciar aulas
-        </Button>
-      </nav>
-
-      <form action={formAction} className={cn("space-y-6")}>
+      <form ref={formRef} onSubmit={handleSubmit} className={cn("space-y-6")}>
         <Card>
           <CardHeader>
-            <CardTitle>Informações básicas</CardTitle>
+            <CardTitle>Informações da aula</CardTitle>
           </CardHeader>
           <CardContent className={cn("space-y-4")}>
             <div className={cn("space-y-1.5")}>
@@ -62,6 +44,7 @@ export function EditarCursoView({ curso }: Props) {
               <Input
                 id="title"
                 type="text"
+                placeholder="Ex: Introdução ao React"
                 {...register("title")}
                 className={cn({
                   "border-destructive": errors.title || state?.errors?.title,
@@ -75,53 +58,40 @@ export function EditarCursoView({ curso }: Props) {
             </div>
 
             <div className={cn("space-y-1.5")}>
-              <Label htmlFor="description">Descrição</Label>
-              <Textarea
-                id="description"
-                rows={3}
-                {...register("description")}
+              <Label htmlFor="video_url">URL do vídeo (opcional)</Label>
+              <Input
+                id="video_url"
+                type="url"
+                placeholder="https://www.youtube.com/watch?v=..."
+                {...register("video_url")}
                 className={cn({
                   "border-destructive":
-                    errors.description || state?.errors?.description,
+                    errors.video_url || state?.errors?.video_url,
                 })}
               />
-              {(errors.description || state?.errors?.description) && (
+              {(errors.video_url || state?.errors?.video_url) && (
                 <p className={cn("text-xs text-destructive")}>
-                  {errors.description?.message ??
-                    state?.errors?.description?.[0]}
+                  {errors.video_url?.message ?? state?.errors?.video_url?.[0]}
                 </p>
               )}
             </div>
-          </CardContent>
-        </Card>
 
-        <Separator />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Preço</CardTitle>
-          </CardHeader>
-          <CardContent className={cn("space-y-4")}>
             <div className={cn("space-y-1.5")}>
-              <Label htmlFor="price_cents">Preço (em centavos)</Label>
+              <Label htmlFor="material_url">URL do material (opcional)</Label>
               <Input
-                id="price_cents"
-                type="number"
-                min={0}
-                step={1}
-                {...register("price_cents")}
+                id="material_url"
+                type="url"
+                placeholder="https://drive.google.com/..."
+                {...register("material_url")}
                 className={cn({
                   "border-destructive":
-                    errors.price_cents || state?.errors?.price_cents,
+                    errors.material_url || state?.errors?.material_url,
                 })}
               />
-              <p className={cn("text-xs text-muted-foreground")}>
-                Valor em centavos. Ex: 4990 = R$ 49,90
-              </p>
-              {(errors.price_cents || state?.errors?.price_cents) && (
+              {(errors.material_url || state?.errors?.material_url) && (
                 <p className={cn("text-xs text-destructive")}>
-                  {errors.price_cents?.message ??
-                    state?.errors?.price_cents?.[0]}
+                  {errors.material_url?.message ??
+                    state?.errors?.material_url?.[0]}
                 </p>
               )}
             </div>
@@ -154,33 +124,7 @@ export function EditarCursoView({ curso }: Props) {
                   </>
                 )}
               />
-              <Label htmlFor="is_published">Curso publicado</Label>
-            </div>
-          </CardContent>
-        </Card>
-
-        <Separator />
-
-        <Card>
-          <CardHeader>
-            <CardTitle>Thumbnail</CardTitle>
-          </CardHeader>
-          <CardContent className={cn("space-y-4")}>
-            <div className={cn("space-y-1.5")}>
-              <Label htmlFor="thumbnail_file">
-                Nova imagem de capa (opcional)
-              </Label>
-              <Input
-                id="thumbnail_file"
-                name="thumbnail_file"
-                type="file"
-                accept="image/*"
-              />
-              {curso.thumbnail_url && (
-                <p className={cn("text-xs text-muted-foreground")}>
-                  Atual: {curso.thumbnail_url}
-                </p>
-              )}
+              <Label htmlFor="is_published">Aula publicada</Label>
             </div>
           </CardContent>
         </Card>
@@ -193,7 +137,7 @@ export function EditarCursoView({ curso }: Props) {
 
         <div className={cn("flex gap-3 pt-2")}>
           <Button type="submit" disabled={isPending} className={cn("flex-1")}>
-            {isPending ? "Salvando…" : "Salvar alterações"}
+            {isPending ? "Criando aula…" : "Criar aula"}
           </Button>
           <Button type="button" variant="outline" onClick={handleCancel}>
             Cancelar

@@ -54,6 +54,18 @@ type Curso = {
   updated_at: string;
 };
 
+type Lesson = {
+  id: string;
+  course_id: string;
+  title: string;
+  video_url: string | null;
+  material_url: string | null;
+  position: number;
+  duration_seconds: number | null;
+  is_published: boolean;
+  created_at: string;
+};
+
 export type {
   AdminRole,
   AdminProfile,
@@ -63,4 +75,5 @@ export type {
   EventStatus,
   Event,
   Curso,
+  Lesson,
 };
