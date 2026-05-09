@@ -5,7 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import { usePerfilViewModel } from "./viewModel";
-import type { StudentProfile } from "./model";
+import { StudentProfile } from '@/lib/supabase/types';
 import Link from "next/link";
 
 type PerfilViewProps = {
