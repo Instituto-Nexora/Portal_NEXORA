@@ -2,7 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { loginSchema } from "./schema";
-import type { ActionState } from "./model";
+import type { ActionState } from "@/lib/supabase/types";
 import { createClient } from "@/lib/supabase/server";
 
 export async function login( _prev: ActionState | null, formData: FormData ): Promise<ActionState> {
