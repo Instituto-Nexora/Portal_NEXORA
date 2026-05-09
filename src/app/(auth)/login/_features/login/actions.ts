@@ -9,7 +9,6 @@ export async function login( _prev: ActionState | null, formData: FormData ): Pr
   const email = formData.get("email")?.toString() || "";
   const password = formData.get("password")?.toString() || "";
 
-  // Validar com Zod no servidor
   const parsed = loginSchema.safeParse({ email, password });
 
   if (!parsed.success) {
@@ -27,6 +26,5 @@ export async function login( _prev: ActionState | null, formData: FormData ): Pr
     return { success: false, message: "Ocorreu um erro inesperado ao tentar entrar." };
   }
 
-  // Sucesso com redirecionamento para a área logada
   redirect("/minha-area");
 }
