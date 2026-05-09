@@ -6,36 +6,41 @@ import { SidebarUserMenu } from "./SidebarUserMenu";
 
 type Props = {
   user: SessionUser;
+  variant?: "full" | "compact";
   className?: string;
 };
 
-export function Sidebar({ user, className }: Props) {
+export function Sidebar({ user, variant = "full", className }: Props) {
+  const isCompact = variant === "compact";
+
   return (
     <aside
       className={cn(
-        "flex h-full w-60 shrink-0 flex-col border-r bg-background",
+        "flex h-full shrink-0 flex-col border-r bg-background",
+        isCompact ? "w-16" : "w-60",
         className,
       )}
     >
-      {/* Logo */}
       <div
-        className={cn("flex h-14 items-center px-5 font-bold tracking-widest")}
+        className={cn(
+          "flex h-14 items-center font-bold tracking-widest",
+          isCompact ? "justify-center px-2 text-sm" : "px-5",
+        )}
       >
-        NEXORA CMS
+        <span className={cn(isCompact && "sr-only")}>NEXORA CMS</span>
+        {isCompact && <span aria-hidden="true">NX</span>}
       </div>
 
       <Separator />
 
-      {/* Navigation */}
       <div className={cn("flex-1 overflow-y-auto py-4")}>
-        <SidebarNav />
+        <SidebarNav showLabels={!isCompact} />
       </div>
 
       <Separator />
 
-      {/* User */}
       <div className={cn("py-4")}>
-        <SidebarUserMenu user={user} />
+        <SidebarUserMenu user={user} compact={isCompact} />
       </div>
     </aside>
   );
