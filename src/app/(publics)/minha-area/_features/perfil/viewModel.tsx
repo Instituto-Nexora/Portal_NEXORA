@@ -5,7 +5,8 @@ import { useForm, type UseFormReturn, type SubmitHandler } from "react-hook-form
 import { zodResolver } from "@hookform/resolvers/zod";
 import { perfilSchema, alterarSenhaSchema } from "./schema";
 import { atualizarPerfil, alterarSenha } from "./actions";
-import type { ActionState, StudentProfile, PerfilFormData, AlterarSenhaFormData } from "./model";
+import type { PerfilFormData, AlterarSenhaFormData } from "./model";
+import type { ActionState, StudentProfile } from '@/lib/supabase/types';
 
 export type PerfilViewModel = {
   perfilForm: UseFormReturn<PerfilFormData>;
@@ -45,7 +46,7 @@ export function usePerfilViewModel(initialData: StudentProfile): PerfilViewModel
     formData.append("new_password", data.new_password);
     const result = await alterarSenha(formData);
     setSenhaStatus(result);
-    if (result.success) senhaForm.reset();
+    if (result?.success) senhaForm.reset();
   };
 
   return { perfilForm, senhaForm, onPerfilSubmit, onSenhaSubmit, perfilStatus, senhaStatus };
