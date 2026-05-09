@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import type { ActionState } from "./model";
+import { ActionState } from '@/lib/supabase/types';
 import { createClient } from "@/lib/supabase/server";
 
 export async function atualizarPerfil( _prev: ActionState | null, formData: FormData ): Promise<ActionState> {
