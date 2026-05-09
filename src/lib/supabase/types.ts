@@ -9,15 +9,12 @@ type AdminProfile = {
   created_at: string;
 };
 
-type student_profiles = {
+type StudentProfile = {
   id: string
   full_name: string
   email: string
   avatar_url: string | null
-}
-
-type Tables = {
-  student_profiles: student_profiles
+  created_at: string
 }
 
 
@@ -29,6 +26,7 @@ type SessionUser = {
 
 type ActionState =
   | {
+      success?: boolean;
       errors?: Record<string, string[]>;
       message?: string;
     }
@@ -57,7 +55,7 @@ type Event = {
 export type {
   AdminRole,
   AdminProfile,
-  Tables,
+  StudentProfile,
   SessionUser,
   ActionState,
   EventType,
