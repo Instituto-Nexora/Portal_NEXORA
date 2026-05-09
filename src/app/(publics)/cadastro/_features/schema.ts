@@ -11,9 +11,3 @@ export const cadastroSchema = z.object({
 });
 
 export type CadastroSchema = z.infer<typeof cadastroSchema>;
-
-export type ActionState = {
-  success: boolean;
-  message: string | null;
-  errors?: Record<string, string[]>;
-};
