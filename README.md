@@ -1,4 +1,4 @@
-# Portal NEXORA
+1# Portal NEXORA
 
 Portal público e institucional do Instituto Nexora, desenvolvido com **Next.js App Router**, focado em divulgação de eventos, iniciativas, conteúdos educacionais e informações da organização.
 
@@ -226,13 +226,13 @@ https://portalnexora.vercel.app
 
 ## Mantenedores
 
-| Nome | GitHub | Foco |
-|------|--------|------|
-| Vinícius | [@viniciusgithub25](https://github.com/viniciusgithub25) | Produto, revisão geral e implementação |
-| Jefferson | [@devjefferson](https://github.com/devjefferson) | Full-stack, performance e arquitetura |
-| Yago Menezes | [@tenmenezes](https://github.com/tenmenezes) | Full-stack, performance e arquitetura |
-| Caio Querino | [@CaioQuerino](https://github.com/CaioQuerino) | Full-stack, performance e arquitetura |
-| Ray Razer | [@RayRazer](https://github.com/rayrazer) | Full-stack, performance e arquitetura |
+| Foto | Nome | GitHub | Foco |
+|------|------|--------|------|
+| <img src="https://github.com/viniciusgithub25.png" width="64" /> | Vinícius | [@viniciusgithub25](https://github.com/viniciusgithub25) | Produto, revisão geral e implementação |
+| <img src="https://github.com/devjefferson.png" width="64" /> | Jefferson | [@devjefferson](https://github.com/devjefferson) | Full-stack, performance e arquitetura |
+| <img src="https://github.com/tenmenezes.png" width="64" /> | Yago Menezes | [@tenmenezes](https://github.com/tenmenezes) | Full-stack, performance e arquitetura |
+| <img src="https://github.com/CaioQuerino.png" width="64" /> | Caio Querino | [@CaioQuerino](https://github.com/CaioQuerino) | Full-stack, performance e arquitetura |
+| <img src="https://github.com/rayrazer.png" width="64" /> | Ray Razer | [@RayRazer](https://github.com/rayrazer) | Full-stack, performance e arquitetura |
 
 ---
 
