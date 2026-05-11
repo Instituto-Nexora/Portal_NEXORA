@@ -1,4 +1,4 @@
-1# Portal NEXORA
+# Portal NEXORA
 
 Portal público e institucional do Instituto Nexora, desenvolvido com **Next.js App Router**, focado em divulgação de eventos, iniciativas, conteúdos educacionais e informações da organização.
 
