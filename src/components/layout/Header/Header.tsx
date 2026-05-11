@@ -1,11 +1,11 @@
-"use client"
-
 import { Menu } from "lucide-react"
 import Image from "next/image"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetClose, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet"
 import { cn } from "@/lib/utils"
+import { createClient } from "@/lib/supabase/server"
+import { signOut } from "@/app/actions"
 
 const navLinks = [
   { label: "Início", href: "/" },
@@ -16,7 +16,10 @@ const navLinks = [
   { label: "Contato", href: "/#contato" },
 ]
 
-export function Header() {
+export async function Header() {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+
   return (
     <header className={cn("bg-teal-900 text-white px-6 py-3 flex items-center justify-between gap-4")}>
       <Link href="/" aria-label="Ir para a página inicial" className={cn("shrink-0")}>
@@ -42,15 +45,46 @@ export function Header() {
             {link.label}
           </Link>
         ))}
+        {user && (
+          <>
+            <Link
+              href="/minha-area"
+              className={cn(
+                "px-3 py-1.5 rounded text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-white/10 transition-colors",
+              )}
+            >
+              Minha Área
+            </Link>
+            <Link
+              href="/minha-area/perfil"
+              className={cn(
+                "px-3 py-1.5 rounded text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-white/10 transition-colors",
+              )}
+            >
+              Meu Perfil
+            </Link>
+          </>
+        )}
       </nav>
 
       <div className={cn("hidden md:flex items-center gap-3 shrink-0")}>
-        <Button
-          className={cn("bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 h-8 px-4 transition-colors")}
-          render={<Link href="/login" />}
-        >
-          Entrar
-        </Button>
+        {user ? (
+          <form action={signOut}>
+            <Button
+              type="submit"
+              className={cn("bg-red-600 hover:bg-red-700 text-white font-bold border-0 h-8 px-4 transition-colors")}
+            >
+              Sair
+            </Button>
+          </form>
+        ) : (
+          <Button
+            className={cn("bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 h-8 px-4 transition-colors")}
+            render={<Link href="/login" />}
+          >
+            Entrar
+          </Button>
+        )}
       </div>
 
       <Sheet>
@@ -85,15 +119,60 @@ export function Header() {
                   </SheetClose>
                 </li>
               ))}
+              {user && (
+                <>
+                  <li>
+                    <SheetClose
+                      className={cn("w-full text-left")}
+                      render={
+                        <Link
+                          href="/minha-area"
+                          className={cn(
+                            "block px-3 py-2.5 rounded text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-white/10 transition-colors",
+                          )}
+                        />
+                      }
+                    >
+                      Minha Área
+                    </SheetClose>
+                  </li>
+                  <li>
+                    <SheetClose
+                      className={cn("w-full text-left")}
+                      render={
+                        <Link
+                          href="/minha-area/perfil"
+                          className={cn(
+                            "block px-3 py-2.5 rounded text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-white/10 transition-colors",
+                          )}
+                        />
+                      }
+                    >
+                      Meu Perfil
+                    </SheetClose>
+                  </li>
+                </>
+              )}
             </ul>
           </nav>
           <div className={cn("p-4 mt-auto border-t border-teal-700")}>
-            <Button
-              className={cn("w-full bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 transition-colors")}
-              render={<Link href="/login" />}
-            >
-              Entrar
-            </Button>
+            {user ? (
+              <form action={signOut}>
+                <Button
+                  type="submit"
+                  className={cn("w-full bg-red-600 hover:bg-red-700 text-white font-bold border-0 transition-colors")}
+                >
+                  Sair da Conta
+                </Button>
+              </form>
+            ) : (
+              <Button
+                className={cn("w-full bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 transition-colors")}
+                render={<Link href="/login" />}
+              >
+                Entrar
+              </Button>
+            )}
           </div>
         </SheetContent>
       </Sheet>
