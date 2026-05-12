@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { UserCircle, LogOut, User, ChevronRight } from "lucide-react";
+import { UserCircle, LogOut, User, ChevronRight, ChevronUp } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/app/actions";
 import type { SessionUser } from "@/lib/supabase/types";
@@ -27,9 +27,9 @@ export function PrivateSidebarUserMenu({ user }: Props) {
 
   return (
     <div className={cn("relative px-4")} ref={menuRef}>
-      {/* Dropdown Menu - Aparece ao lado direito */}
+      {/* Dropdown Menu - Responsivo: Abre para cima no mobile, para o lado no desktop */}
       {isOpen && (
-        <div className="absolute left-full bottom-0 ml-2 w-48 bg-background rounded-md shadow-lg border border-border overflow-hidden z-50">
+        <div className="absolute bottom-full left-4 right-4 mb-2 md:bottom-0 md:left-full md:right-auto md:mb-0 md:ml-2 md:w-48 bg-background rounded-md shadow-lg border border-border overflow-hidden z-50">
           <div className="py-1 flex flex-col">
             <Link
               href="/perfil"
@@ -81,7 +81,10 @@ export function PrivateSidebarUserMenu({ user }: Props) {
             {user.email}
           </p>
         </div>
-        <ChevronRight className={cn("size-4 text-muted-foreground transition-transform duration-200", isOpen && "rotate-180")} />
+        {/* Ícone Desktop */}
+        <ChevronRight className={cn("hidden md:block size-4 text-muted-foreground transition-transform duration-200", isOpen && "rotate-180")} />
+        {/* Ícone Mobile */}
+        <ChevronUp className={cn("md:hidden size-4 text-muted-foreground transition-transform duration-200", isOpen && "rotate-180")} />
       </button>
     </div>
   );
