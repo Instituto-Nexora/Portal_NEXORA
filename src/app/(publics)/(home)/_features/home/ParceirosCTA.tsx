@@ -28,6 +28,7 @@ export function ParceirosCTA() {
             "bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 h-14 px-10 text-lg mt-2 transition-colors",
             "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-amber-300",
           )}
+          nativeButton={false}
           render={<Link href="/parceiros" />}
         >
           Quero Apoiar

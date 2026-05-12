@@ -84,7 +84,7 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
             {eventos.length} evento{eventos.length !== 1 ? "s" : ""} encontrado{eventos.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button render={<Link href="/cms/dashboard/eventos/novo" />}>
+        <Button nativeButton={false} render={<Link href="/cms/dashboard/eventos/novo" />}>
           <PlusIcon />
           Criar evento
         </Button>

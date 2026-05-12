@@ -56,6 +56,7 @@ export function CursosDestaque({ cursos }: CursosDestaqueProps) {
                   <Button
                     size="sm"
                     className={cn("bg-teal-700 hover:bg-teal-600 text-white border-0 w-full")}
+                    nativeButton={false}
                     render={<Link href={curso.href} />}
                   >
                     Saiba Mais

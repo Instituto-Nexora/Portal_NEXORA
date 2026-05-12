@@ -38,7 +38,7 @@ export function AdminsListView({ admins }: Props) {
             Gerencie os usuários com acesso ao CMS.
           </p>
         </div>
-        <Button render={<Link href="/cms/dashboard/admins/novo" />}>
+        <Button nativeButton={false} render={<Link href="/cms/dashboard/admins/novo" />}>
           Criar administrador
         </Button>
       </div>
