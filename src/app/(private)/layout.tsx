@@ -34,7 +34,7 @@ export default async function PrivateLayout({
       <PrivateSidebar user={sessionUser} className={cn("sticky top-0 h-screen hidden md:flex")} />
 
       <div className={cn("flex flex-1 flex-col overflow-hidden")}>
-        <PrivateHeader />
+        <PrivateHeader user={sessionUser} />
 
         <main className={cn("flex-1 overflow-y-auto p-6 bg-muted/40")}>
           {children}
