@@ -6,9 +6,9 @@ status: active
 mode: economico
 execution_mode: complete
 created_at: 2026-05-02
-updated_at: 2026-05-09T00:00:00Z
-feature: crud-aulas-admin
-session: docs/.squads/sessions/crud-aulas-admin
+updated_at: 2026-05-08
+feature: fix-update-fluxo-criar-eventos
+session: docs/.squads/sessions/fix-update-fluxo-criar-eventos
 roles:
   - Arquiteta Frontend
   - Dev Frontend
@@ -31,4 +31,4 @@ project_context:
   docs_business: docs/business/
   docs_tech: docs/tech/
   docs_context: docs/tech-context/
-  session: docs/.squads/sessions/fix-update-fluxo-criar-eventos
+  session: docs/.squads/sessions/refactor-app-structure

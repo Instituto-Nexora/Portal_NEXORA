@@ -11,6 +11,12 @@
 <!-- /SUMMARY -->
 
 <!-- RECENTES -->
+## [Querino · frontend-001] — Autenticação e Banco de Dados
+- **[DECISÃO CRÍTICA] Sincronização Auth/Profile:** A criação do perfil do aluno (`student_profiles`) não deve ser feita via requisição do frontend. Foi implementado um Database Trigger (`handle_new_user`) no PostgreSQL que escuta a tabela `auth.users` do Supabase para garantir resiliência a falhas de rede.
+- **[DECISÃO CRÍTICA] Padrão MVVM (ADR-004):** Todos os novos formulários (Cadastro, Login, Nova Senha) seguiram estritamente o padrão `view.tsx`, `viewModel.tsx`, `schema.ts` e `actions.ts`. `page.tsx` permanece como Server Component.
+- **Gerenciamento de Estado de Mutação:** Padronizamos o uso do hook `useActionState` (nativo do React 19) combinado com `startTransition` para controlar os 4 estados de UI (idle, loading, error, success) das Server Actions, eliminando estados manuais.
+
+
 ## Sessão 2026-05-06
 Task: Fluxo de eventos — CRUD completo (CMS) + listagem/detalhe (plataforma pública). Issues #34–40.
 Issue: #34, #35, #39, #40 (feature:eventos)
@@ -107,4 +113,8 @@ HeroSection: recebe `stats` como prop — split layout desktop, stack mobile
 - `.url()` do Zod v4 está depreciado — usar `z.string().optional()` + `type="url"` no input HTML
 - `createAdminClient()` é exclusivo do CMS; páginas públicas devem usar `createClient()` (anon + RLS)
 - Padrão de delete sem form: `useTransition` + Server Action chamada direto no handler
+## [Renata Revisão] — Proteção de Rotas e UI
+- **Segurança (Middleware):** A validação de rotas é feita via `middleware.ts` na raiz. A pasta `minha-area` foi encapsulada no Route Group `(privates)` para isolamento físico das rotas públicas.
+- **Navegação (Header):** Transformado em Server Component (`async function Header()`). O botão dinâmico substitui "Entrar" por "Sair" e revela opções do Painel logado lendo diretamente o cookie do servidor, otimizando o TTI (Time to Interactive).
+- **Row Level Security (RLS):** A regra fundamental de segurança de dados foi aplicada: Alunos só podem realizar `SELECT` e `UPDATE` nos seus próprios perfis e visualizar suas próprias matrículas via políticas RLS (`auth.uid()`).
 <!-- /RECENTES -->
