@@ -17,7 +17,11 @@ type StatCard = {
   href: string;
 };
 
-export function DashboardView({ totalEventos, eventosPublicados, totalAdmins }: Props) {
+export function DashboardView({
+  totalEventos,
+  eventosPublicados,
+  totalAdmins,
+}: Props) {
   const cards: StatCard[] = [
     {
       title: "Total de eventos",
@@ -45,25 +49,38 @@ export function DashboardView({ totalEventos, eventosPublicados, totalAdmins }: 
   return (
     <div className={cn("space-y-6")}>
       <div>
-        <h1 className={cn("text-2xl font-bold tracking-tight")}>Dashboard</h1>
+        <h1 className={cn("text-xl font-bold tracking-tight sm:text-2xl")}>
+          Dashboard
+        </h1>
         <p className={cn("text-muted-foreground mt-1")}>
           Bem-vindo ao painel de administração do Portal Nexora.
         </p>
       </div>
 
-      <div className={cn("grid gap-4 md:grid-cols-3")}>
+      <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-3")}>
         {cards.map(({ title, value, description, icon: Icon, href }) => (
           <Link key={title} href={href} className={cn("group")}>
             <Card className={cn("transition-shadow group-hover:shadow-md")}>
-              <CardHeader className={cn("flex flex-row items-center justify-between pb-2")}>
-                <CardTitle className={cn("text-sm font-medium text-muted-foreground")}>
+              <CardHeader
+                className={cn(
+                  "flex flex-row items-center justify-between pb-2",
+                )}
+              >
+                <CardTitle
+                  className={cn("text-sm font-medium text-muted-foreground")}
+                >
                   {title}
                 </CardTitle>
-                <Icon className={cn("size-4 text-muted-foreground")} aria-hidden="true" />
+                <Icon
+                  className={cn("size-4 text-muted-foreground")}
+                  aria-hidden="true"
+                />
               </CardHeader>
               <CardContent>
-                <p className={cn("text-3xl font-bold")}>{value}</p>
-                <p className={cn("text-xs text-muted-foreground mt-1")}>{description}</p>
+                <p className={cn("text-2xl font-bold sm:text-3xl")}>{value}</p>
+                <p className={cn("text-xs text-muted-foreground mt-1")}>
+                  {description}
+                </p>
               </CardContent>
             </Card>
           </Link>

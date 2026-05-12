@@ -9,7 +9,7 @@ type AdminProfile = {
   created_at: string;
 };
 
-export type StudentProfile = {
+type StudentProfile = {
   id: string
   full_name: string
   email: string
@@ -54,6 +54,7 @@ type Event = {
 export type {
   AdminRole,
   AdminProfile,
+  StudentProfile,
   SessionUser,
   ActionState,
   EventType,

@@ -1,131 +1,122 @@
 # Portal NEXORA
 
-Portal NEXORA é o portal público e institucional do Instituto Nexora, focado em divulgação de eventos, iniciativas, conteúdos educacionais e informações da organização em um ambiente moderno, rápido e otimizado para SEO.
+Portal público e institucional do Instituto Nexora, desenvolvido com **Next.js App Router**, focado em divulgação de eventos, iniciativas, conteúdos educacionais e informações da organização.
 
-O projeto é construído em cima do **Next.js** (App Router) e segue uma arquitetura opinativa voltada para escalabilidade, colaboração em squads e integração futura com um ecossistema mais amplo de produtos Nexora.
-
----
-
-# Sumário
-
-Navegue livremente pela documentação clicando nas seções abaixo:
-
-- [Objetivo do projeto](#objetivo-do-projeto)
-- [Visão funcional](#visão-funcional)
-- [Arquitetura e estrutura de pastas](#arquitetura-e-estrutura-de-pastas)
-- [Tecnologias utilizadas](#tecnologias-utilizadas)
-- [Tecnologias planejadas / futuras integrações](#tecnologias-planejadas--futuras-integrações)
-- [Rotas importantes](#rotas-importantes)
-- [Funcionalidades já implementadas](#funcionalidades-já-implementadas)
-- [Funcionalidades pendentes / em desenvolvimento](#funcionalidades-pendentes--em-desenvolvimento)
-- [Funcionalidades em stand by](#funcionalidades-em-stand-by)
-- [Deploy](#deploy)
-- [Contribuição](#contribuição)
-- [Time e perfis de contribuição](#time-e-perfis-de-contribuição)
-- [Documentação complementar](#documentação-complementar)
+O projeto utiliza **Synapos** como camada de organização de contexto, sessões, documentação viva e colaboração assistida por IA. Por isso, este `README.md` contém apenas as informações essenciais para instalar, rodar, acessar e contribuir com o projeto.
 
 ---
 
-## Objetivo do projeto
+## Links rápidos
 
-- Criar o portal oficial do Instituto Nexora, centralizando eventos, notícias e informações institucionais em uma única plataforma.  
-- Oferecer uma vitrine digital para programas, formações, projetos de impacto social e oportunidades de engajamento com o instituto.  
-- Integrar o portal a um CMS e a serviços de autenticação para que times internos possam gerenciar conteúdo com autonomia, mantendo governança e rastreabilidade de mudanças.  
-- Estabelecer uma base sólida de frontend para futura expansão em módulos, microsserviços e integrações com outros sistemas do ecossistema Nexora.
-
----
-
-## Visão funcional
-
-Hoje o Portal NEXORA já contempla a base do site público em Next.js, com layout e componentes alinhados à identidade visual Deep Teal + Amber do Instituto Nexora, e com fluxo completo de listagem e exibição de eventos integrados a um CMS.  
-A documentação em `docs/` descreve o MVP, contexto de negócio, specs técnicas e um protocolo de mudanças (CHANGE GUARD) para acompanhar a evolução do produto.
-
-Principais capacidades implementadas ou em andamento:
-
-- Home institucional com hero, destaques e navegação principal.  
-- Listagem e detalhamento de eventos, com fluxo completo CMS + plataforma pública.  
-- Base de autenticação e dashboard CMS integrados com Supabase para gestão de conteúdo (login, registro e acesso administrativo).  
-- Estrutura de documentação viva (business, specs, tech-context, tech) integrada ao repositório para alinhamento entre produto, negócio e engenharia.  
+- **Produção:** [portalnexora.vercel.app](https://portalnexora.vercel.app)
+- **Documentação interna:** [`docs/index.md`](./docs/index.md)
+- **Instruções do projeto:** [`PROJECT-INSTRUCTIONS.md`](./PROJECT-INSTRUCTIONS.md)
+- **Guia de governança:** [`GOVERNANCE-GUIDE.md`](./GOVERNANCE-GUIDE.md)
 
 ---
 
-## Arquitetura e estrutura de pastas
+## Stack principal
 
-A estrutura de código segue o padrão App Router do Next.js, com separação clara entre app, componentes reutilizáveis, bibliotecas de domínio e utilitários.
+- **Next.js** com App Router
+- **React**
+- **TypeScript**
+- **Tailwind CSS**
+- **Supabase**
+- **Biome**
+- **Vercel**
+- **Synapos**
+
+---
+
+## Requisitos
+
+Antes de rodar o projeto, instale:
+
+- Node.js 20+
+- npm, pnpm, yarn ou bun
+- Git
+
+Recomendado:
+
+- Conta no Supabase
+- Conta na Vercel
+- GitHub CLI, caso queira abrir Pull Requests pelo terminal
+
+---
+
+## Instalação
+
+Clone o repositório:
 
 ```bash
-src/
-  app/          # Rotas, layouts e entrypoints da aplicação Next.js
-  components/   # Componentes de UI reutilizáveis, layouts e building blocks
-  lib/          # Funções de domínio, integrações (ex.: Supabase, CMS, etc.)
-  utils/        # Funções utilitárias, helpers, formatadores, etc.
-  proxy.ts      # Proxy/handler para integração com serviços externos e/ou middlewares
-docs/
-  _memory/      # Contexto histórico e memórias do projeto
-  business/     # Documentos de negócio, visão de produto, alinhamento estratégico
-  specs/        # Especificações funcionais/técnicas, incluindo fluxo de auth CMS
-  tech-context/ # Contexto técnico, decisões de arquitetura e trade-offs
-  tech/         # Documentação de implementação, guias técnicos
-  CHANGELOG.md  # Histórico de mudanças e releases funcionais
-  index.md      # Índice principal de documentação
-  pre-prd.md    # Checklist e contexto de ambiente pré-produção
+git clone https://github.com/SEU_ORG/portal-nexora.git
+cd portal-nexora
+```
+
+Instale as dependências:
+
+```bash
+npm install
+```
+
+Ou, se estiver usando outro gerenciador:
+
+```bash
+pnpm install
+# ou
+yarn install
+# ou
+bun install
 ```
 
 ---
 
-## Tecnologias utilizadas
+## Variáveis de ambiente
 
-Principais tecnologias identificadas no projeto:
+Crie um arquivo `.env.local` na raiz do projeto:
 
-- **Next.js (App Router)** – Framework React para renderização híbrida (SSR/SSG), rotas em `app/` e otimizações nativas.  
-- **TypeScript** – Linguagem principal do código, representando ~97% da base atual.  
-- **React** – Biblioteca de UI base, utilizada via Next.js para criação de componentes e páginas.  
-- **CSS / Tailwind / PostCSS** – Estilização com CSS e pipeline configurado via `postcss.config.mjs`, integrando utilitários e boas práticas de performance.  
-- **Supabase** – Autenticação e backend-as-a-service para o fluxo do CMS (login, registro, dashboard e gestão de conteúdo).  
-- **Node.js + npm / Yarn / pnpm / Bun** – Ambiente e gerenciadores de pacotes suportados para desenvolvimento e scripts (`npm run dev`, `yarn dev`, etc.).  
-- **Vercel** – Plataforma de deploy e hosting do portal (`portalnexora.vercel.app`) com integração contínua a partir do GitHub.  
-- **Biome** – Configuração de lint/format no `biome.json` para padronização de estilo e qualidade do código.  
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
-Ferramentas de apoio e automação:
+SUPABASE_SERVICE_ROLE_KEY=
+```
 
-- `.github/` – Configurações de CI/CD, workflows e automações específicas do repositório.  
-- `.claude/`, `.opencode/`, `.synapos/` – Diretórios de automação e agentes para colaboração assistida por IA, orquestração de tarefas e documentação viva dentro do repositório.  
-- `AGENTS.md` – Aviso importante de que esta não é a versão “clássica” do Next.js; há breaking changes, convenções e estrutura diferentes e é obrigatório ler os guias em `node_modules/next/dist/docs/` antes de contribuir.  
+> Nunca envie arquivos `.env*` reais para o GitHub.
 
 ---
 
-## Tecnologias planejadas / futuras integrações
+## Rodando localmente
 
-Com base nos diretórios de documentação (`tech-context`, `tech`, `business`, `specs`) e na presença de fluxo CMS + Supabase, alguns elementos se posicionam como evolução natural da stack:
+Inicie o servidor de desenvolvimento:
 
-- **Camadas adicionais de CMS headless** (ex.: evolução da modelagem de conteúdo, campos customizados e workflows editoriais).  
-- **Ampliação de integrações com Supabase** (storage, row-level security, logs e analytics de eventos).  
-- **Feature flags e AB testing** para experimentar novas seções do portal e validar hipóteses de UX.  
-- **Monitoração e observabilidade** (logs estruturados, métricas de performance e erros) acoplados a dashboards internos.  
-- **Internacionalização (i18n)** para tornar o portal acessível em múltiplos idiomas.  
-- **Automação de documentação** conectando `docs/` com pipelines que gerem changelogs e releases automatizados.  
+```bash
+npm run dev
+```
 
-Esses itens podem ser refinados e consolidados a partir dos artefatos em `docs/business` e `docs/specs` à medida que o roadmap for evoluindo.
+Acesse:
 
----
-
-## Rotas importantes
-
-A estrutura de rotas está centralizada em `src/app`, seguindo o padrão de pastas do App Router do Next.js.  
-Abaixo estão as rotas principais previstas/implementadas com base nos commits e na documentação de eventos e CMS:
-
-- `/` – Home do portal, com conteúdos institucionais, hero principal e destaques de eventos e programas.  
-- `/eventos` – Listagem pública de eventos do Instituto Nexora, consumindo dados do CMS.  
-- `/eventos/[slug]` – Página de detalhe de um evento específico (descrição, agenda, CTAs, inscrições, etc.).  
-- `/cms/login` – Tela de login do CMS para equipe interna, integrada ao Supabase Auth.  
-- `/cms/register` – Tela de registro para novos usuários autorizados a operar o CMS, conforme regras de governança do instituto.  
-- `/cms/dashboard` – Dashboard autenticado para gestão de eventos, conteúdos e outras entidades administráveis.  
-
-> Observação: a estrutura exata de pastas pode ser ajustada à medida que o App Router evolui, mas o fluxo “CMS + plataforma pública de eventos” já está implementado e consolidado nos últimos commits.
+```txt
+http://localhost:3000
+```
 
 ---
 
-## Funcionalidades já implementadas
+## Scripts úteis
+
+```bash
+npm run dev       # inicia o ambiente local
+npm run build     # gera build de produção
+npm run start     # executa build de produção localmente
+npm run lint      # valida lint, se configurado
+npm run format    # formata o código, se configurado
+```
+
+> Consulte o `package.json` para a lista exata de scripts disponíveis.
+
+---
+
+## Rotas principais
 
 Com base nos commits recentes e na documentação em `docs/`, as seguintes funcionalidades estão implementadas ou em estágio avançado:
 
@@ -138,9 +129,16 @@ Com base nos commits recentes e na documentação em `docs/`, as seguintes funci
   - Login e registro de usuários de CMS.  
   - Dashboard base para operações administrativas.  
 
+- **Experiência responsiva do CMS**  
+  - Sidebar compacta no desktop com ícones e tooltips.  
+  - Menu lateral mobile acionado pela topbar para telas pequenas.  
+  - Dashboard, administradores e eventos ajustados para leitura e operação em celulares.  
+  - Tabelas administrativas com fallback responsivo, incluindo cards mobile para administradores.  
+
 - **Base de identidade visual e UI**  
   - Redesign da home e de eventos com identidade Deep Teal + Amber e componentes de UI reutilizáveis.  
   - Componentização da interface em `src/components` para garantir consistência visual.  
+  - Tela global de carregamento e tela 404 Not Found consistentes com o design system.  
 
 - **Documentação viva do produto**  
   - Especificações de MVP e documentação de produto em `docs/specs`.  
@@ -149,106 +147,117 @@ Com base nos commits recentes e na documentação em `docs/`, as seguintes funci
 
 ---
 
-## Funcionalidades pendentes / em desenvolvimento
+## Fluxo de contribuição
 
-A partir dos issues abertos, documentação de specs e presença de artefatos de pré-produção, algumas funcionalidades podem ser consideradas pendentes ou em desenvolvimento contínuo:
+Toda alteração relevante deve seguir o fluxo:
 
-- **Aprimoramento do CMS**  
-  - Novos tipos de conteúdo além de eventos (notícias, relatos, trilhas educacionais, etc.).  
-  - Perfis de permissão mais granulares para diferentes papéis internos (comunicação, coordenação, curadoria de conteúdo).  
+```txt
+issue → branch → implementação → Pull Request → revisão → merge
+```
 
 - **Melhorias de UX e acessibilidade**  
-  - Refinos de navegação, breadcrumbs, estados de carregamento e mensagens de erro.  
+  - Refinos de navegação, breadcrumbs e mensagens de erro específicas por fluxo.  
   - Ajustes de acessibilidade (ARIA, contraste, navegação por teclado).  
 
-- **Camada de observabilidade e métricas**  
-  - Coleta e visualização de métricas de tráfego, engajamento em eventos e performance do portal.  
+```txt
+feature/nome-da-feature
+bugfix/nome-do-bug
+refactor/nome-do-refactor
+docs/nome-da-doc
+chore/nome-da-tarefa
+```
 
-- **Evolução de pré-produção para produção completa**  
-  - Validação de fluxos em ambiente pré-produção (`docs/pre-prd.md`) e ajustes necessários para hardening de produção.  
+Exemplo:
+
+```bash
+git checkout main
+git pull origin main
+
+git checkout -b feature/events-list
+```
+
+Depois da implementação:
+
+```bash
+git add .
+git commit -m "feat: implementa listagem de eventos"
+git push -u origin feature/events-list
+```
+
+Abra uma Pull Request para `main`.
 
 ---
 
-## Funcionalidades em stand by
+## Uso com Synapos
 
-Existem espaços claros na documentação que sinalizam capacidade futura ou backlog em espera, ainda não priorizados para este ciclo:
+Este projeto usa Synapos para organizar contexto, sessões e documentação viva.
 
-- **Módulos adicionais de portal** como blogs aprofundados, landing pages específicas para programas e integrações com plataformas externas (por exemplo, sistemas acadêmicos ou CRMs).  
-- **Automação avançada com agentes** via `.claude/`, `.opencode/` e `.synapos`, ampliando o uso de IA para geração de conteúdo, QA automático e revisão de código.  
-- **Internacionalização completa** e suporte a múltiplos domínios/brands debaixo do ecossistema Nexora.  
+Use o Synapos para tarefas que envolvem:
 
-Esses itens permanecem em stand by até serem priorizados formalmente no roadmap em `docs/business` e `docs/specs`.
+- feature nova
+- bugfix com contexto acumulado
+- refactor
+- documentação técnica
+- decisões arquiteturais
+- handoff entre devs/agentes
+
+Comando base:
+
+```bash
+npx synapos
+```
+
+As sessões e memórias de trabalho ficam em:
+
+```txt
+docs/.squads/sessions/
+docs/_memory/
+```
+
+A documentação técnica, de negócio e decisões do projeto ficam em:
+
+```txt
+docs/
+```
 
 ---
 
 ## Deploy
 
-O Portal NEXORA é deployado na Vercel, com ambiente principal disponível em:  
+O deploy principal é feito na **Vercel**.
 
-- **Produção**: [`portalnexora.vercel.app`](https://portalnexora.vercel.app) – ambiente oficial público.  
-- **Previews**: criados automaticamente a cada pull request, permitindo validação em ambiente espelhado antes do merge.  
+Fluxo esperado:
 
-A Vercel recebe builds diretamente do GitHub e utiliza a pipeline padrão do Next.js App Router para gerar as páginas e otimizações de performance.
+```txt
+Pull Request aberta
+→ Vercel cria Preview Deployment
+→ revisão técnica
+→ merge na main
+→ deploy em produção
+```
 
----
+Ambiente de produção:
 
-## Contribuição
-
-Antes de contribuir, é indispensável levar em conta que “This is NOT the Next.js you know”: esta versão possui breaking changes de APIs, convenções e estrutura de arquivos em relação à documentação clássica.  
-
-Contribuidores devem seguir o protocolo CHANGE GUARD descrito em `docs/` para qualquer alteração relevante de fluxo, rota ou comportamento.
-
-Para contribuir com este projeto, siga rigorosamente as diretrizes dos arquivos:
-
-1. [PROJECT-INSTRUCTIONS.md](./PROJECT-INSTRUCTIONS.md)
-2. [GOVERNANCE-GUIDE.md](./GOVERNANCE-GUIDE.md)
-
-Esses documentos contêm todas as regras e processos obrigatórios para submissões.
-
-Recomendações gerais:
-
-- Abrir issue descrevendo claramente contexto, problema e proposta de solução.  
-- Referenciar documentos em `docs/business`, `docs/specs` e `docs/tech-context` que embasem a mudança.  
-- Atualizar `docs/CHANGELOG.md` e, quando necessário, registrar os passos no protocolo CHANGE GUARD.  
+```txt
+https://portalnexora.vercel.app
+```
 
 ---
 
-## Time e perfis de contribuição
+## Mantenedores
 
-O Portal NEXORA é desenvolvido pelo Instituto Nexora e conta com um time multidisciplinar, estruturado em squads.  
-Abaixo, uma tabela com as pessoas que contribuem diretamente com o projeto:
-
-### Tabela de contribuidores (GitHub)
-
-| Foto                                                                 | Nome             | GitHub / Perfil                                                    | Papel principal           | Foco de contribuição                           | Status de contribuição |
-|----------------------------------------------------------------------|------------------|---------------------------------------------------------------------|---------------------------|-----------------------------------------------|------------------------|
-| <img src="https://github.com/viniciusgithub25.png" width="64" />     | Vinícius         | [@viniciusgithub25](https://github.com/viniciusgithub25)           | Engenheiro Frontend       | Implementação de rotas, componentes e UX      | Ativo                  |
-| <img src="https://github.com/devjefferson.png" width="64" />         | Jefferson        | [@devjefferson](https://github.com/devjefferson)                   | Engenheiro Full-Stack       | Implementação de rotas, performance e UX      | Ativo                  |
-| <img src="https://github.com/tenmenezes.png" width="64" />           | Yago Menezes     | [@tenmenezes](https://github.com/tenmenezes)                       | Engenheiro Full-Stack       | Visão de produto, Revisão geral, futuras implementações | Ativo                  |
-
-### Tabela de squads e sessões (sincronizada com `docs/.squads/sessions/portal-nexora`)
-
-Use esta tabela como visão macro das sessões/squads ligadas ao portal. A ideia é mantê-la alinhada com os arquivos em `docs/.squads/sessions/portal-nexora` e demais artefatos de squad.
-
-| Squad / Sessão                        | Descrição breve                                         | Responsáveis principais                          | Artefatos relacionados                                       |
-|--------------------------------------|---------------------------------------------------------|--------------------------------------------------|--------------------------------------------------------------|
-| Portal Nexora – Frontend Web        | Desenvolvimento do portal público e camadas de UI       | Vinícius, Jefferson, Yago                        | `docs/tech`, `docs/specs`, `src/app`, `src/components`       |
-| Portal Nexora – CMS & Conteúdo      | Fluxo de CMS, Supabase, modelos de conteúdo e governança| Yago, Jefferson            | `docs/business`, `docs/specs/cms-*`, `docs/tech-context`     |
-| Portal Nexora – Observabilidade     | Métricas, logs, monitoração e qualidade em produção     | A definir                                       | `docs/tech-context`, `docs/pre-prd.md`, `docs/CHANGELOG.md`  |
-| Portal Nexora – Experimentos & IA   | Automação com agentes, experimentos de UX, testes A/B   | A definir                                       | `.claude/`, `.opencode/`, `.synapos/`, `docs/_memory`        |
+| Foto | Nome | GitHub | Foco |
+|------|------|--------|------|
+| <img src="https://github.com/viniciusgithub25.png" width="64" /> | Vinícius | [@viniciusgithub25](https://github.com/viniciusgithub25) | Produto, revisão geral e implementação |
+| <img src="https://github.com/devjefferson.png" width="64" /> | Jefferson | [@devjefferson](https://github.com/devjefferson) | Full-stack, performance e arquitetura |
+| <img src="https://github.com/tenmenezes.png" width="64" /> | Yago Menezes | [@tenmenezes](https://github.com/tenmenezes) | Full-stack, performance e arquitetura |
+| <img src="https://github.com/CaioQuerino.png" width="64" /> | Caio Querino | [@CaioQuerino](https://github.com/CaioQuerino) | Full-stack, performance e arquitetura |
+| <img src="https://github.com/rayrazer.png" width="64" /> | Ray Razer | [@RayRazer](https://github.com/rayrazer) | Full-stack, performance e arquitetura |
 
 ---
 
-## Documentação complementar
+## Observações importantes
 
-Toda a documentação de negócio, técnica e de produto vive dentro do diretório `docs/` e deve ser tratada como parte essencial do código:
+Este projeto não deve ter decisões relevantes documentadas apenas em conversas ou commits soltos.
 
-- `docs/index.md` – índice principal da documentação interna.  
-- `docs/business/` – visão de negócio, objetivos estratégicos, público-alvo e contexto institucional.  
-- `docs/specs/` – especificações funcionais e técnicas, incluindo fluxo de auth CMS.  
-- `docs/tech-context/` – decisões arquiteturais, contexto de stack e trade-offs.  
-- `docs/tech/` – documentação de implementação, padrões de código, guias para devs.  
-- `docs/CHANGELOG.md` – registro cronológico de mudanças relevantes.  
-- `docs/pre-prd.md` – checklist e informações sobre o ambiente de pré-produção.  
-
-Ao abrir novas tarefas ou features, é recomendado sempre vincular o código a pelo menos um artefato em `docs/` para manter o alinhamento end-to-end entre visão, implementação e operação.
+Sempre que uma mudança afetar arquitetura, produto, autenticação, CMS, deploy ou fluxo de usuário, registre o contexto em `docs/` ou na session correspondente do Synapos.
