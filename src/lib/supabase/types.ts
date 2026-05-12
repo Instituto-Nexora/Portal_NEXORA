@@ -9,6 +9,14 @@ type AdminProfile = {
   created_at: string;
 };
 
+export type StudentProfile = {
+  id: string
+  full_name: string
+  email: string
+  avatar_url: string | null
+  created_at: string
+}
+
 type SessionUser = {
   id: string;
   email: string;
@@ -17,6 +25,7 @@ type SessionUser = {
 
 type ActionState =
   | {
+      success?: boolean;
       errors?: Record<string, string[]>;
       message?: string;
     }
