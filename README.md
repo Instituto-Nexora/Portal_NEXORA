@@ -138,9 +138,16 @@ Com base nos commits recentes e na documentação em `docs/`, as seguintes funci
   - Login e registro de usuários de CMS.  
   - Dashboard base para operações administrativas.  
 
+- **Experiência responsiva do CMS**  
+  - Sidebar compacta no desktop com ícones e tooltips.  
+  - Menu lateral mobile acionado pela topbar para telas pequenas.  
+  - Dashboard, administradores e eventos ajustados para leitura e operação em celulares.  
+  - Tabelas administrativas com fallback responsivo, incluindo cards mobile para administradores.  
+
 - **Base de identidade visual e UI**  
   - Redesign da home e de eventos com identidade Deep Teal + Amber e componentes de UI reutilizáveis.  
   - Componentização da interface em `src/components` para garantir consistência visual.  
+  - Tela global de carregamento e tela 404 Not Found consistentes com o design system.  
 
 - **Documentação viva do produto**  
   - Especificações de MVP e documentação de produto em `docs/specs`.  
@@ -158,7 +165,7 @@ A partir dos issues abertos, documentação de specs e presença de artefatos de
   - Perfis de permissão mais granulares para diferentes papéis internos (comunicação, coordenação, curadoria de conteúdo).  
 
 - **Melhorias de UX e acessibilidade**  
-  - Refinos de navegação, breadcrumbs, estados de carregamento e mensagens de erro.  
+  - Refinos de navegação, breadcrumbs e mensagens de erro específicas por fluxo.  
   - Ajustes de acessibilidade (ARIA, contraste, navegação por teclado).  
 
 - **Camada de observabilidade e métricas**  
