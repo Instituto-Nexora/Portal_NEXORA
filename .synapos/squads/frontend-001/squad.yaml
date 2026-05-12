@@ -6,9 +6,9 @@ status: active
 mode: economico
 execution_mode: complete
 created_at: 2026-05-02
-updated_at: 2026-05-08
-feature: fix-update-fluxo-criar-eventos
-session: docs/.squads/sessions/fix-update-fluxo-criar-eventos
+updated_at: 2026-05-11T22:36:23-03:00
+feature: refactor-app-structure
+session: docs/.squads/sessions/refactor-app-structure
 roles:
   - Arquiteta Frontend
   - Dev Frontend
@@ -31,4 +31,4 @@ project_context:
   docs_business: docs/business/
   docs_tech: docs/tech/
   docs_context: docs/tech-context/
-  session: docs/.squads/sessions/fix-update-fluxo-criar-eventos
+  session: docs/.squads/sessions/refactor-app-structure

@@ -1,8 +1,6 @@
 
 import type { Metadata } from "next"
 import { Outfit, JetBrains_Mono } from "next/font/google"
-import { Footer } from "@/components/layout/Footer"
-import { Header } from "@/components/layout/Header"
 import "../components/layout/globals.css"
 
 const outfit = Outfit({

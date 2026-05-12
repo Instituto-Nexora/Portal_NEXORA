@@ -28,7 +28,7 @@ export async function proxy(request: NextRequest) {
   const isStudentProtected = PROTECTED_STUDENT_PATHS.some((p) => pathname.startsWith(p))
 
   if (user && isStudentPublic) {
-    return NextResponse.redirect(new URL('/minha-area/perfil', request.url))
+    return NextResponse.redirect(new URL('/minha-area', request.url))
   }
   if (!user && isStudentProtected) {
     return NextResponse.redirect(new URL('/login', request.url))
