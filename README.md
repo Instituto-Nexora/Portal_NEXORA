@@ -118,6 +118,7 @@ npm run format    # formata o código, se configurado
 
 ## Rotas principais
 
+<<<<<<< HEAD
 ```txt
 /                    # Home pública
 /eventos             # Listagem pública de eventos
@@ -126,6 +127,34 @@ npm run format    # formata o código, se configurado
 /cms/register        # Registro do CMS
 /cms/dashboard       # Dashboard administrativo
 ```
+=======
+Com base nos commits recentes e na documentação em `docs/`, as seguintes funcionalidades estão implementadas ou em estágio avançado:
+
+- **Fluxo completo de eventos**  
+  - Criação e gestão de eventos via CMS.  
+  - Exibição pública de eventos (listagem e detalhe) no portal.  
+  - Integração entre camada de conteúdo e frontend com identidade visual atualizada.  
+
+- **Autenticação do CMS com Supabase**  
+  - Login e registro de usuários de CMS.  
+  - Dashboard base para operações administrativas.  
+
+- **Experiência responsiva do CMS**  
+  - Sidebar compacta no desktop com ícones e tooltips.  
+  - Menu lateral mobile acionado pela topbar para telas pequenas.  
+  - Dashboard, administradores e eventos ajustados para leitura e operação em celulares.  
+  - Tabelas administrativas com fallback responsivo, incluindo cards mobile para administradores.  
+
+- **Base de identidade visual e UI**  
+  - Redesign da home e de eventos com identidade Deep Teal + Amber e componentes de UI reutilizáveis.  
+  - Componentização da interface em `src/components` para garantir consistência visual.  
+  - Tela global de carregamento e tela 404 Not Found consistentes com o design system.  
+
+- **Documentação viva do produto**  
+  - Especificações de MVP e documentação de produto em `docs/specs`.  
+  - Changelog funcional em `docs/CHANGELOG.md` para acompanhar releases e incrementos.  
+  - Protocolo CHANGE GUARD para rastrear modificações passo a passo e manter governança sobre o que entra em produção.  
+>>>>>>> main
 
 ---
 
@@ -137,7 +166,13 @@ Toda alteração relevante deve seguir o fluxo:
 issue → branch → implementação → Pull Request → revisão → merge
 ```
 
+<<<<<<< HEAD
 Padrão de branches:
+=======
+- **Melhorias de UX e acessibilidade**  
+  - Refinos de navegação, breadcrumbs e mensagens de erro específicas por fluxo.  
+  - Ajustes de acessibilidade (ARIA, contraste, navegação por teclado).  
+>>>>>>> main
 
 ```txt
 feature/nome-da-feature
