@@ -43,7 +43,6 @@ export function CMSMobileSidebar({ user }: Props) {
         </SheetDescription>
         <Sidebar
           user={user}
-          variant="full"
           className={cn("w-full border-r-0")}
         />
       </SheetContent>
