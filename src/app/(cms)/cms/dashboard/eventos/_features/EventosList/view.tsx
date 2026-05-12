@@ -44,18 +44,23 @@ const STATUS_LABEL: Record<EventStatus, string> = {
   archived: "Arquivado",
 };
 
-const STATUS_VARIANT: Record<EventStatus, "default" | "secondary" | "outline"> = {
-  draft: "outline",
-  published: "default",
-  archived: "secondary",
-};
+const STATUS_VARIANT: Record<EventStatus, "default" | "secondary" | "outline"> =
+  {
+    draft: "outline",
+    published: "default",
+    archived: "secondary",
+  };
 
 const TYPE_LABEL: Record<EventType, string> = {
   ao_vivo: "Ao Vivo",
   gravado: "Gravado",
 };
 
-export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }: Props) {
+export function EventosListView({
+  eventos,
+  statusFilter = "",
+  typeFilter = "",
+}: Props) {
   const router = useRouter();
   const [status, setStatus] = useState(statusFilter);
   const [type, setType] = useState(typeFilter);
@@ -77,14 +82,25 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
 
   return (
     <div className={cn("space-y-6")}>
-      <div className={cn("flex items-center justify-between")}>
+      <div
+        className={cn(
+          "flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between",
+        )}
+      >
         <div>
-          <h1 className={cn("text-2xl font-bold tracking-tight")}>Eventos</h1>
+          <h1 className={cn("text-xl font-bold tracking-tight sm:text-2xl")}>
+            Eventos
+          </h1>
           <p className={cn("text-sm text-muted-foreground mt-1")}>
-            {eventos.length} evento{eventos.length !== 1 ? "s" : ""} encontrado{eventos.length !== 1 ? "s" : ""}
+            {eventos.length} evento{eventos.length !== 1 ? "s" : ""} encontrado
+            {eventos.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button nativeButton={false} render={<Link href="/cms/dashboard/eventos/novo" />}>
+        <Button
+          nativeButton={false}
+          className={cn("w-full sm:w-auto")}
+          render={<Link href="/cms/dashboard/eventos/novo" />}
+        >
           <PlusIcon />
           Criar evento
         </Button>
@@ -92,15 +108,29 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
 
       <Separator />
 
-      <div className={cn("flex items-end gap-3 flex-wrap")}>
-        <SlidersHorizontal className={cn("size-4 text-muted-foreground mb-2")} aria-hidden="true" />
+      <div
+        className={cn(
+          "grid gap-3 rounded-lg border bg-background p-3 sm:flex sm:flex-wrap sm:items-end sm:border-0 sm:p-0",
+        )}
+      >
+        <div
+          className={cn(
+            "flex h-9 items-center gap-2 text-sm font-medium text-muted-foreground sm:justify-center sm:px-1",
+          )}
+        >
+          <SlidersHorizontal className={cn("size-4")} aria-hidden="true" />
+          <span className={cn("sm:sr-only")}>Filtros</span>
+        </div>
 
         <div className={cn("space-y-1")}>
-          <Label htmlFor="filter-status" className={cn("text-xs text-muted-foreground")}>
+          <Label
+            htmlFor="filter-status"
+            className={cn("text-xs text-muted-foreground")}
+          >
             Status
           </Label>
           <Select value={status} onValueChange={(v) => setStatus(v ?? "")}>
-            <SelectTrigger id="filter-status" className={cn("w-40")}>
+            <SelectTrigger id="filter-status" className={cn("w-full sm:w-40")}>
               <SelectValue placeholder="Todos os status" />
             </SelectTrigger>
             <SelectContent>
@@ -113,11 +143,14 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
         </div>
 
         <div className={cn("space-y-1")}>
-          <Label htmlFor="filter-type" className={cn("text-xs text-muted-foreground")}>
+          <Label
+            htmlFor="filter-type"
+            className={cn("text-xs text-muted-foreground")}
+          >
             Tipo
           </Label>
           <Select value={type} onValueChange={(v) => setType(v ?? "")}>
-            <SelectTrigger id="filter-type" className={cn("w-36")}>
+            <SelectTrigger id="filter-type" className={cn("w-full sm:w-36")}>
               <SelectValue placeholder="Todos os tipos" />
             </SelectTrigger>
             <SelectContent>
@@ -128,36 +161,53 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
           </Select>
         </div>
 
-        <Button onClick={handleFilter} size="sm">
+        <Button onClick={handleFilter} className={cn("w-full sm:w-auto")}>
           Filtrar
         </Button>
         {hasActiveFilters && (
-          <Button onClick={handleReset} variant="ghost" size="sm">
+          <Button
+            onClick={handleReset}
+            variant="ghost"
+            className={cn("w-full sm:w-auto")}
+          >
             Limpar filtros
           </Button>
         )}
       </div>
 
       {eventos.length === 0 ? (
-        <div className={cn("rounded-lg border border-dashed p-16 text-center")}>
-          <p className={cn("text-sm font-medium text-muted-foreground")}>Nenhum evento encontrado.</p>
+        <div
+          className={cn(
+            "rounded-lg border border-dashed p-8 text-center sm:p-16",
+          )}
+        >
+          <p className={cn("text-sm font-medium text-muted-foreground")}>
+            Nenhum evento encontrado.
+          </p>
           <p className={cn("text-xs text-muted-foreground mt-1")}>
             {hasActiveFilters ? "Tente remover os filtros ou " : ""}
-            <Link href="/cms/dashboard/eventos/novo" className={cn("underline underline-offset-2")}>
+            <Link
+              href="/cms/dashboard/eventos/novo"
+              className={cn("underline underline-offset-2")}
+            >
               crie um novo evento
             </Link>
             .
           </p>
         </div>
       ) : (
-        <div className={cn("rounded-lg border overflow-hidden")}>
+        <div className={cn("overflow-x-auto rounded-lg border")}>
           <Table>
             <TableHeader>
               <TableRow>
-                <TableHead>Título</TableHead>
-                <TableHead className={cn("hidden sm:table-cell")}>Tipo</TableHead>
+                <TableHead className={cn("min-w-56")}>Título</TableHead>
+                <TableHead className={cn("hidden sm:table-cell")}>
+                  Tipo
+                </TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead className={cn("hidden md:table-cell")}>Criado em</TableHead>
+                <TableHead className={cn("hidden md:table-cell")}>
+                  Criado em
+                </TableHead>
                 <TableHead className={cn("w-16")} />
               </TableRow>
             </TableHeader>
@@ -166,7 +216,11 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
                 <TableRow key={evento.id}>
                   <TableCell>
                     <div className={cn("font-medium")}>{evento.title}</div>
-                    <div className={cn("text-xs text-muted-foreground font-mono mt-0.5")}>
+                    <div
+                      className={cn(
+                        "text-xs text-muted-foreground font-mono mt-0.5",
+                      )}
+                    >
                       /{evento.slug}
                     </div>
                   </TableCell>
@@ -178,12 +232,18 @@ export function EventosListView({ eventos, statusFilter = "", typeFilter = "" }:
                       {STATUS_LABEL[evento.status]}
                     </Badge>
                   </TableCell>
-                  <TableCell className={cn("hidden md:table-cell text-muted-foreground text-xs")}>
+                  <TableCell
+                    className={cn(
+                      "hidden md:table-cell text-muted-foreground text-xs",
+                    )}
+                  >
                     {formatDate(evento.created_at)}
                   </TableCell>
                   <TableCell className={cn("text-right")}>
                     <Tooltip>
-                      <TooltipTrigger render={<span className={cn("inline-block")} />}>
+                      <TooltipTrigger
+                        render={<span className={cn("inline-block")} />}
+                      >
                         <Link
                           href={`/cms/dashboard/eventos/${evento.id}`}
                           className={cn(
