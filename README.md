@@ -118,16 +118,6 @@ npm run format    # formata o código, se configurado
 
 ## Rotas principais
 
-<<<<<<< HEAD
-```txt
-/                    # Home pública
-/eventos             # Listagem pública de eventos
-/eventos/[slug]      # Detalhe de evento
-/cms/login           # Login do CMS
-/cms/register        # Registro do CMS
-/cms/dashboard       # Dashboard administrativo
-```
-=======
 Com base nos commits recentes e na documentação em `docs/`, as seguintes funcionalidades estão implementadas ou em estágio avançado:
 
 - **Fluxo completo de eventos**  
@@ -154,7 +144,6 @@ Com base nos commits recentes e na documentação em `docs/`, as seguintes funci
   - Especificações de MVP e documentação de produto em `docs/specs`.  
   - Changelog funcional em `docs/CHANGELOG.md` para acompanhar releases e incrementos.  
   - Protocolo CHANGE GUARD para rastrear modificações passo a passo e manter governança sobre o que entra em produção.  
->>>>>>> main
 
 ---
 
@@ -166,13 +155,9 @@ Toda alteração relevante deve seguir o fluxo:
 issue → branch → implementação → Pull Request → revisão → merge
 ```
 
-<<<<<<< HEAD
-Padrão de branches:
-=======
 - **Melhorias de UX e acessibilidade**  
   - Refinos de navegação, breadcrumbs e mensagens de erro específicas por fluxo.  
   - Ajustes de acessibilidade (ARIA, contraste, navegação por teclado).  
->>>>>>> main
 
 ```txt
 feature/nome-da-feature
