@@ -17,7 +17,6 @@ export function CMSShell({ user, children }: Props) {
       <div className={cn("flex h-screen overflow-hidden")}>
         <Sidebar
           user={user}
-          variant="compact"
           className={cn("sticky top-0 hidden h-screen lg:flex")}
         />
 

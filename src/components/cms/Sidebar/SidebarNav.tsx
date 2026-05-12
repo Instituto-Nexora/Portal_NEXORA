@@ -61,10 +61,10 @@ export function SidebarNav({ showLabels = true }: Props) {
                 ? "bg-primary text-primary-foreground"
                 : "text-muted-foreground hover:bg-accent hover:text-accent-foreground",
             )}
-            aria-label={showLabels ? undefined : label}
+            aria-label={ label}
           >
             <Icon className={cn("h-4 w-4 shrink-0")} />
-            {showLabels && <span>{label}</span>}
+            <span>{label}</span>
           </Link>
         );
 

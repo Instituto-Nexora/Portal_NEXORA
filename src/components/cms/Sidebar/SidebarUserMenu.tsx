@@ -48,19 +48,19 @@ export function SidebarUserMenu({ user, compact = false }: Props) {
       aria-label={compact ? "Sair" : undefined}
     >
       <LogOut className={cn("h-4 w-4 shrink-0")} />
-      {!compact && <span>Sair</span>}
+
     </button>
   );
 
   return (
-    <div className={cn("flex flex-col gap-2 px-2")}>
+    <div className={cn("flex items-center justify-between px-4")}>
       <div
         className={cn(
           "flex items-center gap-3 rounded-md px-3 py-2",
-          compact && "justify-center px-0",
+        
         )}
       >
-        {compact ? (
+    
           <Tooltip>
             <TooltipTrigger render={<span className={cn("block")} />}>
               {userAvatar}
@@ -69,10 +69,8 @@ export function SidebarUserMenu({ user, compact = false }: Props) {
               {user.profile?.full_name ?? user.email}
             </TooltipContent>
           </Tooltip>
-        ) : (
-          userAvatar
-        )}
-        {!compact && (
+      
+       
           <div className={cn("min-w-0 flex-1")}>
             <p className={cn("truncate text-sm font-medium")}>
               {user.profile?.full_name ?? "Administrador"}
@@ -81,20 +79,17 @@ export function SidebarUserMenu({ user, compact = false }: Props) {
               {user.email}
             </p>
           </div>
-        )}
+      
       </div>
 
       <form action={signOut}>
-        {compact ? (
+  
           <Tooltip>
             <TooltipTrigger render={<span className={cn("block")} />}>
               {signOutButton}
             </TooltipTrigger>
-            <TooltipContent side="right">Sair</TooltipContent>
           </Tooltip>
-        ) : (
-          signOutButton
-        )}
+   
       </form>
     </div>
   );
