@@ -13,7 +13,7 @@ const navLinks = [
   { label: "Projetos", href: "/#projetos" },
   { label: "Eventos", href: "/eventos" },
   { label: "Parceiros", href: "/#parceiros" },
-  { label: "Contato", href: "/#contato" },
+  { label: "Contato", href: "/contato" },
 ]
 
 export async function Header() {
