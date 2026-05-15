@@ -51,7 +51,7 @@
   --brand-primary: oklch(0.45 0.12 175);
   --brand-primary-dark: oklch(0.38 0.11 175);
   --brand-primary-light: oklch(0.96 0.04 175);
-  --brand-teal-hero: oklch(0.20 0.07 175);
+  --brand-teal-hero: oklch(0.2 0.07 175);
   --brand-accent: oklch(0.75 0.16 85);
   --brand-accent-dark: oklch(0.65 0.16 85);
   --brand-heading: oklch(0.13 0.02 240);
@@ -131,9 +131,36 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground;
+    @apply overflow-x-hidden bg-background text-foreground;
   }
   html {
     @apply font-sans;
   }
+}
+
+.nexora-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in srgb, var(--primary) 60%, transparent)
+    transparent;
+}
+
+.nexora-scrollbar::-webkit-scrollbar {
+  width: 0.625rem;
+  height: 0.625rem;
+}
+
+.nexora-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.nexora-scrollbar::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--primary) 35%, transparent);
+  border: 0.1875rem solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+
+.nexora-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--primary) 55%, transparent);
+  background-clip: padding-box;
 }

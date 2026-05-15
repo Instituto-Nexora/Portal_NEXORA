@@ -1,0 +1,1 @@
+CMS: perfil/dropdown/avatar, sidebar Shadcn e responsividade de edição de eventos. Há decisões pendentes sobre escopo backend, método de instalação da sidebar e local de hooks globais.

@@ -1,9 +1,9 @@
+import { Sidebar as CMSAppSidebar } from "@/components/cms/Sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
-import { CMSMobileSidebar } from "./CMSMobileSidebar";
-import { Sidebar } from "./Sidebar";
 import { TopBar } from "./TopBar";
 
 type Props = {
@@ -14,20 +14,23 @@ type Props = {
 export function CMSShell({ user, children }: Props) {
   return (
     <TooltipProvider>
-      <div className={cn("flex h-screen overflow-hidden")}>
-        <Sidebar
-          user={user}
-          className={cn("sticky top-0 hidden h-screen lg:flex")}
-        />
-
-        <div className={cn("flex flex-1 flex-col overflow-hidden")}>
-          <TopBar mobileNav={<CMSMobileSidebar user={user} />} />
-
-          <main className={cn("flex-1 overflow-y-auto p-4 sm:p-6")}>
-            {children}
-          </main>
-        </div>
-      </div>
+      <SidebarProvider className={cn(["h-svh overflow-hidden"])}>
+        <CMSAppSidebar user={user} />
+        <SidebarInset>
+          <TopBar />
+          <div
+            className={cn([
+              "nexora-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-hidden",
+            ])}
+          >
+            <main
+              className={cn(["mx-auto min-w-0 w-full max-w-7xl p-4 sm:p-6"])}
+            >
+              {children}
+            </main>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
       <Toaster richColors closeButton />
     </TooltipProvider>
   );
