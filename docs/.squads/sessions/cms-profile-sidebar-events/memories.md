@@ -23,4 +23,7 @@ Implementação incremental concluída: sidebar CMS Shadcn-like, rota /cms/dashb
 
 ## [frontend-001 · rodrigo-react] — 2026-05-12
 Bug-fix visual pós-teste: removido scroll externo horizontal/vertical no CMS, adicionado scroll interno estilizado (`nexora-scrollbar`), ajustada responsividade/min-width da página de perfil e corrigido estado colapsado da sidebar para ocultar labels e preservar a logo.
+
+## [frontend-001 · rodrigo-react] — 2026-05-15
+Continuação dos ajustes visuais da sidebar/perfil: no mobile, o bloco com avatar/nome/e-mail deixou de abrir dropdown e passou a exibir ações explícitas; no desktop, o gatilho do menu do usuário ganhou cursor/indicador visual; a sidebar colapsada recebeu alinhamento centralizado dos ícones e tooltips nos itens clicáveis; o avatar foi padronizado em componente visual Shadcn-like.
 <!-- /RECENTES -->

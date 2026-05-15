@@ -40,3 +40,20 @@ Nenhum blocker encontrado. `npm run build` passou após correções de scroll/si
 
 - Scroll externo do CMS foi convertido para scroll interno com barra estilizada.
 - Sidebar colapsada agora preserva ícones e logo sem exibir letras truncadas dos labels.
+
+
+## [frontend-001 · renata-revisao-fe] — 2026-05-15 · continuação ajustes sidebar
+
+### BLOCKER
+
+Nenhum blocker encontrado. `npm run build` passou após os ajustes de avatar, dropdown mobile, cursor/indicador do menu do usuário, tooltips e alinhamento no modo colapsado.
+
+### SUGGESTION
+
+- Retestar visualmente a sidebar em desktop colapsado/expandido e em mobile para confirmar que o bloco do usuário não aciona dropdown no sheet.
+- Validar visualmente se os tooltips da navegação aparecem à direita quando a sidebar está minimizada.
+
+### PRAISE
+
+- A área do usuário no mobile ficou estática e evita quebra por dropdown.
+- Itens clicáveis da sidebar minimizada agora possuem tooltip e melhor indicação de interação.
