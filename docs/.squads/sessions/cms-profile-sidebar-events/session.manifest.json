@@ -1,0 +1,38 @@
+{
+  "feature": "cms-profile-sidebar-events",
+  "manifest_version": 2,
+  "created_at": "2026-05-12T23:38:16.164342Z",
+  "files": {
+    "context.md": {
+      "hash": "2305-1778629096",
+      "snapshot_valid": true,
+      "loaded_at": "2026-05-12T23:38:16.164342Z"
+    },
+    "architecture.md": {
+      "hash": "4681-1778631520",
+      "snapshot_valid": false,
+      "loaded_at": "2026-05-13T00:18:40.835319Z"
+    },
+    "memories.md": {
+      "entry_count": 4,
+      "last_entry_at": "2026-05-13T00:18:40.835319Z"
+    },
+    "review-notes.md": {
+      "hash": "1773-1778631520",
+      "snapshot_valid": false,
+      "loaded_at": "2026-05-13T00:18:40.835319Z"
+    },
+    "feature-notes.md": {
+      "hash": "1806-1778630667",
+      "snapshot_valid": false,
+      "loaded_at": "2026-05-13T00:04:28.018357Z"
+    }
+  },
+  "adrs": {
+    "loaded_domains": [
+      "frontend",
+      "*"
+    ],
+    "loaded_at": "2026-05-12T23:38:16.164342Z"
+  }
+}

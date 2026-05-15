@@ -10,18 +10,17 @@ type AdminProfile = {
 };
 
 type StudentProfile = {
-  id: string
-  full_name: string
-  email: string
-  avatar_url: string | null
-  created_at: string
-}
-
+  id: string;
+  full_name: string;
+  email: string;
+  avatar_url: string | null;
+  created_at: string;
+};
 
 type SessionUser = {
   id: string;
   email: string;
-  profile: AdminProfile;
+  profile: AdminProfile | null;
 };
 
 type ActionState =
