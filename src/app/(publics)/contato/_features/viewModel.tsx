@@ -4,17 +4,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm, type UseFormReturn } from "react-hook-form";
 import { contactSchema, type ContactFormType } from "./schema";
+import { enviarContatoAction } from "./actions";
 
 export type ContactViewModel = {
   form: UseFormReturn<ContactFormType>;
   isSubmitting: boolean;
   isSuccess: boolean;
+  error: string | null;
   onSubmit: (data: ContactFormType) => Promise<void>;
 };
 
 const useContactViewModel = (): ContactViewModel => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const form = useForm<ContactFormType>({
     resolver: zodResolver(contactSchema),
@@ -24,32 +27,26 @@ const useContactViewModel = (): ContactViewModel => {
   const onSubmit = async (data: ContactFormType) => {
     setIsSubmitting(true);
     setIsSuccess(false);
+    setError(null);
 
     try {
-      // TODO: Substituir por chamada real à API (Route Handler) no futuro
-      await new Promise((resolve) => setTimeout(resolve, 1500));
-      console.log("Mensagem recebida:", data);
-      const response = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
-      });
+      const result = await enviarContatoAction(data);
 
-      if (!response.ok) {
-        throw new Error("Falha na resposta do servidor.");
+      if (!result.success) {
+        setError(result.error || "Falha ao enviar mensagem.");
+        return;
       }
 
       setIsSuccess(true);
       form.reset();
-    } catch (error) {
-      console.error("Erro ao enviar contato:", error);
-      // Opcional no futuro: setar um estado `isError` e exibir um Toast do Shadcn
+    } catch (err) {
+      setError("Ocorreu um erro inesperado ao conectar ao servidor.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  return { form, isSubmitting, isSuccess, onSubmit };
+  return { form, isSubmitting, isSuccess, error, onSubmit };
 };
 
 export default useContactViewModel;
