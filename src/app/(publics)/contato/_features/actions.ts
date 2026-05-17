@@ -15,8 +15,8 @@ export async function enviarContatoAction(data: ContactFormType) {
     const { nome, email, mensagem } = parsed.data;
 
     const { error } = await resend.emails.send({
-      from: 'NEXORA Site <onboarding@resend.dev>', // Email padrão de testes do Resend
-      to: 'caioquerino04@gmail.com', // Seu email cadastrado no Resend
+      from: 'NEXORA Site <onboarding@resend.dev>',
+      to: 'caioquerino04@gmail.com', 
       subject: `Novo Contato do Portal: ${nome}`,
       html: `
         <div style="font-family: sans-serif; color: #334155;">
