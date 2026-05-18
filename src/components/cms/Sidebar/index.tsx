@@ -19,6 +19,7 @@ import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { SidebarNav } from "./SidebarNav";
 import { SidebarUserMenu } from "./SidebarUserMenu";
+import Link from "next/link";
 
 type Props = {
   user: SessionUser;
@@ -37,7 +38,7 @@ export function Sidebar({ user, className }: Props) {
                   asChild
                   className={cn(["h-10 font-bold tracking-widest"])}
                 >
-                  <a
+                  <Link
                     href="/cms/dashboard"
                     aria-label="Ir para o dashboard do CMS"
                   >
@@ -55,7 +56,7 @@ export function Sidebar({ user, className }: Props) {
                     >
                       NEXORA CMS
                     </span>
-                  </a>
+                  </Link>
                 </SidebarMenuButton>
               </TooltipTrigger>
               <TooltipContent side="right">Dashboard</TooltipContent>
