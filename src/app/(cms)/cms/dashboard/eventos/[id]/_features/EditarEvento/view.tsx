@@ -8,10 +8,20 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import type { Event } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { DeleteEventoDialog } from "../DeleteEventoDialog/view";
@@ -34,16 +44,24 @@ export function EditarEventoView({ evento }: Props) {
   const tipo = watch("type");
 
   return (
-    <div className={cn("mx-auto max-w-2xl py-8 px-4")}>
-      <div className={cn("flex items-start justify-between mb-8")}>
+    <div className={cn("mx-auto w-full max-w-4xl px-0 py-4 sm:py-8")}>
+      <div
+        className={cn(
+          "mb-6 flex flex-col gap-4 sm:mb-8 sm:flex-row sm:items-start sm:justify-between",
+        )}
+      >
         <div>
-          <h1 className={cn("text-2xl font-bold tracking-tight mb-1")}>
+          <h1
+            className={cn("mb-1 text-2xl font-bold tracking-tight sm:text-3xl")}
+          >
             Editar evento
           </h1>
-          <div className={cn("flex items-center gap-2")}>
+          <div className={cn("flex min-w-0 flex-wrap items-center gap-2")}>
             <span className={cn("text-sm text-muted-foreground")}>Slug:</span>
-            <Badge variant="secondary">
-              <code className={cn("font-mono text-xs")}>{evento.slug}</code>
+            <Badge variant="secondary" className={cn("max-w-full")}>
+              <code className={cn("truncate font-mono text-xs")}>
+                {evento.slug}
+              </code>
             </Badge>
           </div>
         </div>
@@ -52,7 +70,7 @@ export function EditarEventoView({ evento }: Props) {
 
       <form action={formAction} className={cn("space-y-6")}>
         {/* Informações básicas */}
-        <Card>
+        <Card className={cn("overflow-hidden")}>
           <CardHeader>
             <CardTitle>Informações básicas</CardTitle>
           </CardHeader>
@@ -99,13 +117,16 @@ export function EditarEventoView({ evento }: Props) {
               </Label>
               <Textarea
                 id="long_description"
-                rows={4}
+                rows={5}
                 {...register("long_description")}
-                className={cn({
-                  "border-destructive":
-                    errors.long_description ||
-                    state?.errors?.long_description,
-                })}
+                className={cn([
+                  "min-h-32 resize-y",
+                  {
+                    "border-destructive":
+                      errors.long_description ||
+                      state?.errors?.long_description,
+                  },
+                ])}
               />
             </div>
           </CardContent>
@@ -114,12 +135,12 @@ export function EditarEventoView({ evento }: Props) {
         <Separator />
 
         {/* Configurações */}
-        <Card>
+        <Card className={cn("overflow-hidden")}>
           <CardHeader>
             <CardTitle>Configurações</CardTitle>
           </CardHeader>
           <CardContent className={cn("space-y-4")}>
-            <div className={cn("grid grid-cols-2 gap-4")}>
+            <div className={cn("grid gap-4 sm:grid-cols-2")}>
               <div className={cn("space-y-1.5")}>
                 <Label htmlFor="type">Tipo</Label>
                 <Controller
@@ -224,9 +245,7 @@ export function EditarEventoView({ evento }: Props) {
                   >
                     ⓘ
                   </TooltipTrigger>
-                  <TooltipContent>
-                    Duração estimada em minutos
-                  </TooltipContent>
+                  <TooltipContent>Duração estimada em minutos</TooltipContent>
                 </Tooltip>
               </div>
               <Input
@@ -236,8 +255,7 @@ export function EditarEventoView({ evento }: Props) {
                 {...register("duration_minutes")}
                 className={cn({
                   "border-destructive":
-                    errors.duration_minutes ||
-                    state?.errors?.duration_minutes,
+                    errors.duration_minutes || state?.errors?.duration_minutes,
                 })}
               />
             </div>
@@ -247,7 +265,7 @@ export function EditarEventoView({ evento }: Props) {
         <Separator />
 
         {/* Mídia */}
-        <Card>
+        <Card className={cn("overflow-hidden")}>
           <CardHeader>
             <CardTitle>Mídia</CardTitle>
           </CardHeader>
@@ -300,11 +318,24 @@ export function EditarEventoView({ evento }: Props) {
           </Alert>
         )}
 
-        <div className={cn("flex gap-3 pt-2")}>
-          <Button type="submit" disabled={isPending} className={cn("flex-1")}>
+        <div
+          className={cn(
+            "sticky bottom-0 -mx-4 flex flex-col-reverse gap-3 border-t bg-background/95 px-4 py-4 backdrop-blur sm:static sm:mx-0 sm:flex-row sm:border-t-0 sm:bg-transparent sm:px-0 sm:pt-2 sm:backdrop-blur-none",
+          )}
+        >
+          <Button
+            type="submit"
+            disabled={isPending}
+            className={cn("w-full sm:flex-1")}
+          >
             {isPending ? "Salvando…" : "Salvar alterações"}
           </Button>
-          <Button type="button" variant="outline" onClick={handleCancel}>
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleCancel}
+            className={cn("w-full sm:w-auto")}
+          >
             Cancelar
           </Button>
         </div>
