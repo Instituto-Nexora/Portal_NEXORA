@@ -1,0 +1,28 @@
+name: engineer-001
+domain: engineer
+displayName: "Squad Engineer"
+description: "Feature engineering completo: investigação → arquitetura → planejamento → execução guiada por ADRs"
+status: active
+mode: alta
+execution_mode: complete
+created_at: 2026-05-18
+updated_at: 2026-05-18T00:00:00-03:00
+feature: fluxo-de-contato
+session: docs/.squads/sessions/fluxo-de-contato
+roles:
+  - Lead Engineer
+  - Arquiteta Frontend
+  - Dev Frontend
+agents:
+  - leo-engenheiro
+  - ana-arquitetura-fe
+  - rodrigo-react
+pipeline:
+  default: feature-development
+  file: pipeline/pipeline.yaml
+project_context:
+  company: docs/_memory/company.md
+  docs_business: docs/business/
+  docs_tech: docs/tech/
+  docs_context: docs/tech-context/
+  session: docs/.squads/sessions/fluxo-de-contato

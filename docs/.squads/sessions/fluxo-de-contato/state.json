@@ -1,0 +1,17 @@
+{
+  "feature": "fluxo-de-contato",
+  "created_at": "2026-05-18T00:00:00-03:00",
+  "updated_at": "2026-05-18T00:00:00-03:00",
+  "squads": {
+    "engineer-001": {
+      "domain": "engineer",
+      "pipeline": "feature-development",
+      "started_at": "2026-05-18T00:00:00-03:00",
+      "completed_at": null,
+      "status": "running",
+      "completed_steps": [],
+      "current_step": "01-gate-integridade",
+      "suspended_at": "01-gate-integridade"
+    }
+  }
+}
