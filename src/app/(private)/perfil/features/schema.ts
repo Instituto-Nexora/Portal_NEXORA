@@ -1,13 +1,24 @@
 import { z } from "zod";
 
 export const perfilSchema = z.object({
-  full_name: z.string().min(2, "Nome obrigatório"),
+  full_name: z
+    .string()
+    .trim()
+    .min(2, "Informe pelo menos 2 caracteres.")
+    .max(80, "Use no máximo 80 caracteres."),
 });
 
 export const alterarSenhaSchema = z.object({
-  new_password: z.string().min(6, "A nova senha deve ter no mínimo 6 caracteres"),
-  confirm_password: z.string(),
-}).refine((d) => d.new_password === d.confirm_password, {
-  message: "As senhas não coincidem",
-  path: ["confirm_password"],
-});
+    new_password: z
+      .string()
+      .min(8, "A senha deve ter pelo menos 8 caracteres.")
+      .regex(/[A-Z]/, "Inclua ao menos uma letra maiúscula.")
+      .regex(/[a-z]/, "Inclua ao menos uma letra minúscula.")
+      .regex(/[0-9]/, "Inclua ao menos um número."),
+    confirm_password: z.string().min(1, "Confirme a senha."),
+    otp_code: z.string().optional(),
+  })
+  .refine((data) => data.new_password === data.confirm_password, {
+    path: ["confirm_password"],
+    message: "As senhas não conferem.",
+  });
