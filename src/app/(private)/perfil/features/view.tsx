@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
-import { UserCircle, KeyRound, Camera } from "lucide-react";
+import { UserCircle, KeyRound, Camera, Type, Moon, Sun, Monitor } from "lucide-react";
 import { usePerfilViewModel } from "./viewModel";
 import type { PerfilInitialData } from "./model";
 
@@ -35,6 +35,11 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
     isPendingAvatar,
     avatarPreview,
     handleAvatarPreview,
+    theme,
+    setTheme,
+    fontSize,
+    fontOptions,
+    setFontSize,
   } = usePerfilViewModel({ initialData });
 
   const isLoadingPerfil = isPendingPerfil || formPerfil.formState.isSubmitting;
@@ -220,6 +225,52 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                   {isPendingAvatar ? "Enviando..." : "Atualizar foto"}
                 </Button>
               </form>
+            </CardContent>
+          </Card>
+
+          {/* Seção de Acessibilidade */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-teal-900">
+                <Type className="h-5 w-5 text-indigo-500" />
+                Acessibilidade
+              </CardTitle>
+              <CardDescription>
+                Personalize a experiência visual da plataforma.
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-3">
+                <Label>Tema Visual</Label>
+                <div className="flex flex-wrap gap-2">
+                  <Button type="button" variant={theme === "light" ? "default" : "outline"} onClick={() => setTheme("light")} className={cn(theme === "light" && "bg-teal-600 hover:bg-teal-700")}>
+                    <Sun className="mr-2 h-4 w-4" /> Claro
+                  </Button>
+                  <Button type="button" variant={theme === "dark" ? "default" : "outline"} onClick={() => setTheme("dark")} className={cn(theme === "dark" && "bg-teal-600 hover:bg-teal-700")}>
+                    <Moon className="mr-2 h-4 w-4" /> Escuro
+                  </Button>
+                  <Button type="button" variant={theme === "system" ? "default" : "outline"} onClick={() => setTheme("system")} className={cn(theme === "system" && "bg-teal-600 hover:bg-teal-700")}>
+                    <Monitor className="mr-2 h-4 w-4" /> Sistema
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <Label>Tamanho da Fonte</Label>
+                <div className="flex flex-wrap gap-2">
+                  {fontOptions?.map((opt) => (
+                    <Button
+                      key={opt.value}
+                      type="button"
+                      variant={fontSize === opt.value ? "default" : "outline"}
+                      className={cn(fontSize === opt.value && "bg-teal-600 hover:bg-teal-700")}
+                      onClick={() => setFontSize(opt.value)}
+                    >
+                      {opt.label}
+                    </Button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
         </aside>

@@ -5,6 +5,8 @@ import { useForm, type UseFormReturn, type SubmitHandler } from "react-hook-form
 import { zodResolver } from "@hookform/resolvers/zod";
 import { alterarSenhaSchema, perfilSchema } from "./schema";
 import { alterarSenha, atualizarPerfil, atualizarAvatar } from "./actions";
+import { useTheme } from "@/hooks/useTheme";
+import { useChangeFont } from "@/hooks/useChangeFont";
 import type { ActionState, AlterarSenhaFormData, PerfilFormData, PerfilInitialData } from "./model";
 
 export type PasswordStrength = {
@@ -34,6 +36,13 @@ export type PerfilViewModel = {
   isPendingAvatar: boolean;
   avatarPreview: string | null;
   handleAvatarPreview: (event: React.ChangeEvent<HTMLInputElement>) => void;
+
+  // Acessibilidade
+  theme: ReturnType<typeof useTheme>["theme"];
+  setTheme: ReturnType<typeof useTheme>["setTheme"];
+  fontSize: ReturnType<typeof useChangeFont>["fontSize"];
+  fontOptions: ReturnType<typeof useChangeFont>["options"];
+  setFontSize: ReturnType<typeof useChangeFont>["setFontSize"];
 };
 
 function getPasswordStrength(password: string): PasswordStrength {
@@ -55,6 +64,9 @@ function getPasswordStrength(password: string): PasswordStrength {
 }
 
 export function usePerfilViewModel({ initialData }: { initialData: PerfilInitialData }): PerfilViewModel {
+  const { theme, setTheme } = useTheme();
+  const { fontSize, options: fontOptions, setFontSize } = useChangeFont();
+
   // --- Hooks para o formulário de Perfil ---
   const [statusPerfil, formActionPerfil, isPendingPerfil] = useActionState(atualizarPerfil, null);
   const formPerfil = useForm<PerfilFormData>({
@@ -131,5 +143,10 @@ export function usePerfilViewModel({ initialData }: { initialData: PerfilInitial
     isPendingAvatar,
     avatarPreview,
     handleAvatarPreview,
+    theme,
+    setTheme,
+    fontSize,
+    fontOptions,
+    setFontSize,
   };
 }
