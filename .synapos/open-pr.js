@@ -1,0 +1,37 @@
+const title = "refactor(layout): estruturação da área logada e refinamento do header público";
+const body = `### 🎯 Objetivo
+Esta PR tem como objetivo refatorar e aprimorar a estrutura de layout e navegação do **Portal Nexora**, dividindo claramente as responsabilidades visuais entre a **Área Pública** e a **Área Logada (Privada)**.
+
+---
+
+### 🛠 Alterações e Funcionalidades Implementadas
+
+#### 1. Área Logada (Privada) - Modelo "Shell"
+- **Novo Layout Estrutural:** O layout da área privada (\`src/app/(private)/layout.tsx\`) foi completamente reescrito para utilizar um design em formato *Shell* dinâmico, baseado na mesma estrutura flexível do nosso CMS.
+- **\`PrivateSidebar\` Nativa:** Implementação de uma barra lateral (\`Sidebar\`) fixa que acomoda:
+  - O logotipo / nome do portal no topo.
+  - Links de navegação exclusivos para o usuário ("Minha Área").
+- **Menu do Usuário (\`PrivateSidebarUserMenu\`):** Adicionado no rodapé da Sidebar.
+  - Faz o carregamento (Server-Side) dos dados do usuário (\`user.profile.full_name\`, \`user.email\` e avatar) diretamente da tabela \`student_profiles\` no Supabase.
+  - Clique no menu abre um *drawer/dropdown* lateral revelando os atalhos "Meu Perfil" e a ação de "Sair".
+- **Limpeza do \`PrivateHeader\`:** O header da área privada tornou-se extremamente limpo e não renderiza elementos redundantes (como logos ou links espalhados), servindo apenas para maximizar o foco do usuário no conteúdo da página.
+
+#### 2. Cabeçalho Público (\`Header\`)
+- **Limpeza da Navbar Principal:** Quando o usuário está autenticado, os atalhos de "Minha Área" e "Meu Perfil" **foram removidos** da lista de navegação global, mantendo a navbar pública imutável e limpa.
+- **Avatar Interativo:** O botão estático de "Entrar" é substituído pela foto de avatar do aluno.
+- **Menu Hover Inteligente:** Ao passar o mouse sobre o avatar do aluno, um submenu flutuante é disparado exibindo os atalhos privados "Minha Área", "Meu Perfil" e "Sair".
+- **Menu Mobile Adaptado:** Links restritos da "Minha Conta" só são renderizados dentro do Menu Hambúrguer caso exista uma sessão ativa.
+
+---
+
+### 🛡️ Mitigações e Melhorias de Arquitetura
+
+- **Prevenção de FOUC e Blink de Autenticação:** A extração do perfil do usuário foi deslocada para a camada \`async\` do \`layout.tsx\` via Server Components. Evita delay de Client-side fetching na Sidebar e previne falhas de UI durante a renderização inicial.
+- **Desempenho no Public Header:** O menu dropdown principal (quando logado) foi construído utilizando *Hover States do Tailwind CSS* (\`group-hover\`), sem a necessidade de converter o arquivo base para \`"use client"\`, economizando JavaScript no client bundle e permitindo renderização estática sever-side.
+- **Componentização Granular:** Separação estrita dos componentes de layout e isolamento completo de navegação pública (\`Header\`) vs navegação privada (\`PrivateSidebar\`).`;
+
+const url = `https://github.com/Instituto-Nexora/Portal_NEXORA/pull/new/refactor/app-structure?title=${encodeURIComponent(title)}&body=${encodeURIComponent(body)}`;
+
+const { exec } = require('child_process');
+// Using start directly which will use the default browser, or specifically msedge
+exec(`start msedge "${url}"`);

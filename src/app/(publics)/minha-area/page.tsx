@@ -2,7 +2,7 @@ import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
 import { CursoCard } from "./_features/MinhAreaCursos/CursoCard"
-import type { EnrollmentComCurso } from "./_features/MinhAreaCursos/CursoCard"
+import type { EnrollmentComProgresso } from "./_features/MinhAreaCursos/CursoCard"
 import { EmptyState } from "./_features/MinhAreaCursos/EmptyState"
 import { cn } from "@/lib/utils"
 
@@ -28,13 +28,10 @@ export default async function MinhaAreaPage() {
       `
       id,
       course_id,
-      completed_lessons,
-      last_lesson_id,
       courses (
         id,
         title,
-        thumbnail_url,
-        total_lessons
+        thumbnail_url
       )
     `,
     )
@@ -51,9 +48,19 @@ export default async function MinhaAreaPage() {
     )
   }
 
-  const enrollments = ((data ?? []) as unknown as EnrollmentComCurso[]).filter(
-    (e) => e.courses != null,
-  )
+  const enrollments: EnrollmentComProgresso[] = (data ?? [])
+    .filter((e) => e.courses != null)
+    .map((e) => {
+      const curso = e.courses as unknown as EnrollmentComProgresso["courses"]
+      // TODO: calcularProgressoCurso(e.course_id, user.id) — issue #22
+      return {
+        id: e.id,
+        course_id: e.course_id,
+        courses: curso,
+        completed_lessons: 0,
+        total_lessons: 0,
+      }
+    })
 
   return (
     <main className={cn("max-w-5xl mx-auto px-6 py-12")}>

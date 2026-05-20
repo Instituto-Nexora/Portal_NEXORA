@@ -1,96 +1,261 @@
 "use client";
 
-import { LogOut, User } from "lucide-react";
-import Image from "next/image";
+import {
+  ChevronsUpDown,
+  LogOut,
+  Monitor,
+  Moon,
+  MoreHorizontal,
+  Settings,
+  Sun,
+  UserCircle,
+} from "lucide-react";
+import Link from "next/link";
 import { signOut } from "@/app/(cms)/cms/login/_features/login/actions";
+import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useSidebar } from "@/components/ui/sidebar";
 import {
   Tooltip,
   TooltipContent,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import { useChangeFont } from "@/hooks/useChangeFont";
+import { type ThemeMode, useTheme } from "@/hooks/useTheme";
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/UserAvatar";
 
 type Props = {
   user: SessionUser;
   compact?: boolean;
 };
 
-export function SidebarUserMenu({ user, compact = false }: Props) {
-  const userAvatar = (
-    <div
-      className={cn(
-        "flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground",
-      )}
-    >
-      {user.profile?.avatar_url ? (
-        <Image
-          src={user.profile.avatar_url}
-          alt={user.profile.full_name}
-          width={32}
-          height={32}
-          unoptimized
-          className={cn("h-8 w-8 rounded-full object-cover")}
+const THEME_ITEMS: Array<{
+  value: ThemeMode;
+  label: string;
+  icon: typeof Monitor;
+}> = [
+  { value: "system", label: "Sistema", icon: Monitor },
+  { value: "light", label: "Claro", icon: Sun },
+  { value: "dark", label: "Escuro", icon: Moon },
+];
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("");
+}
+
+
+export function SidebarUserMenu({ user }: Props) {
+  const { theme, setTheme } = useTheme();
+  const { fontSize, options, setFontSize } = useChangeFont();
+  const { isMobile, state } = useSidebar();
+  const displayName = user.profile?.full_name ?? "Administrador";
+  const avatarUrl = user.profile?.avatar_url;
+  const initials = getInitials(displayName) || "NX";
+  const isCollapsed = state === "collapsed";
+
+  if (isMobile) {
+    return (
+      <div className={cn(["space-y-2 px-2"])}>
+        <div
+          className={cn([
+            "flex items-center gap-3 rounded-md px-2 py-2 text-sm",
+          ])}
+        >
+          <UserAvatar
+            avatarUrl={avatarUrl}
+            displayName={displayName}
+            initials={initials}
+          />
+          <span className={cn(["min-w-0 flex-1 text-left"])}>
+            <span className={cn(["block truncate font-medium"])}>
+              {displayName}
+            </span>
+            <span
+              className={cn(["block truncate text-xs text-muted-foreground"])}
+            >
+              {user.email}
+            </span>
+          </span>
+        </div>
+        <Button
+          nativeButton={false}
+          variant="ghost"
+          className={cn(["w-full justify-start gap-2"])}
+          render={<Link href="/cms/dashboard/perfil" />}
+        >
+          <UserCircle className={cn(["size-4"])} />
+          Meu perfil
+        </Button>
+        <form action={signOut}>
+          <Button
+            type="submit"
+            variant="ghost"
+            className={cn([
+              "w-full justify-start gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive",
+            ])}
+          >
+            <LogOut className={cn(["size-4"])} />
+            Sair
+          </Button>
+        </form>
+      </div>
+    );
+  }
+
+  const trigger = (
+    <DropdownMenuTrigger
+      render={
+        <Button
+          type="button"
+          variant="ghost"
+          className={cn([
+            "relative h-auto w-full cursor-pointer justify-start gap-2 px-2 py-2 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground group-data-[state=collapsed]/sidebar:size-9 group-data-[state=collapsed]/sidebar:justify-center group-data-[state=collapsed]/sidebar:px-0",
+          ])}
         />
-      ) : (
-        <User className={cn("h-4 w-4")} />
-      )}
-    </div>
-  );
-
-  const signOutButton = (
-    <button
-      type="submit"
-      className={cn(
-        "flex w-full items-center gap-3 rounded-md px-3 py-2 text-sm font-medium text-muted-foreground transition-colors hover:bg-accent hover:text-accent-foreground",
-        compact && "justify-center px-0",
-      )}
-      aria-label={compact ? "Sair" : undefined}
+      }
     >
-      <LogOut className={cn("h-4 w-4 shrink-0")} />
-
-    </button>
+      <UserAvatar
+        avatarUrl={avatarUrl}
+        displayName={displayName}
+        initials={initials}
+      />
+      <span
+        className={cn([
+          "min-w-0 flex-1 text-left group-data-[state=collapsed]/sidebar:hidden",
+        ])}
+      >
+        <span className={cn(["block truncate text-sm font-medium"])}>
+          {displayName}
+        </span>
+        <span className={cn(["block truncate text-xs text-muted-foreground"])}>
+          {user.email}
+        </span>
+      </span>
+      <ChevronsUpDown
+        className={cn([
+          "ml-auto size-4 text-muted-foreground group-data-[state=collapsed]/sidebar:hidden",
+        ])}
+        aria-hidden="true"
+      />
+      <MoreHorizontal
+        className={cn([
+          "absolute right-0 bottom-0 hidden size-3 rounded-full bg-background text-primary group-data-[state=collapsed]/sidebar:block",
+        ])}
+        aria-hidden="true"
+      />
+    </DropdownMenuTrigger>
   );
 
   return (
-    <div className={cn("flex items-center justify-between px-4")}>
-      <div
-        className={cn(
-          "flex items-center gap-3 rounded-md px-3 py-2",
-        
-        )}
-      >
-    
-          <Tooltip>
-            <TooltipTrigger render={<span className={cn("block")} />}>
-              {userAvatar}
-            </TooltipTrigger>
-            <TooltipContent side="right">
-              {user.profile?.full_name ?? user.email}
-            </TooltipContent>
-          </Tooltip>
-      
-       
-          <div className={cn("min-w-0 flex-1")}>
-            <p className={cn("truncate text-sm font-medium")}>
-              {user.profile?.full_name ?? "Administrador"}
-            </p>
-            <p className={cn("truncate text-xs text-muted-foreground")}>
-              {user.email}
-            </p>
+    <DropdownMenu>
+      {isCollapsed ? (
+        <Tooltip>
+          <TooltipTrigger render={<span className={cn(["block"])} />}>
+            {trigger}
+          </TooltipTrigger>
+          <TooltipContent side="right">Abrir menu do usuário</TooltipContent>
+        </Tooltip>
+      ) : (
+        trigger
+      )}
+      <DropdownMenuContent side="right" align="end" className={cn(["w-64"])}>
+        <DropdownMenuLabel>
+          <div className={cn(["flex items-center gap-2"])}>
+            <UserAvatar
+              avatarUrl={avatarUrl}
+              displayName={displayName}
+              initials={initials}
+              className="size-9"
+            />
+            <div className={cn(["min-w-0"])}>
+              <p className={cn(["truncate"])}>{displayName}</p>
+              <p
+                className={cn([
+                  "truncate text-xs font-normal text-muted-foreground",
+                ])}
+              >
+                {user.email}
+              </p>
+            </div>
           </div>
-      
-      </div>
-
-      <form action={signOut}>
-  
-          <Tooltip>
-            <TooltipTrigger render={<span className={cn("block")} />}>
-              {signOutButton}
-            </TooltipTrigger>
-          </Tooltip>
-   
-      </form>
-    </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem closeOnClick={false}>
+          <Link
+            href="/cms/dashboard/perfil"
+            className={cn(["flex w-full items-center gap-2"])}
+          >
+            <UserCircle className={cn(["size-4"])} />
+            Meu perfil
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem closeOnClick={false}>
+          <Link
+            href="/cms/dashboard/perfil#preferencias"
+            className={cn(["flex w-full items-center gap-2"])}
+          >
+            <Settings className={cn(["size-4"])} />
+            Preferências
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className={cn(["text-xs text-muted-foreground"])}>
+          Tema
+        </DropdownMenuLabel>
+        {THEME_ITEMS.map(({ value, label, icon: Icon }) => (
+          <DropdownMenuItem key={value} onClick={() => setTheme(value)}>
+            <Icon className={cn(["size-4"])} />
+            <span className={cn(["flex-1"])}>{label}</span>
+            {theme === value && (
+              <span className={cn(["text-xs text-primary"])}>Atual</span>
+            )}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuSeparator />
+        <DropdownMenuLabel className={cn(["text-xs text-muted-foreground"])}>
+          Fonte
+        </DropdownMenuLabel>
+        {options.map((option) => (
+          <DropdownMenuItem
+            key={option.value}
+            onClick={() => setFontSize(option.value)}
+          >
+            <span className={cn(["flex-1"])}>{option.label}</span>
+            <span className={cn(["text-xs text-muted-foreground"])}>
+              {option.description}
+            </span>
+            {fontSize === option.value && (
+              <span className={cn(["text-xs text-primary"])}>Atual</span>
+            )}
+          </DropdownMenuItem>
+        ))}
+        <DropdownMenuSeparator />
+        <form action={signOut}>
+          <DropdownMenuItem variant="destructive" closeOnClick={false}>
+            <button
+              type="submit"
+              className={cn(["flex w-full items-center gap-2 text-left"])}
+            >
+              <LogOut className={cn(["size-4"])} />
+              Sair
+            </button>
+          </DropdownMenuItem>
+        </form>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

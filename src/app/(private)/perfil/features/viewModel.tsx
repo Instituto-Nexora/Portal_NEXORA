@@ -1,34 +1,44 @@
 "use client";
 
-import { useActionState, startTransition, useEffect } from "react";
+import { startTransition, useActionState, useEffect, useMemo } from "react";
 import { useForm, type UseFormReturn, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useChangeFont } from "@/hooks/useChangeFont";
+import { useTheme } from "@/hooks/useTheme";
+import { getPasswordStrength, type PasswordStrength } from "@/utils/getPasswordStrength";
+import { notifyStatus } from "@/utils/notifyStatus";
+import { alterarSenha, atualizarAvatar, atualizarPerfil } from "./actions";
 import { alterarSenhaSchema, perfilSchema } from "./schema";
-import { alterarSenha, atualizarPerfil } from "./actions";
 import type { ActionState, AlterarSenhaFormData, PerfilFormData, PerfilInitialData } from "./model";
 
 export type PerfilViewModel = {
-  // Formulário de Perfil
   formPerfil: UseFormReturn<PerfilFormData>;
   onSubmitPerfil: SubmitHandler<PerfilFormData>;
   statusPerfil: ActionState | null;
   isPendingPerfil: boolean;
-
-  // Formulário de Senha
   formSenha: UseFormReturn<AlterarSenhaFormData>;
   onSubmitSenha: SubmitHandler<AlterarSenhaFormData>;
   statusSenha: ActionState | null;
   isPendingSenha: boolean;
+  passwordStrength: PasswordStrength;
+  statusAvatar: ActionState | null;
+  avatarFormAction: (payload: FormData) => void;
+  isPendingAvatar: boolean;
+  theme: ReturnType<typeof useTheme>["theme"];
+  setTheme: ReturnType<typeof useTheme>["setTheme"];
+  fontSize: ReturnType<typeof useChangeFont>["fontSize"];
+  fontOptions: ReturnType<typeof useChangeFont>["options"];
+  setFontSize: ReturnType<typeof useChangeFont>["setFontSize"];
 };
 
 export function usePerfilViewModel({ initialData }: { initialData: PerfilInitialData }): PerfilViewModel {
-  // --- Hooks para o formulário de Perfil ---
+  const { theme, setTheme } = useTheme();
+  const { fontSize, options: fontOptions, setFontSize } = useChangeFont();
+
   const [statusPerfil, formActionPerfil, isPendingPerfil] = useActionState(atualizarPerfil, null);
   const formPerfil = useForm<PerfilFormData>({
     resolver: zodResolver(perfilSchema),
-    defaultValues: {
-      full_name: initialData.full_name || "",
-    },
+    defaultValues: { full_name: initialData.full_name || "" },
   });
 
   const onSubmitPerfil: SubmitHandler<PerfilFormData> = (data) => {
@@ -37,15 +47,14 @@ export function usePerfilViewModel({ initialData }: { initialData: PerfilInitial
     startTransition(() => formActionPerfil(formData));
   };
 
-  // --- Hooks para o formulário de Senha ---
   const [statusSenha, formActionSenha, isPendingSenha] = useActionState(alterarSenha, null);
   const formSenha = useForm<AlterarSenhaFormData>({
     resolver: zodResolver(alterarSenhaSchema),
-    defaultValues: {
-      new_password: "",
-      confirm_password: "",
-    },
+    defaultValues: { new_password: "", confirm_password: "" },
   });
+
+  const watchedPassword = formSenha.watch("new_password");
+  const passwordStrength = useMemo(() => getPasswordStrength(watchedPassword ?? ""), [watchedPassword]);
 
   const onSubmitSenha: SubmitHandler<AlterarSenhaFormData> = (data) => {
     const formData = new FormData();
@@ -54,11 +63,14 @@ export function usePerfilViewModel({ initialData }: { initialData: PerfilInitial
     startTransition(() => formActionSenha(formData));
   };
 
-  // Efeito para limpar o formulário de senha após o sucesso
+  const [statusAvatar, avatarFormAction, isPendingAvatar] = useActionState(atualizarAvatar, null);
+
+  useEffect(() => notifyStatus(statusPerfil), [statusPerfil]);
+  useEffect(() => notifyStatus(statusAvatar), [statusAvatar]);
+  useEffect(() => notifyStatus(statusSenha), [statusSenha]);
+
   useEffect(() => {
-    if (statusSenha?.success) {
-      formSenha.reset();
-    }
+    if (statusSenha?.success) formSenha.reset();
   }, [statusSenha, formSenha]);
 
   return {
@@ -70,5 +82,14 @@ export function usePerfilViewModel({ initialData }: { initialData: PerfilInitial
     onSubmitSenha,
     statusSenha,
     isPendingSenha,
+    passwordStrength,
+    statusAvatar,
+    avatarFormAction,
+    isPendingAvatar,
+    theme,
+    setTheme,
+    fontSize,
+    fontOptions,
+    setFontSize,
   };
 }

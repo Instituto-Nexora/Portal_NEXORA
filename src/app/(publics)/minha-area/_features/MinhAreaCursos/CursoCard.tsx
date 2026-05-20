@@ -16,31 +16,26 @@ type Curso = {
   id: string
   title: string
   thumbnail_url: string | null
-  total_lessons: number
 }
 
-export type EnrollmentComCurso = {
+export type EnrollmentComProgresso = {
   id: string
   course_id: string
-  completed_lessons: number
-  last_lesson_id: string | null
   courses: Curso
+  total_lessons: number     
+  completed_lessons: number 
 }
 
 type CursoCardProps = {
-  enrollment: EnrollmentComCurso
+  enrollment: EnrollmentComProgresso
 }
 
 export function CursoCard({ enrollment }: CursoCardProps) {
-  const { courses, completed_lessons, last_lesson_id } = enrollment
-  const total = courses.total_lessons
-  const completed = completed_lessons
-  const percent = total > 0 ? Math.round((completed / total) * 100) : 0
-  const isComplete = percent >= 100
+  const { courses, completed_lessons, total_lessons } = enrollment
+  const percent = total_lessons > 0 ? Math.round((completed_lessons / total_lessons) * 100) : 0
+  const isComplete = total_lessons > 0 && completed_lessons >= total_lessons
 
-  const continueHref = last_lesson_id
-    ? `/cursos/${courses.id}/aulas/${last_lesson_id}`
-    : `/cursos/${courses.id}`
+  const continueHref = `/cursos/${courses.id}` // TODO: última aula — lesson_progress.lesson_id ORDER BY completed_at DESC
 
   return (
     <Card
@@ -77,10 +72,10 @@ export function CursoCard({ enrollment }: CursoCardProps) {
       <CardContent className={cn("flex-1 flex flex-col gap-2")}>
         <Progress
           value={percent}
-          aria-label={`Progresso: ${completed} de ${total} aulas concluídas`}
+          aria-label={`Progresso: ${completed_lessons} de ${total_lessons} aulas concluídas`}
         />
         <p className={cn("text-xs text-slate-500")}>
-          {completed} de {total} aula{total !== 1 ? "s" : ""}
+          {completed_lessons} de {total_lessons} aula{total_lessons !== 1 ? "s" : ""}
         </p>
       </CardContent>
 
