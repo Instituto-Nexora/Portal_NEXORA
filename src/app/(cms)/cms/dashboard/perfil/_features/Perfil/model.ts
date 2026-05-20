@@ -21,10 +21,4 @@ type PerfilActionState = {
   errors?: Record<string, string[]>;
 } | null;
 
-type PasswordStrength = {
-  score: number;
-  label: string;
-  className: string;
-};
-
-export type { PerfilActionState, PerfilInitialData, PasswordStrength };
+export type { PerfilActionState, PerfilInitialData };

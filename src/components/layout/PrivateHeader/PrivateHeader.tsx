@@ -1,61 +1,46 @@
 "use client";
 
-import { useState, useEffect } from "react"
-import { Menu } from "lucide-react"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
-import { PrivateSidebarNav } from "@/components/layout/PrivateSidebar/PrivateSidebarNav"
-import { PrivateSidebarUserMenu } from "@/components/layout/PrivateSidebar/PrivateSidebarUserMenu"
-import type { SessionUser } from "@/lib/supabase/types"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Separator } from "@/components/ui/separator"
-import { cn } from "@/lib/utils"
+import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import { useTheme } from "@/hooks/useTheme";
+import type { SessionUser } from "@/lib/supabase/types";
+import { cn } from "@/lib/utils";
 
 type Props = {
   user: SessionUser;
-}
+};
 
-export function PrivateHeader({ user }: Props) {
-  const [open, setOpen] = useState(false);
-  const pathname = usePathname();
+export function PrivateHeader({ user: _ }: Props) {
+  const { theme, setTheme } = useTheme();
 
-  // Fecha o menu lateral automaticamente ao navegar para outra rota
-  useEffect(() => {
-    setOpen(false);
-  }, [pathname]);
+  function handleThemeToggle() {
+    setTheme(theme === "dark" ? "light" : "dark");
+  }
 
   return (
-    <header className={cn("flex h-14 shrink-0 items-center border-b bg-background px-6")}>
-      {/* Menu Hamburger - Visível apenas no Mobile */}
-      <div className="md:hidden flex items-center">
-        <Sheet open={open} onOpenChange={setOpen}>
-          <SheetTrigger className="mr-4 focus:outline-none">
-            <Menu className="size-6 text-foreground" />
-            <span className="sr-only">Abrir menu</span>
-          </SheetTrigger>
-          <SheetContent side="left" className="p-0 flex flex-col w-72 bg-background border-r border-border">
-            <div className={cn("flex h-14 items-center px-5")}>
-              <Link href="/minha-area" onClick={() => setOpen(false)}>
-                <p className="text-xl font-bold tracking-widest text-foreground">NEXORA TI</p>
-              </Link>
-            </div>
-            
-            <Separator />
-            
-            <div className={cn("flex-1 overflow-y-auto py-4")}>
-              <PrivateSidebarNav />
-            </div>
-            
-            <Separator />
-            
-            <div className={cn("py-4")}>
-              <PrivateSidebarUserMenu user={user} />
-            </div>
-          </SheetContent>
-        </Sheet>
-      </div>
+    <header
+      className={cn(
+        "sticky top-0 z-20 flex h-14 shrink-0 items-center gap-2 border-b bg-background/95 px-3 backdrop-blur supports-backdrop-filter:bg-background/80 sm:px-6",
+      )}
+    >
+      <SidebarTrigger />
 
-      {/* Espaço vazio no desktop apenas para manter a barra superior limpa */}
+      <div className={cn("ml-auto")}>
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          onClick={handleThemeToggle}
+          aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
+        >
+          {theme === "dark" ? (
+            <Sun className={cn("size-5")} />
+          ) : (
+            <Moon className={cn("size-5")} />
+          )}
+        </Button>
+      </div>
     </header>
-  )
+  );
 }

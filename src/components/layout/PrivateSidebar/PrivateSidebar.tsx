@@ -1,8 +1,25 @@
-import { Separator } from "@/components/ui/separator";
+import {
+  Sidebar as SidebarRoot,
+  SidebarContent,
+  SidebarFooter,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarRail,
+  SidebarSeparator,
+} from "@/components/ui/sidebar";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 import { PrivateSidebarNav } from "./PrivateSidebarNav";
 import { PrivateSidebarUserMenu } from "./PrivateSidebarUserMenu";
-import type { SessionUser } from "@/lib/supabase/types";
 
 type Props = {
   user: SessionUser;
@@ -10,32 +27,43 @@ type Props = {
 };
 
 export function PrivateSidebar({ user, className }: Props) {
-
   return (
-    <aside
-      className={cn(
-        "flex h-full w-60 flex-col bg-background border-r",
-        className,
-      )}
-    >
-      {/* Logo */}
-      <div className={cn("flex h-14 items-center px-5")}>
-          <p className="text-xl">NEXORA TI</p>
-      </div>
+    <SidebarRoot collapsible="icon" className={className}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem>
+            <Tooltip>
+              <TooltipTrigger render={<span className={cn("block")} />}>
+                <SidebarMenuButton asChild className={cn("h-10 font-bold tracking-widest")}>
+                  <Link href="/minha-area" aria-label="Ir para minha área">
+                    <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-black text-primary-foreground")}>
+                      N
+                    </span>
+                    <span className={cn("truncate group-data-[state=collapsed]/sidebar:hidden")}>
+                      NEXORA TI
+                    </span>
+                  </Link>
+                </SidebarMenuButton>
+              </TooltipTrigger>
+              <TooltipContent side="right">Minha Área</TooltipContent>
+            </Tooltip>
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
 
-      <Separator />
+      <SidebarSeparator />
 
-      {/* Navigation */}
-      <div className={cn("flex-1 overflow-y-auto py-4")}>
+      <SidebarContent>
         <PrivateSidebarNav />
-      </div>
+      </SidebarContent>
 
-      <Separator />
+      <Separator className={cn("bg-sidebar-border")} />
 
-      {/* User Menu Footer */}
-      <div className={cn("py-4")}>
+      <SidebarFooter>
         <PrivateSidebarUserMenu user={user} />
-      </div>
-    </aside>
+      </SidebarFooter>
+
+      <SidebarRail />
+    </SidebarRoot>
   );
 }
