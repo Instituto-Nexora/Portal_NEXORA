@@ -6,8 +6,8 @@ export type PerfilFormData = z.infer<typeof perfilSchema>;
 export type AlterarSenhaFormData = z.infer<typeof alterarSenhaSchema>;
 
 export type ActionState = BaseActionState & {
-  formId: "perfil" | "senha";
+  formId: "perfil" | "senha" | "avatar";
 };
 
 // Tipo para os dados iniciais do perfil, vindo do Server Component
-export type PerfilInitialData = StudentProfile;
+export type PerfilInitialData = StudentProfile & { avatar_url?: string | null };

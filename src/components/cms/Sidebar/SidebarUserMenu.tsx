@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/app/(cms)/cms/login/_features/login/actions";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -32,6 +31,7 @@ import { useChangeFont } from "@/hooks/useChangeFont";
 import { type ThemeMode, useTheme } from "@/hooks/useTheme";
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
+import { UserAvatar } from "@/components/UserAvatar";
 
 type Props = {
   user: SessionUser;
@@ -57,28 +57,6 @@ function getInitials(name: string) {
     .join("");
 }
 
-function UserAvatar({
-  avatarUrl,
-  displayName,
-  initials,
-  className,
-}: {
-  avatarUrl: string | null | undefined;
-  displayName: string;
-  initials: string;
-  className?: string;
-}) {
-  return (
-    <Avatar className={cn(["size-8", className])}>
-      {avatarUrl && <AvatarImage src={avatarUrl} alt={displayName} />}
-      <AvatarFallback
-        className={cn(["bg-primary text-xs text-primary-foreground"])}
-      >
-        {initials}
-      </AvatarFallback>
-    </Avatar>
-  );
-}
 
 export function SidebarUserMenu({ user }: Props) {
   const { theme, setTheme } = useTheme();

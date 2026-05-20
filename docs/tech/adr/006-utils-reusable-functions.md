@@ -57,14 +57,57 @@ Um arquivo por responsabilidade, em **camelCase**:
 
 | Prefixo | Propósito | Exemplo |
 |---|---|---|
-| `format*` | Formatar dados para exibição | `formatDate.ts`, `formatDuration.ts`, `formatPrice.ts` |
+| `format*` | Formatar dados para exibição | `formatDate.ts`, `formatDuration.ts`, `formatPrice.ts`, `formatNumber.ts` |
 | `validate*` | Validar dados (fora de schemas Zod) | `validateCpf.ts` |
 | `generate*` | Gerar valores ou estruturas | `generateSearchParams.ts` |
-| `get*` | Extrair ou derivar dados | `getInitials.ts` |
+| `get*` | Extrair ou derivar dados | `getInitials.ts`, `getPasswordStrength.ts` |
 | `check*` | Verificar condições booleanas | `checkPermissions.ts` |
+| `notify*` | Disparar notificações/toasts de UI | `notifyStatus.ts` |
 | Nome descritivo | Outros helpers | `downloadFile.ts`, `environment.ts`, `parseError.ts` |
 
-### 3. Estrutura de um util
+### 3. Funções canônicas — obrigatoriamente em `src/utils/`
+
+As funções abaixo são exemplos confirmados que **nunca** devem ser implementadas inline ou duplicadas em features:
+
+| Função | Arquivo | Descrição |
+|---|---|---|
+| `formatNumber` | `src/utils/formatNumber.ts` | Formatação de números com separador de milhar, decimais e moeda |
+| `notifyStatus` | `src/utils/notifyStatus.ts` | Wrapper de toast/sonner para feedback de sucesso, erro e loading |
+| `getPasswordStrength` | `src/utils/getPasswordStrength.ts` | Calcula força da senha (weak / medium / strong) sem estado React |
+
+```typescript
+// src/utils/formatNumber.ts
+export const formatNumber = (value: number, options?: Intl.NumberFormatOptions): string =>
+  new Intl.NumberFormat("pt-BR", options).format(value);
+
+export const formatCurrency = (value: number): string =>
+  formatNumber(value, { style: "currency", currency: "BRL" });
+
+// src/utils/notifyStatus.ts
+import { toast } from "sonner";
+
+export const notifyStatus = (status: "success" | "error" | "loading", message: string) => {
+  if (status === "success") toast.success(message);
+  else if (status === "error") toast.error(message);
+  else toast.loading(message);
+};
+
+// src/utils/getPasswordStrength.ts
+export type PasswordStrength = "weak" | "medium" | "strong";
+
+export const getPasswordStrength = (password: string): PasswordStrength => {
+  if (password.length < 6) return "weak";
+  const hasUpper = /[A-Z]/.test(password);
+  const hasNumber = /[0-9]/.test(password);
+  const hasSymbol = /[^A-Za-z0-9]/.test(password);
+  const score = [hasUpper, hasNumber, hasSymbol].filter(Boolean).length;
+  if (score <= 1) return "weak";
+  if (score === 2) return "medium";
+  return "strong";
+};
+```
+
+### 4. Estrutura de um util
 
 ```typescript
 // src/utils/formatDuration.ts
@@ -99,7 +142,7 @@ export const formatCourseDuration = (minutes: number): string => {
 - Sem dependências de framework (sem `import { useState } from 'react'`)
 - Sem chamadas HTTP — utils são funções de transformação de dados
 
-### 4. O que NÃO vai em utils/
+### 5. O que NÃO vai em utils/
 
 ```typescript
 // ❌ INCORRETO: hook React não pertence a utils/
@@ -129,7 +172,7 @@ export const ROLES = ["student", "admin"]; // ❌
 | Schema de validação | `src/schemas.ts` ou `features/*/schema.ts` |
 | Componente reutilizável | `src/components/` |
 
-### 5. Importação
+### 6. Importação
 
 ```typescript
 // ✅ CORRETO: importar pelo caminho absoluto com alias @/
