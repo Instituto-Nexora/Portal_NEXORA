@@ -5,6 +5,8 @@ import {
   LogOut,
   MoreHorizontal,
   Settings,
+  TicketIcon,
+  LayoutDashboard,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -128,9 +130,21 @@ export function PrivateSidebarUserMenu({ user }: Props) {
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem closeOnClick={false}>
+          <Link href="/minha-area" className={cn("flex w-full items-center gap-2")}>
+            <LayoutDashboard className={cn("size-4")} />
+            Minha Área
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem closeOnClick={false}>
           <Link href="/perfil" className={cn("flex w-full items-center gap-2")}>
             <UserCircle className={cn("size-4")} />
             Meu perfil
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem closeOnClick={false}>
+          <Link href="/tickets" className={cn("flex w-full items-center gap-2")}>
+            <TicketIcon className={cn("size-4")} />
+            Meus Tickets
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>
@@ -139,6 +153,7 @@ export function PrivateSidebarUserMenu({ user }: Props) {
             Preferências
           </Link>
         </DropdownMenuItem>
+
  
         <form action={signOut}>
           <DropdownMenuItem variant="destructive" closeOnClick={false}>
