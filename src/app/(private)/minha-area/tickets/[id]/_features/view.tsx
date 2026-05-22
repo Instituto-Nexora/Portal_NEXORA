@@ -54,7 +54,7 @@ export default function TicketChatView({ ticket, initialMessages, currentUser }:
           <div className="text-center text-muted-foreground py-10">Nenhuma mensagem encontrada.</div>
         ) : (
           initialMessages.map((msg) => {
-            const isMe = msg.autor_id === currentUser;
+            const isMe = msg.autor_role === "student";
             return (
               <div key={msg.id} className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}>
                 <div className={cn(

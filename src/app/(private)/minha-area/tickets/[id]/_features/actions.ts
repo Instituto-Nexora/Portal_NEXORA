@@ -34,7 +34,7 @@ export async function enviarMensagemAction(ticketId: string, formData: FormData)
   const { error } = await supabase.from("ticket_messages").insert({
     ticket_id: ticketId,
     autor_id: user.id,
-    autor_role: "aluno",
+    autor_role: "student",
     mensagem: parsed.data.mensagem,
   });
 
@@ -53,7 +53,7 @@ export async function marcarMensagensComoLidasAction(ticketId: string) {
   await supabase.from("ticket_messages")
     .update({ lida: true })
     .eq("ticket_id", ticketId)
-    .neq("autor_id", user.id)
+    .eq("autor_role", "admin")
     .eq("lida", false);
     
   revalidatePath(`/minha-area/tickets/${ticketId}`);

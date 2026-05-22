@@ -23,11 +23,11 @@ const useTicketChatViewModel = ({ ticket, initialMessages, currentUser }: Props)
   });
 
   useEffect(() => {
-    const unreadFromAdmin = initialMessages.some(m => !m.lida && m.autor_id !== currentUser);
+    const unreadFromAdmin = initialMessages.some(m => !m.lida && m.autor_role === "admin");
     if (unreadFromAdmin) {
       marcarMensagensComoLidasAction(ticket.id);
     }
-  }, [ticket.id, initialMessages, currentUser]);
+  }, [ticket.id, initialMessages]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
