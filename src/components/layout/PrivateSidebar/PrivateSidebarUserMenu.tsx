@@ -59,7 +59,7 @@ export function PrivateSidebarUserMenu({ user }: Props) {
           nativeButton={false}
           variant="ghost"
           className={cn("w-full justify-start gap-2")}
-          render={<Link href="/perfil" />}
+          render={<Link href="/minha-area/perfil" />}
         >
           <UserCircle className={cn("size-4")} />
           Meu perfil
@@ -136,19 +136,19 @@ export function PrivateSidebarUserMenu({ user }: Props) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>
-          <Link href="/perfil" className={cn("flex w-full items-center gap-2")}>
+          <Link href="/minha-area/perfil" className={cn("flex w-full items-center gap-2")}>
             <UserCircle className={cn("size-4")} />
             Meu perfil
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>
-          <Link href="/tickets" className={cn("flex w-full items-center gap-2")}>
+          <Link href="/minha-area/tickets" className={cn("flex w-full items-center gap-2")}>
             <TicketIcon className={cn("size-4")} />
             Meus Tickets
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>
-          <Link href="/perfil#preferencias" className={cn("flex w-full items-center gap-2")}>
+          <Link href="/minha-area/perfil#preferencias" className={cn("flex w-full items-center gap-2")}>
             <Settings className={cn("size-4")} />
             Preferências
           </Link>
