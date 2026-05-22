@@ -7,6 +7,7 @@ import useTicketsListViewModel from "./viewModel";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/formatDate";
 import type { TicketStatus } from "@/lib/supabase/types";
+import type { TicketListItem } from "./model";
 
 const statusMap: Record<TicketStatus, { label: string; color: string }> = {
   aberto: { label: "Aberto", color: "bg-amber-100 text-amber-800 border-amber-200" },
@@ -14,8 +15,8 @@ const statusMap: Record<TicketStatus, { label: string; color: string }> = {
   finalizado: { label: "Finalizado", color: "bg-gray-100 text-gray-800 border-gray-200" },
 };
 
-export default function TicketsListView() {
-  const { tickets, isLoading } = useTicketsListViewModel();
+export default function TicketsListView({ initialTickets }: { initialTickets: TicketListItem[] }) {
+  const { tickets } = useTicketsListViewModel(initialTickets);
 
   return (
     <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-6">
@@ -34,13 +35,7 @@ export default function TicketsListView() {
         </Button>
       </div>
 
-      {isLoading ? (
-        <div className="space-y-4">
-          {[1, 2, 3].map((i) => (
-            <div key={i} className="h-24 bg-gray-50 animate-pulse rounded-lg border border-gray-100" />
-          ))}
-        </div>
-      ) : tickets.length === 0 ? (
+      {tickets.length === 0 ? (
         <div className="text-center py-20 border-2 border-dashed rounded-lg bg-gray-50">
           <MessageCircle className="mx-auto h-12 w-12 text-gray-300 mb-4" aria-hidden="true" />
           <p className="text-muted-foreground mb-4">Você ainda não possui nenhum ticket de suporte aberto.</p>
