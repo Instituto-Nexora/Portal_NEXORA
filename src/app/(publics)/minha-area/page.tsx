@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation"
 import type { Metadata } from "next"
 import { createClient } from "@/lib/supabase/server"
+import { calcularProgressoCurso } from "@/utils/calcularProgressoCurso"
 import { CursoCard } from "./_features/MinhAreaCursos/CursoCard"
 import type { EnrollmentComProgresso } from "./_features/MinhAreaCursos/CursoCard"
 import { EmptyState } from "./_features/MinhAreaCursos/EmptyState"
@@ -48,19 +49,28 @@ export default async function MinhaAreaPage() {
     )
   }
 
-  const enrollments: EnrollmentComProgresso[] = (data ?? [])
-    .filter((e) => e.courses != null)
-    .map((e) => {
-      const curso = e.courses as unknown as EnrollmentComProgresso["courses"]
-      // TODO: calcularProgressoCurso(e.course_id, user.id) — issue #22
-      return {
-        id: e.id,
-        course_id: e.course_id,
-        courses: curso,
-        completed_lessons: 0,
-        total_lessons: 0,
-      }
-    })
+  const enrollments: EnrollmentComProgresso[] = await Promise.all(
+    (data ?? [])
+      .filter(
+        (e): e is typeof e & { courses: NonNullable<typeof e.courses> } =>
+          e.courses != null,
+      )
+      .map(async (e) => {
+        const curso = e.courses as unknown as EnrollmentComProgresso["courses"]
+        const { concluidas, total, percentual } = await calcularProgressoCurso(
+          e.course_id,
+          user.id,
+        )
+        return {
+          id: e.id,
+          course_id: e.course_id,
+          courses: curso,
+          concluidas,
+          total,
+          percentual,
+        }
+      }),
+  )
 
   return (
     <main className={cn("max-w-5xl mx-auto px-6 py-12")}>
