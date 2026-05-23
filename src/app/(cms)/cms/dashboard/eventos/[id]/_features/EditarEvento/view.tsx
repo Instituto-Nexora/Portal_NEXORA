@@ -27,35 +27,6 @@ import { cn } from "@/lib/utils";
 import { DeleteEventoDialog } from "../DeleteEventoDialog/view";
 import { useEditarEventoViewModel } from "./viewModel";
 
-"use client";
-
-import { Controller } from "react-hook-form";
-import { ThumbnailUpload } from "@/components/cms/ThumbnailUpload";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import type { Event } from "@/lib/supabase/types";
-import { cn } from "@/lib/utils";
-import { DeleteEventoDialog } from "../DeleteEventoDialog/view";
-import { useEditarEventoViewModel } from "./viewModel";
-
 type Props = {
   evento: Event;
 };
