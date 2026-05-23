@@ -1,67 +1,113 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
+import { redirect } from "next/navigation";
+import { MinhaAreaView } from "@/_features/minha-area/minha-area.view";
+import type { CursoComProgresso } from "@/_features/minha-area/types/minha-area.types";
+import { createClient } from "@/lib/supabase/server";
+import type { Curso } from "@/lib/supabase/types";
 
 export const metadata: Metadata = {
   title: "Meus Cursos - NEXORA",
 };
 
 export default async function MinhaAreaPage() {
-  // Mock data: Aqui você fará o fetch dos cursos do aluno no Supabase
-  const meusCursos = [
-    {
-      id: "trilha-frontend",
-      title: "Trilha Frontend Iniciante",
-      progress: 35,
-      lastClass: "HTML Semântico",
-    },
-    {
-      id: "trilha-logica",
-      title: "Lógica de Programação",
-      progress: 100,
-      lastClass: "Certificado Liberado",
-    },
-  ];
+  const supabase = await createClient();
 
-  return (
-    <div className={cn("container mx-auto py-8")}>
-      <div className={cn("mb-8")}>
-        <h1 className={cn("text-3xl font-bold text-slate-900")}>Meus Cursos</h1>
-        <p className={cn("text-slate-500")}>Continue de onde parou ou inicie uma nova trilha.</p>
-      </div>
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      <div className={cn("grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6")}>
-        {meusCursos.map((curso) => (
-          <div key={curso.id} className={cn("bg-white p-6 rounded-lg shadow-sm border flex flex-col gap-4")}>
-            <div>
-              <h2 className={cn("text-xl font-semibold text-slate-900")}>{curso.title}</h2>
-              <p className={cn("text-sm text-slate-500 mt-1")}>Última aula: {curso.lastClass}</p>
-            </div>
-            
-            <div className={cn("flex flex-col gap-1 mt-auto")}>
-              <div className={cn("flex justify-between text-sm")}>
-                <span className={cn("font-medium text-slate-700")}>Progresso</span>
-                <span className={cn("text-slate-500")}>{curso.progress}%</span>
-              </div>
-              <div className={cn("w-full bg-slate-100 rounded-full h-2 overflow-hidden")}>
-                <div 
-                  className={cn("h-full rounded-full", curso.progress === 100 ? "bg-green-500" : "bg-blue-600")}
-                  style={{ width: `${curso.progress}%` }}
-                />
-              </div>
-            </div>
+  if (!user) {
+    redirect("/login");
+  }
 
-            <div className={cn("pt-4 mt-2 border-t")}>
-              <Button className={cn("w-full")} variant={curso.progress === 100 ? "outline" : "default"}>
-                <Link href={`/minha-area/cursos/${curso.id}`}>
-                  {curso.progress === 100 ? "Acessar Curso" : "Continuar Aula"}
-                </Link>
-              </Button>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+  const { data: enrollments, error: enrollError } = await supabase
+    .from("enrollments")
+    .select("id, course_id")
+    .eq("user_id", user.id)
+    .order("enrolled_at", { ascending: false });
+
+  if (enrollError) {
+    throw enrollError;
+  }
+
+  const enrollmentList = enrollments ?? [];
+
+  if (enrollmentList.length === 0) {
+    return <MinhaAreaView cursos={[]} />;
+  }
+
+  const courseIds = enrollmentList.map((e) => e.course_id);
+
+  const { data: cursosData, error: cursosError } = await supabase
+    .from("courses")
+    .select("*")
+    .in("id", courseIds);
+
+  if (cursosError) {
+    throw cursosError;
+  }
+
+  const cursosMap = new Map((cursosData ?? []).map((c) => [c.id, c as Curso]));
+
+  const { data: lessonsData, error: lessonsError } = await supabase
+    .from("lessons")
+    .select("id, course_id")
+    .eq("is_published", true)
+    .in("course_id", courseIds);
+
+  if (lessonsError) {
+    throw lessonsError;
+  }
+
+  const lessonsPerCourse = new Map<string, string[]>();
+  const allLessonIds: string[] = [];
+
+  for (const lesson of lessonsData ?? []) {
+    const list = lessonsPerCourse.get(lesson.course_id);
+    if (list) {
+      list.push(lesson.id);
+    } else {
+      lessonsPerCourse.set(lesson.course_id, [lesson.id]);
+    }
+    allLessonIds.push(lesson.id);
+  }
+
+  const { data: progressData, error: progressError } =
+    allLessonIds.length > 0
+      ? await supabase
+          .from("lesson_progress")
+          .select("lesson_id")
+          .eq("user_id", user.id)
+          .not("completed_at", "is", null)
+          .in("lesson_id", allLessonIds)
+      : { data: [], error: null };
+
+  if (progressError) {
+    throw progressError;
+  }
+
+  const completedSet = new Set(progressData?.map((p) => p.lesson_id) ?? []);
+
+  const cursosComProgresso: CursoComProgresso[] = [];
+
+  for (const enrollment of enrollmentList) {
+    const curso = cursosMap.get(enrollment.course_id);
+    if (!curso) continue;
+
+    const aulas = lessonsPerCourse.get(enrollment.course_id) ?? [];
+    const totalAulas = aulas.length;
+    const aulasConcluidas = aulas.filter((id) => completedSet.has(id)).length;
+    const progressPercent =
+      totalAulas > 0 ? Math.round((aulasConcluidas / totalAulas) * 100) : 0;
+
+    cursosComProgresso.push({
+      ...curso,
+      enrollmentId: enrollment.id,
+      progressPercent,
+      totalAulas,
+      aulasConcluidas,
+    });
+  }
+
+  return <MinhaAreaView cursos={cursosComProgresso} />;
 }

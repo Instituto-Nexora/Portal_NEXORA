@@ -103,12 +103,13 @@ export async function Header() {
             </div>
           </div>
         ) : (
-          <Button
-            className={cn("bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 h-8 px-4 transition-colors")}
-            render={<Link href="/login" />}
-          >
-            Entrar
-          </Button>
+           <Button
+             className={cn("bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 h-8 px-4 transition-colors")}
+             nativeButton={false}
+             render={<Link href="/login" />}
+           >
+             Entrar
+           </Button>
         )}
       </div>
 
@@ -201,12 +202,13 @@ export async function Header() {
                 </Button>
               </form>
             ) : (
-              <Button
-                className={cn("w-full bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 transition-colors")}
-                render={<Link href="/login" />}
-              >
-                Entrar
-              </Button>
+               <Button
+                 className={cn("w-full bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0 transition-colors")}
+                 nativeButton={false}
+                 render={<Link href="/login" />}
+               >
+                 Entrar
+               </Button>
             )}
           </div>
         </SheetContent>

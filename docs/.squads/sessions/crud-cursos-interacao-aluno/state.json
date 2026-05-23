@@ -1,13 +1,13 @@
 {
-  "feature": "fix-update-fluxo-criar-eventos",
-  "created_at": "2026-05-08T00:00:00Z",
-  "updated_at": "2026-05-12T00:00:00Z",
+  "feature": "crud-cursos-interacao-aluno",
+  "created_at": "2026-05-15T14:58:00Z",
+  "updated_at": "2026-05-15T14:58:00Z",
   "squads": {
     "frontend-001": {
       "domain": "frontend",
       "pipeline": "feature-development",
-      "started_at": "2026-05-12T00:00:00Z",
-      "completed_at": "2026-05-12T00:00:00Z",
+      "started_at": "2026-05-15T14:58:00Z",
+      "completed_at": "2026-05-15T14:58:00Z",
       "status": "completed",
       "completed_steps": ["01-gate-integridade", "02-arquitetura", "03-checkpoint-design", "04-implementacao", "05-review", "06-docs"],
       "current_step": null,

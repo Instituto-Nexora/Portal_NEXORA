@@ -96,10 +96,10 @@ export function EventosListView({
             {eventos.length !== 1 ? "s" : ""}
           </p>
         </div>
-        <Button render={<Link href="/cms/dashboard/eventos/novo" />}>
-          <PlusIcon />
-          Criar evento
-        </Button>
+         <Button nativeButton={false} render={<Link href="/cms/dashboard/eventos/novo" />}>
+           <PlusIcon />
+           Criar evento
+         </Button>
       </div>
 
       <Separator />

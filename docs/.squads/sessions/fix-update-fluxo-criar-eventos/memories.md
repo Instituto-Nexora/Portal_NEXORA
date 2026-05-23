@@ -11,6 +11,10 @@
 <!-- /SUMMARY -->
 
 <!-- RECENTES -->
+## Sessão 2026-05-12
+Task: Player de vídeo para aulas na área do aluno
+Issue: —
+
 ## Sessão 2026-05-08
 Task: Bug — evento criado no CMS não refletia em /eventos público
 Issue: —

@@ -6,9 +6,9 @@ status: active
 mode: economico
 execution_mode: complete
 created_at: 2026-05-02
-updated_at: 2026-05-08
-feature: fix-update-fluxo-criar-eventos
-session: docs/.squads/sessions/fix-update-fluxo-criar-eventos
+updated_at: 2026-05-15T14:57:20Z
+feature: crud-cursos-interacao-aluno
+session: docs/.squads/sessions/crud-cursos-interacao-aluno
 roles:
   - Arquiteta Frontend
   - Dev Frontend

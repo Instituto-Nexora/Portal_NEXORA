@@ -10,13 +10,12 @@ type AdminProfile = {
 };
 
 type StudentProfile = {
-  id: string
-  full_name: string
-  email: string
-  avatar_url: string | null
-  created_at: string
-}
-
+  id: string;
+  full_name: string;
+  email: string;
+  avatar_url: string | null;
+  created_at: string;
+};
 
 type SessionUser = {
   id: string;
@@ -31,6 +30,23 @@ type ActionState =
       message?: string;
     }
   | undefined;
+
+type CourseEnrollment = {
+  id: string;
+  user_id: string;
+  course_id: string;
+  enrolled_at: string;
+  progress_percent: number | null;
+};
+
+type LessonProgress = {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  completed: boolean;
+  completed_at: string | null;
+  created_at: string;
+};
 
 type EventType = "ao_vivo" | "gravado";
 type EventStatus = "draft" | "published" | "archived";
@@ -82,6 +98,8 @@ export type {
   StudentProfile,
   SessionUser,
   ActionState,
+  CourseEnrollment,
+  LessonProgress,
   EventType,
   EventStatus,
   Event,
