@@ -128,3 +128,42 @@ ImpactoSection foi movida para posição 2 (social proof acima do fold).
 - `heroStats` e `impactoItems` em page.tsx → unificar em fonte única quando dados vierem do Supabase
 - `blockquote`/`footer` nos depoimentos → considerar `figure`/`figcaption` para melhor semântica
 - Verificar visualmente o CMS após remapeamento de `--primary` para teal
+
+---
+
+# Feature Notes — Listagem de Cursos Adquiridos (Minha Área)
+
+**Data:** 2026-05-23
+**Squad:** frontend-001
+**Task:** #24 — Criar página de listagem de cursos adquiridos (aluno)
+**Issue relacionada:** #18 (schema), #22 (progresso), #24 (listagem)
+
+## O que foi implementado
+
+- `src/app/(publics)/minha-area/page.tsx` — Server Component protegido; redireciona para `/login` se não autenticado; busca matrículas do aluno via Supabase e chama `calcularProgressoCurso()` em paralelo para cada curso
+- `src/app/(publics)/minha-area/_features/MinhAreaCursos/CursoCard.tsx` — Card com thumbnail, título, barra de progresso (`Progress`), texto "X de Y aulas" e botão condicional ("Continuar" ou "Baixar Certificado")
+- `src/app/(publics)/minha-area/_features/MinhAreaCursos/EmptyState.tsx` — estado vazio com CTA para `/vendas`
+- `src/app/(publics)/minha-area/loading.tsx` — skeletons para o grid de cards
+- `src/components/ui/progress.tsx` — componente `Progress` via `@base-ui/react/progress` com animação `translateX`
+
+## Decisões técnicas
+
+- **Colunas da query** seguem estritamente o schema da issue #18: `enrollments(id, course_id)` + `courses(id, title, thumbnail_url)`. Colunas não existentes no schema foram removidas.
+- **`calcularProgressoCurso(courseId, userId)`** importada de `src/utils/calcularProgressoCurso` (issue #22) — retorna `{ concluidas, total, percentual }`. O arquivo ainda não existe; o módulo dará erro de import até a issue #22 ser implementada.
+- **`Promise.all`** paraleliza as chamadas de progresso por curso para não serializar N roundtrips.
+- **Cast de tipo** `e.courses as unknown as EnrollmentComProgresso["courses"]` necessário porque o projeto não usa tipos gerados pelo Supabase (`supabase gen types`); o cliente infere joins como array mesmo para FK many-to-one.
+- **Conflitos de merge resolvidos nesta branch:** `globals.css`, `progress.tsx`, `EditarEvento/view.tsx` — em todos foi mantida a versão do `main` por ter melhorias de layout responsivo.
+
+## Dependências pendentes
+
+| Dependência | Issue | Impacto |
+|---|---|---|
+| `src/utils/calcularProgressoCurso.ts` | #22 | Barra de progresso, botão certificado |
+| Rota `/cursos/[id]` | #23 | Botão "Continuar" resulta em 404 |
+| Rota `/api/certificados/[id]` | — | Botão "Baixar Certificado" resulta em 404 |
+
+## Pontos de atenção para manutenção futura
+
+1. Quando issue #22 for mergeada, remover o erro de módulo e verificar se a assinatura `{ concluidas, total, percentual }` bate com o que foi implementado
+2. `continueHref` aponta para `/cursos/${courses.id}` — quando issue #22 expor a última aula concluída, atualizar para o deep link da aula
+3. Projeto não tem tipos Supabase gerados — considerar `supabase gen types typescript` para eliminar casts `as unknown as`
