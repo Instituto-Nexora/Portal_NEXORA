@@ -1,13 +1,18 @@
 "use client";
 
 import Link from "next/link";
-import { AlertCircle, MessageSquare, Search, Filter, Clock, Eye } from "lucide-react";
+import { MessageSquare, Search, Filter, Clock, Eye } from "lucide-react";
+import Select, { StylesConfig } from "react-select";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { formatDate } from "@/utils/formatDate";
 import useTicketsAdminViewModel from "./viewModel";
 import type { TicketAdminItem } from "./model";
 import type { TicketStatus } from "@/lib/supabase/types";
+interface SelectOption {
+  value: string;
+  label: string;
+}
 
 const statusMap: Record<TicketStatus, { label: string; color: string }> = {
   aberto: { label: "Aberto", color: "bg-amber-100 text-amber-800 border-amber-200" },
@@ -15,10 +20,67 @@ const statusMap: Record<TicketStatus, { label: string; color: string }> = {
   finalizado: { label: "Finalizado", color: "bg-gray-100 text-gray-800 border-gray-200" },
 };
 
+const statusOptions: SelectOption[] = [
+  { value: 'todos', label: 'Todos os Status' },
+  { value: 'aberto', label: 'Aberto' },
+  { value: 'em_progresso', label: 'Em Progresso' },
+  { value: 'finalizado', label: 'Finalizado' }
+];
+
+const topicOptions: SelectOption[] = [
+  { value: 'todos', label: 'Todos os Tópicos' },
+  { value: 'aula', label: 'Aula' },
+  { value: 'cadastro', label: 'Cadastro' },
+  { value: 'curso', label: 'Curso' },
+  { value: 'eventos', label: 'Eventos' },
+  { value: 'reclamacao', label: 'Reclamação' }
+];
+
+const customSelectStyles: StylesConfig<SelectOption> = {
+  control: (base, { isFocused }) => ({
+    ...base,
+    paddingLeft: '1.75rem',
+    minHeight: '38px',
+    borderColor: isFocused ? '#0f766e' : '#e5e7eb',
+    borderWidth: '1px',
+    boxShadow: isFocused ? '0 0 0 2px #0f766e' : 'none',
+    '&:hover': {
+      borderColor: '#0f766e'
+    }
+  }),
+  option: (base, { isSelected, isFocused }) => ({
+    ...base,
+    backgroundColor: isSelected ? '#0f766e' : isFocused ? '#f0fdfa' : 'white',
+    color: isSelected ? 'white' : '#1f2937',
+    cursor: 'pointer',
+    '&:active': {
+      backgroundColor: '#0f766e',
+      color: 'white'
+    }
+  }),
+  
+  menu: (base) => ({
+    ...base,
+    zIndex: 20
+  }),
+  singleValue: (base) => ({
+    ...base,
+    color: '#1f2937'
+  })
+};
+
 export default function TicketsAdminView({ initialTickets }: { initialTickets: TicketAdminItem[] }) {
   const { 
     tickets, statusFilter, setStatusFilter, topicFilter, setTopicFilter, searchTerm, setSearchTerm 
   } = useTicketsAdminViewModel(initialTickets);
+
+  const handleStatusChange = (option: SelectOption | null) => {
+    setStatusFilter(option?.value || 'todos');
+  };
+
+  const handleTopicChange = (option: SelectOption | null) => {
+    setTopicFilter(option?.value || 'todos');
+  };
 
   return (
     <div className="p-6 max-w-7xl mx-auto space-y-6">
@@ -40,38 +102,39 @@ export default function TicketsAdminView({ initialTickets }: { initialTickets: T
             className="w-full pl-9 pr-4 py-2 text-sm border rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 transition-colors"
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
+            style={{ color: '#1f2937' }}
           />
         </div>
         
         <div className="flex gap-4">
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
-            <select
-              className="w-full sm:w-[160px] pl-9 pr-4 py-2 text-sm border rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 appearance-none bg-white transition-colors"
-              value={statusFilter}
-              onChange={(e) => setStatusFilter(e.target.value as any)}
-            >
-              <option value="todos">Todos os Status</option>
-              <option value="aberto">Aberto</option>
-              <option value="em_progresso">Em Progresso</option>
-              <option value="finalizado">Finalizado</option>
-            </select>
+          {/* Select de Status */}
+          <div className="relative w-full sm:w-[160px]">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" aria-hidden="true" />
+            <Select<SelectOption>
+              options={statusOptions}
+              value={statusOptions.find(opt => opt.value === statusFilter) || null}
+              onChange={handleStatusChange}
+              styles={customSelectStyles}
+              isSearchable={false}
+              className="w-full"
+              classNamePrefix="react-select"
+              placeholder="Status"
+            />
           </div>
 
-          <div className="relative">
-            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" aria-hidden="true" />
-            <select
-              className="w-full sm:w-[160px] pl-9 pr-4 py-2 text-sm border rounded-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 appearance-none bg-white transition-colors"
-              value={topicFilter}
-              onChange={(e) => setTopicFilter(e.target.value as any)}
-            >
-              <option value="todos">Todos os Tópicos</option>
-              <option value="aula">Aula</option>
-              <option value="cadastro">Cadastro</option>
-              <option value="curso">Curso</option>
-              <option value="eventos">Eventos</option>
-              <option value="reclamacao">Reclamação</option>
-            </select>
+          {/* Select de Tópicos */}
+          <div className="relative w-full sm:w-[160px]">
+            <Filter className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 z-10 pointer-events-none" aria-hidden="true" />
+            <Select<SelectOption>
+              options={topicOptions}
+              value={topicOptions.find(opt => opt.value === topicFilter) || null}
+              onChange={handleTopicChange}
+              styles={customSelectStyles}
+              isSearchable={false}
+              className="w-full"
+              classNamePrefix="react-select"
+              placeholder="Tópico"
+            />
           </div>
         </div>
       </div>

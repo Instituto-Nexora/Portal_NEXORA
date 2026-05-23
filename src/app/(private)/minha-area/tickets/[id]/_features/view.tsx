@@ -15,9 +15,9 @@ type Props = {
 };
 
 const statusMap: Record<TicketStatus, { label: string; color: string }> = {
-  aberto: { label: "Aberto", color: "bg-amber-100 text-amber-800 border-amber-200" },
-  em_progresso: { label: "Em Progresso", color: "bg-blue-100 text-blue-800 border-blue-200" },
-  finalizado: { label: "Finalizado", color: "bg-gray-100 text-gray-800 border-gray-200" },
+  aberto: { label: "Aberto", color: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400" },
+  em_progresso: { label: "Em Progresso", color: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400" },
+  finalizado: { label: "Finalizado", color: "bg-muted text-muted-foreground border-border" },
 };
 
 export default function TicketChatView({ ticket, initialMessages, currentUser }: Props) {
@@ -29,14 +29,14 @@ export default function TicketChatView({ ticket, initialMessages, currentUser }:
       {/* Cabeçalho do Ticket */}
       <div className="flex items-center justify-between gap-4 pb-4 border-b shrink-0">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="shrink-0 text-teal-950">
+          <Button variant="ghost" size="icon" className="shrink-0 text-foreground">
             <Link href="/minha-area/tickets" aria-label="Voltar para a lista de tickets">
               <ArrowLeft className="w-5 h-5" aria-hidden="true" />
             </Link>
           </Button>
           <div>
             <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold text-teal-950 capitalize">{ticket.topico}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-foreground capitalize">{ticket.topico}</h1>
               <span className={cn("text-xs font-semibold px-2.5 py-0.5 rounded-full border", statusMap[ticket.status].color)}>
                 {statusMap[ticket.status].label}
               </span>
@@ -59,13 +59,13 @@ export default function TicketChatView({ ticket, initialMessages, currentUser }:
               <div key={msg.id} className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}>
                 <div className={cn(
                   "max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 flex flex-col gap-1 shadow-sm",
-                  isMe ? "bg-teal-600 text-white rounded-tr-sm" : "bg-white border text-teal-950 rounded-tl-sm"
+                  isMe ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card border border-border text-card-foreground rounded-tl-sm"
                 )}>
                   <div className="flex items-center justify-between gap-4 mb-1">
-                    <span className={cn("text-xs font-bold", isMe ? "text-teal-100" : "text-teal-700")}>
+                    <span className={cn("text-xs font-bold", isMe ? "text-primary-foreground/90" : "text-foreground")}>
                       {isMe ? "Você" : "Suporte Nexora"}
                     </span>
-                    <span className={cn("text-[10px] flex items-center gap-1", isMe ? "text-teal-200" : "text-gray-400")}>
+                    <span className={cn("text-[10px] flex items-center gap-1", isMe ? "text-primary-foreground/70" : "text-muted-foreground")}>
                       <Clock className="w-3 h-3" aria-hidden="true" />
                       {formatDate(msg.created_at)} às {formatTime(msg.created_at)}
                     </span>
@@ -82,27 +82,27 @@ export default function TicketChatView({ ticket, initialMessages, currentUser }:
       {/* Caixa de Texto / Footer */}
       <div className="shrink-0 pt-4 border-t bg-muted/40 sm:bg-transparent">
         {isFinished ? (
-          <div className="bg-gray-50 border rounded-lg p-4 flex items-center justify-center gap-2 text-gray-600">
-            <CheckCircle2 className="w-5 h-5 text-gray-400" aria-hidden="true" />
+          <div className="bg-muted border rounded-lg p-4 flex items-center justify-center gap-2 text-muted-foreground">
+            <CheckCircle2 className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
             <p className="text-sm font-medium">Este ticket foi finalizado e não aceita novas mensagens.</p>
           </div>
         ) : (
           <form onSubmit={onSubmit} className="flex gap-2 items-end">
             <div className="flex-1 space-y-1">
-              {errors.root && <p className="text-xs text-red-600 font-medium mb-1 px-1">{errors.root.message}</p>}
+              {errors.root && <p className="text-xs text-destructive font-medium mb-1 px-1">{errors.root.message}</p>}
               <textarea
                 rows={2}
                 placeholder="Digite sua mensagem..."
                 className={cn(
-                  "flex w-full rounded-md border bg-white px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-600 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none min-h-[60px] transition-colors",
-                  errors.mensagem ? "border-red-500 focus-visible:ring-red-500" : "border-input"
+                  "flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none min-h-[60px] transition-colors",
+                  errors.mensagem ? "border-destructive focus-visible:ring-destructive" : "border-input"
                 )}
                 {...register("mensagem")}
                 disabled={isPending}
                 onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onSubmit(); } }}
               />
             </div>
-            <Button type="submit" size="icon" className="h-[60px] w-[60px] shrink-0 bg-amber-500 hover:bg-amber-400 text-teal-950 transition-colors rounded-md" disabled={isPending} aria-label="Enviar mensagem">
+            <Button type="submit" size="icon" className="h-[60px] w-[60px] shrink-0 bg-accent hover:bg-accent/90 text-accent-foreground transition-colors rounded-md" disabled={isPending} aria-label="Enviar mensagem">
               {isPending ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Send className="h-5 w-5" aria-hidden="true" />}
             </Button>
           </form>
