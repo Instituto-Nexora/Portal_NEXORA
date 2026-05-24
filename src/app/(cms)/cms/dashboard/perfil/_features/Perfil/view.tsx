@@ -9,6 +9,9 @@ import {
 } from "lucide-react";
 import { AccessibilityCard } from "@/components/shared/AccessibilityCard";
 import { AvatarDropzone } from "@/components/shared/AvatarDropzone";
+import { PasswordStrengthMeter } from "@/components/shared/PasswordStrengthMeter";
+import { ProfileActionStatus } from "@/components/shared/ProfileActionStatus";
+import { ProfileIdentitySummary } from "@/components/shared/ProfileIdentitySummary";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
@@ -34,7 +37,6 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
 import { cn } from "@/lib/utils";
 import { getInitials } from "@/utils/getInitials";
 import type { PerfilInitialData } from "./model";
@@ -194,13 +196,7 @@ export function PerfilView({ initialData }: Props) {
                   </div>
                 </div>
 
-                {statusPerfil?.formId === "perfil" && (
-                  <Alert
-                    variant={statusPerfil.success ? "default" : "destructive"}
-                  >
-                    <AlertDescription>{statusPerfil.message}</AlertDescription>
-                  </Alert>
-                )}
+                <ProfileActionStatus status={statusPerfil} />
 
                 <div className={cn(["flex justify-end"])}>
                   <Button
@@ -284,20 +280,7 @@ export function PerfilView({ initialData }: Props) {
                   remaining={initialData.passwordChangesRemaining}
                 />
 
-                <div className={cn(["min-w-0 space-y-2"])}>
-                  <div
-                    className={cn(["flex items-center justify-between gap-3"])}
-                  >
-                    <Label>Força da senha</Label>
-                    <span className={cn(["text-xs text-muted-foreground"])}>
-                      {passwordStrength.label}
-                    </span>
-                  </div>
-                  <Progress
-                    value={passwordStrength.score}
-                    indicatorClassName={passwordStrength.barColor}
-                  />
-                </div>
+                <PasswordStrengthMeter passwordStrength={passwordStrength} />
 
                 <div className={cn(["min-w-0 space-y-2"])}>
                   <Label>Código OTP</Label>
@@ -310,13 +293,7 @@ export function PerfilView({ initialData }: Props) {
                   </InputOTP>
                 </div>
 
-                {statusSenha?.formId === "senha" && (
-                  <Alert
-                    variant={statusSenha.success ? "default" : "destructive"}
-                  >
-                    <AlertDescription>{statusSenha.message}</AlertDescription>
-                  </Alert>
-                )}
+                <ProfileActionStatus status={statusSenha} />
 
                 <div className={cn(["flex justify-end"])}>
                   <Button
@@ -351,26 +328,16 @@ export function PerfilView({ initialData }: Props) {
                   disabled={isPendingAvatar}
                 />
 
-                <div className={cn(["space-y-1 text-center"])}>
-                  <p className={cn(["text-sm font-medium"])}>
-                    {initialData.fullName}
-                  </p>
-                  <p className={cn(["text-xs text-muted-foreground"])}>
-                    {initialData.email}
-                  </p>
-                </div>
+                <ProfileIdentitySummary
+                  fullName={initialData.fullName}
+                  email={initialData.email}
+                />
 
                 <DailyChangeHint
                   remaining={initialData.avatarChangesRemaining}
                 />
 
-                {statusAvatar?.formId === "avatar" && (
-                  <Alert
-                    variant={statusAvatar.success ? "default" : "destructive"}
-                  >
-                    <AlertDescription>{statusAvatar.message}</AlertDescription>
-                  </Alert>
-                )}
+                <ProfileActionStatus status={statusAvatar} />
 
                 <Button
                   type="submit"

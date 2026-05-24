@@ -3,6 +3,9 @@
 import { Camera, KeyRound, UserCircle } from "lucide-react";
 import { AccessibilityCard } from "@/components/shared/AccessibilityCard";
 import { AvatarDropzone } from "@/components/shared/AvatarDropzone";
+import { PasswordStrengthMeter } from "@/components/shared/PasswordStrengthMeter";
+import { ProfileActionStatus } from "@/components/shared/ProfileActionStatus";
+import { ProfileIdentitySummary } from "@/components/shared/ProfileIdentitySummary";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,8 +16,6 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
 import { getInitials } from "@/utils/getInitials";
 import type { PerfilInitialData } from "./model";
 import { usePerfilViewModel } from "./viewModel";
@@ -110,20 +111,7 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                   </p>
                 </div>
 
-                {statusPerfil?.formId === "perfil" && (
-                  <div
-                    className={cn(
-                      "p-3 rounded-md text-center",
-                      statusPerfil.success
-                        ? "bg-teal-50 text-teal-800"
-                        : "bg-red-50 text-red-800",
-                    )}
-                  >
-                    <p className="text-sm font-medium">
-                      {statusPerfil.message}
-                    </p>
-                  </div>
-                )}
+                <ProfileActionStatus status={statusPerfil} />
 
                 <div className="pt-2 flex justify-end">
                   <Button
@@ -166,27 +154,7 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                       {formSenha.formState.errors.new_password.message}
                     </p>
                   )}
-                  <div className="mt-2 space-y-1.5">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Força da senha</span>
-                      <span
-                        className={cn(
-                          "font-medium",
-                          passwordStrength.textColor,
-                        )}
-                      >
-                        {passwordStrength.label}
-                      </span>
-                    </div>
-                    <Progress
-                      value={passwordStrength.score}
-                      className={cn(
-                        "h-1.5 bg-slate-100",
-                        passwordStrength.barColor &&
-                          `[&>div]:${passwordStrength.barColor}`,
-                      )}
-                    />
-                  </div>
+                  <PasswordStrengthMeter passwordStrength={passwordStrength} />
                 </div>
 
                 <div className="flex flex-col gap-2">
@@ -204,18 +172,7 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                   )}
                 </div>
 
-                {statusSenha?.formId === "senha" && (
-                  <div
-                    className={cn(
-                      "p-3 rounded-md text-center",
-                      statusSenha.success
-                        ? "bg-teal-50 text-teal-800"
-                        : "bg-red-50 text-red-800",
-                    )}
-                  >
-                    <p className="text-sm font-medium">{statusSenha.message}</p>
-                  </div>
-                )}
+                <ProfileActionStatus status={statusSenha} />
 
                 <div className="pt-2 flex justify-end">
                   <Button
@@ -249,27 +206,12 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                   fallbackClassName="bg-teal-600 text-white"
                 />
 
-                <div className="space-y-1 text-center">
-                  <p className="text-sm font-medium">{initialData.full_name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    {initialData.email}
-                  </p>
-                </div>
+                <ProfileIdentitySummary
+                  fullName={initialData.full_name}
+                  email={initialData.email}
+                />
 
-                {statusAvatar?.formId === "avatar" && (
-                  <div
-                    className={cn(
-                      "p-3 rounded-md text-center",
-                      statusAvatar.success
-                        ? "bg-teal-50 text-teal-800"
-                        : "bg-red-50 text-red-800",
-                    )}
-                  >
-                    <p className="text-sm font-medium">
-                      {statusAvatar.message}
-                    </p>
-                  </div>
-                )}
+                <ProfileActionStatus status={statusAvatar} />
 
                 <Button
                   type="submit"
