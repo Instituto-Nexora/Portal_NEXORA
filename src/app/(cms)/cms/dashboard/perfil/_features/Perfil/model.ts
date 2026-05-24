@@ -8,8 +8,9 @@ type PerfilInitialData = {
   fullName: string;
   role: AdminRole;
   avatarUrl: string | null;
-  nextProfileChangeAt: string | null;
-  nextAvatarChangeAt: string | null;
+  profileChangesRemaining: number;
+  avatarChangesRemaining: number;
+  passwordChangesRemaining: number;
   theme: ThemeMode;
   fontSize: FontSizeMode;
 };
@@ -18,6 +19,8 @@ type PerfilActionState = {
   formId: "perfil" | "avatar" | "senha" | "conta";
   success: boolean;
   message: string;
+  code?: "daily_limit_reached";
+  resetAt?: string;
   errors?: Record<string, string[]>;
 } | null;
 

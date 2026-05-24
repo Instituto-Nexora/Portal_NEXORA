@@ -64,7 +64,9 @@ export async function criarEvento(
     type: parsed.data.type,
     status: parsed.data.status,
     scheduled_at: parsed.data.scheduled_at ?? null,
-    duration_minutes: parsed.data.duration_minutes ? Number(parsed.data.duration_minutes) : null,
+    duration_minutes: parsed.data.duration_minutes
+      ? Number(parsed.data.duration_minutes)
+      : null,
     thumbnail_url,
     youtube_url: parsed.data.youtube_url || null,
   });

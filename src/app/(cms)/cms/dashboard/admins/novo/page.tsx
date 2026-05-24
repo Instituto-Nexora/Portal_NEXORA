@@ -1,10 +1,10 @@
-import type { Metadata } from 'next'
-import { NovoAdminView } from './_features/NovoAdmin/view'
+import type { Metadata } from "next";
+import { NovoAdminView } from "./_features/NovoAdmin/view";
 
 export const metadata: Metadata = {
-  title: 'Novo Administrador — NEXORA CMS',
-}
+  title: "Novo Administrador — NEXORA CMS",
+};
 
 export default function NovoAdminPage() {
-  return <NovoAdminView />
+  return <NovoAdminView />;
 }

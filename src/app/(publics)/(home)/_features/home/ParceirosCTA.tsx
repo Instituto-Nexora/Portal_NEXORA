@@ -1,6 +1,6 @@
-import Link from "next/link"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 export function ParceirosCTA() {
   return (
@@ -12,15 +12,27 @@ export function ParceirosCTA() {
       id="parceiros"
       aria-labelledby="parceiros-title"
     >
-      <div className={cn("max-w-2xl mx-auto text-center flex flex-col items-center gap-6")}>
-        <span className={cn("text-amber-400 text-xs font-semibold tracking-widest uppercase")}>
+      <div
+        className={cn(
+          "max-w-2xl mx-auto text-center flex flex-col items-center gap-6",
+        )}
+      >
+        <span
+          className={cn(
+            "text-amber-400 text-xs font-semibold tracking-widest uppercase",
+          )}
+        >
           Impacto Social
         </span>
-        <h2 id="parceiros-title" className={cn("text-4xl font-black text-white")}>
+        <h2
+          id="parceiros-title"
+          className={cn("text-4xl font-black text-white")}
+        >
           Seja um Parceiro
         </h2>
         <p className={cn("text-teal-200 text-lg leading-relaxed max-w-lg")}>
-          Empresas e instituições podem apoiar nossos projetos e transformar vidas com o poder da tecnologia.
+          Empresas e instituições podem apoiar nossos projetos e transformar
+          vidas com o poder da tecnologia.
         </p>
         <Button
           size="lg"
@@ -34,5 +46,5 @@ export function ParceirosCTA() {
         </Button>
       </div>
     </section>
-  )
+  );
 }

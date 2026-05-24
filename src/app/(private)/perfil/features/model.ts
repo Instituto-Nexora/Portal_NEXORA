@@ -1,6 +1,9 @@
-import { z } from "zod";
-import { alterarSenhaSchema, perfilSchema } from "./schema";
-import { StudentProfile, ActionState as BaseActionState } from "@/lib/supabase/types";
+import type { z } from "zod";
+import type {
+  ActionState as BaseActionState,
+  StudentProfile,
+} from "@/lib/supabase/types";
+import type { alterarSenhaSchema, perfilSchema } from "./schema";
 
 export type PerfilFormData = z.infer<typeof perfilSchema>;
 export type AlterarSenhaFormData = z.infer<typeof alterarSenhaSchema>;

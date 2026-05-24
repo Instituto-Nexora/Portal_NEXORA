@@ -1,2 +1,2 @@
-export { default } from "./view";
 export * from "./model";
+export { default } from "./view";

@@ -1,0 +1,22 @@
+{
+  "feature": "issue-92-admin-cms-conta-cooldown",
+  "created_at": "2026-05-24T16:12:56.936774+00:00",
+  "updated_at": "2026-05-24T17:33:23.886802+00:00",
+  "squads": {
+    "frontend-001": {
+      "domain": "frontend",
+      "pipeline": "quick-fix",
+      "started_at": "2026-05-24T16:12:56.936774+00:00",
+      "completed_at": "2026-05-24T17:33:23.886802+00:00",
+      "status": "completed",
+      "completed_steps": [
+        "01-gate-integridade",
+        "qf-02-contexto",
+        "qf-03-executar",
+        "qf-04-registrar"
+      ],
+      "current_step": null,
+      "suspended_at": null
+    }
+  }
+}

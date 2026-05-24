@@ -9,6 +9,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/app/actions";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -27,14 +28,10 @@ import {
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { getInitials } from "@/utils/getInitials";
-import { UserAvatar } from "@/components/UserAvatar";
 
 type Props = {
   user: SessionUser;
 };
-
-
-
 
 export function PrivateSidebarUserMenu({ user }: Props) {
   const { isMobile, state } = useSidebar();
@@ -46,11 +43,23 @@ export function PrivateSidebarUserMenu({ user }: Props) {
   if (isMobile) {
     return (
       <div className={cn("space-y-2 px-2")}>
-        <div className={cn("flex items-center gap-3 rounded-md px-2 py-2 text-sm")}>
-          <UserAvatar avatarUrl={avatarUrl} displayName={displayName} initials={initials} />
+        <div
+          className={cn("flex items-center gap-3 rounded-md px-2 py-2 text-sm")}
+        >
+          <UserAvatar
+            avatarUrl={avatarUrl}
+            displayName={displayName}
+            initials={initials}
+          />
           <span className={cn("min-w-0 flex-1 text-left")}>
-            <span className={cn("block truncate font-medium")}>{displayName}</span>
-            <span className={cn("block truncate text-xs text-muted-foreground")}>{user.email}</span>
+            <span className={cn("block truncate font-medium")}>
+              {displayName}
+            </span>
+            <span
+              className={cn("block truncate text-xs text-muted-foreground")}
+            >
+              {user.email}
+            </span>
           </span>
         </div>
         <Button
@@ -66,7 +75,9 @@ export function PrivateSidebarUserMenu({ user }: Props) {
           <Button
             type="submit"
             variant="ghost"
-            className={cn("w-full justify-start gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive")}
+            className={cn(
+              "w-full justify-start gap-2 text-destructive hover:bg-destructive/10 hover:text-destructive",
+            )}
           >
             <LogOut className={cn("size-4")} />
             Sair
@@ -88,17 +99,33 @@ export function PrivateSidebarUserMenu({ user }: Props) {
         />
       }
     >
-      <UserAvatar avatarUrl={avatarUrl} displayName={displayName} initials={initials} />
-      <span className={cn("min-w-0 flex-1 text-left group-data-[state=collapsed]/sidebar:hidden")}>
-        <span className={cn("block truncate text-sm font-medium")}>{displayName}</span>
-        <span className={cn("block truncate text-xs text-muted-foreground")}>{user.email}</span>
+      <UserAvatar
+        avatarUrl={avatarUrl}
+        displayName={displayName}
+        initials={initials}
+      />
+      <span
+        className={cn(
+          "min-w-0 flex-1 text-left group-data-[state=collapsed]/sidebar:hidden",
+        )}
+      >
+        <span className={cn("block truncate text-sm font-medium")}>
+          {displayName}
+        </span>
+        <span className={cn("block truncate text-xs text-muted-foreground")}>
+          {user.email}
+        </span>
       </span>
       <ChevronsUpDown
-        className={cn("ml-auto size-4 text-muted-foreground group-data-[state=collapsed]/sidebar:hidden")}
+        className={cn(
+          "ml-auto size-4 text-muted-foreground group-data-[state=collapsed]/sidebar:hidden",
+        )}
         aria-hidden="true"
       />
       <MoreHorizontal
-        className={cn("absolute right-0 bottom-0 hidden size-3 rounded-full bg-background text-primary group-data-[state=collapsed]/sidebar:block")}
+        className={cn(
+          "absolute right-0 bottom-0 hidden size-3 rounded-full bg-background text-primary group-data-[state=collapsed]/sidebar:block",
+        )}
         aria-hidden="true"
       />
     </DropdownMenuTrigger>
@@ -119,10 +146,21 @@ export function PrivateSidebarUserMenu({ user }: Props) {
       <DropdownMenuContent side="right" align="end" className={cn("w-64")}>
         <DropdownMenuLabel>
           <div className={cn("flex items-center gap-2")}>
-            <UserAvatar avatarUrl={avatarUrl} displayName={displayName} initials={initials} className="size-9" />
+            <UserAvatar
+              avatarUrl={avatarUrl}
+              displayName={displayName}
+              initials={initials}
+              className="size-9"
+            />
             <div className={cn("min-w-0")}>
               <p className={cn("truncate")}>{displayName}</p>
-              <p className={cn("truncate text-xs font-normal text-muted-foreground")}>{user.email}</p>
+              <p
+                className={cn(
+                  "truncate text-xs font-normal text-muted-foreground",
+                )}
+              >
+                {user.email}
+              </p>
             </div>
           </div>
         </DropdownMenuLabel>
@@ -134,15 +172,21 @@ export function PrivateSidebarUserMenu({ user }: Props) {
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>
-          <Link href="/perfil#preferencias" className={cn("flex w-full items-center gap-2")}>
+          <Link
+            href="/perfil#preferencias"
+            className={cn("flex w-full items-center gap-2")}
+          >
             <Settings className={cn("size-4")} />
             Preferências
           </Link>
         </DropdownMenuItem>
- 
+
         <form action={signOut}>
           <DropdownMenuItem variant="destructive" closeOnClick={false}>
-            <button type="submit" className={cn("flex w-full items-center gap-2 text-left")}>
+            <button
+              type="submit"
+              className={cn("flex w-full items-center gap-2 text-left")}
+            >
               <LogOut className={cn("size-4")} />
               Sair
             </button>

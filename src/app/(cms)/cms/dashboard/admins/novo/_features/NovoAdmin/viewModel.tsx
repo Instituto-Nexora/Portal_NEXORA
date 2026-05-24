@@ -1,42 +1,42 @@
-'use client'
+"use client";
 
-import { useActionState } from 'react'
-import { useForm, type UseFormReturn } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/navigation'
-import { criarAdmin } from './actions'
-import { novoAdminSchema, type NovoAdminFormData } from './schema'
-import type { ActionState } from '@/lib/supabase/types'
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useRouter } from "next/navigation";
+import { useActionState } from "react";
+import { type UseFormReturn, useForm } from "react-hook-form";
+import type { ActionState } from "@/lib/supabase/types";
+import { criarAdmin } from "./actions";
+import { type NovoAdminFormData, novoAdminSchema } from "./schema";
 
 type NovoAdminViewModel = {
-  form: UseFormReturn<NovoAdminFormData>
-  formAction: (payload: FormData) => void
-  isPending: boolean
-  state: ActionState
-  handleCancel: () => void
-}
+  form: UseFormReturn<NovoAdminFormData>;
+  formAction: (payload: FormData) => void;
+  isPending: boolean;
+  state: ActionState;
+  handleCancel: () => void;
+};
 
 export function useNovoAdminViewModel(): NovoAdminViewModel {
-  const router = useRouter()
+  const router = useRouter();
   const [state, formAction, isPending] = useActionState<ActionState, FormData>(
     criarAdmin,
-    undefined
-  )
+    undefined,
+  );
 
   const form = useForm<NovoAdminFormData>({
     resolver: zodResolver(novoAdminSchema),
     defaultValues: {
-      full_name: '',
-      email: '',
-      password: '',
-      confirm_password: '',
-      role: 'content_creator',
+      full_name: "",
+      email: "",
+      password: "",
+      confirm_password: "",
+      role: "content_creator",
     },
-  })
+  });
 
   function handleCancel() {
-    router.back()
+    router.back();
   }
 
-  return { form, formAction, isPending, state, handleCancel }
+  return { form, formAction, isPending, state, handleCancel };
 }

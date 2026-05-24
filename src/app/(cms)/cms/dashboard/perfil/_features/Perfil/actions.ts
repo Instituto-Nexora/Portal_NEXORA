@@ -6,47 +6,91 @@ import { createClient } from "@/lib/supabase/server";
 import type { PerfilActionState } from "./model";
 import { perfilSchema, senhaSchema } from "./schema";
 
-const COOLDOWN_MS = 2 * 60 * 60 * 1000;
+const DAILY_CHANGE_LIMIT = 5;
+const DAILY_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
 const AVATAR_BUCKET = "images/avatars";
 const PROFILE_METADATA_KEY = "cms_profile_last_changed_at";
 const AVATAR_METADATA_KEY = "cms_avatar_last_changed_at";
-const PASSWORD_METADATA_KEY = "cms_password_last_changed_at";
+const PROFILE_HISTORY_METADATA_KEY = "cms_profile_change_history";
+const AVATAR_HISTORY_METADATA_KEY = "cms_avatar_change_history";
+const PASSWORD_HISTORY_METADATA_KEY = "cms_password_change_history";
 
-type CooldownKey =
-  | typeof PROFILE_METADATA_KEY
-  | typeof AVATAR_METADATA_KEY
-  | typeof PASSWORD_METADATA_KEY;
+type DailyHistoryKey =
+  | typeof PROFILE_HISTORY_METADATA_KEY
+  | typeof AVATAR_HISTORY_METADATA_KEY
+  | typeof PASSWORD_HISTORY_METADATA_KEY;
 
 type AuthMetadata = Record<string, unknown>;
 
-function getIsoMetadata(metadata: AuthMetadata, key: CooldownKey) {
-  const value = metadata[key];
+type DailyLimitResult = {
+  message: string;
+  resetAt: string;
+};
 
-  if (typeof value !== "string") {
-    return null;
+function getRecentDailyChanges(metadata: AuthMetadata, key: DailyHistoryKey) {
+  const value = metadata[key];
+  const now = Date.now();
+
+  if (!Array.isArray(value)) {
+    return [];
   }
 
-  return value;
+  return value.filter((entry): entry is string => {
+    if (typeof entry !== "string") {
+      return false;
+    }
+
+    const timestamp = new Date(entry).getTime();
+    return (
+      !Number.isNaN(timestamp) &&
+      timestamp <= now &&
+      now - timestamp < DAILY_LIMIT_WINDOW_MS
+    );
+  });
 }
 
-function getCooldownMessage(lastChangedAt: string | null) {
-  if (!lastChangedAt) {
+function getDailyLimit(metadata: AuthMetadata, key: DailyHistoryKey) {
+  const recentChanges = getRecentDailyChanges(metadata, key);
+
+  if (recentChanges.length < DAILY_CHANGE_LIMIT) {
     return null;
   }
 
-  const nextChangeAt = new Date(lastChangedAt).getTime() + COOLDOWN_MS;
-  const remainingMs = nextChangeAt - Date.now();
+  const oldestTimestamp = Math.min(
+    ...recentChanges.map((entry) => new Date(entry).getTime()),
+  );
+  const resetAt = new Date(
+    oldestTimestamp + DAILY_LIMIT_WINDOW_MS,
+  ).toISOString();
 
-  if (remainingMs <= 0) {
-    return null;
-  }
+  return {
+    message:
+      "Limite diário de 5 alterações alcançado. A alteração será disponibilizada novamente após 1 dia.",
+    resetAt,
+  } satisfies DailyLimitResult;
+}
 
-  const remainingMinutes = Math.ceil(remainingMs / 60000);
-  const hours = Math.floor(remainingMinutes / 60);
-  const minutes = remainingMinutes % 60;
-  const readable = hours > 0 ? `${hours}h ${minutes}min` : `${minutes}min`;
+function createDailyLimitState(
+  formId: NonNullable<PerfilActionState>["formId"],
+  dailyLimit: DailyLimitResult,
+): PerfilActionState {
+  return {
+    formId,
+    success: false,
+    message: dailyLimit.message,
+    code: "daily_limit_reached",
+    resetAt: dailyLimit.resetAt,
+  };
+}
 
-  return `Aguarde ${readable} para alterar novamente.`;
+function getUpdatedDailyHistory(
+  metadata: AuthMetadata,
+  key: DailyHistoryKey,
+  now: string,
+) {
+  return [...getRecentDailyChanges(metadata, key), now].slice(
+    -DAILY_CHANGE_LIMIT,
+  );
 }
 
 function getFileExtension(file: File) {
@@ -116,12 +160,10 @@ export async function atualizarPerfil(
   }
 
   const metadata = (user.user_metadata ?? {}) as AuthMetadata;
-  const cooldownMessage = getCooldownMessage(
-    getIsoMetadata(metadata, PROFILE_METADATA_KEY),
-  );
+  const dailyLimit = getDailyLimit(metadata, PROFILE_HISTORY_METADATA_KEY);
 
-  if (cooldownMessage) {
-    return { formId: "perfil", success: false, message: cooldownMessage };
+  if (dailyLimit) {
+    return createDailyLimitState("perfil", dailyLimit);
   }
 
   const now = new Date().toISOString();
@@ -130,6 +172,11 @@ export async function atualizarPerfil(
       ...metadata,
       full_name: parsed.data.full_name,
       [PROFILE_METADATA_KEY]: now,
+      [PROFILE_HISTORY_METADATA_KEY]: getUpdatedDailyHistory(
+        metadata,
+        PROFILE_HISTORY_METADATA_KEY,
+        now,
+      ),
     },
   });
 
@@ -205,12 +252,10 @@ export async function atualizarAvatar(
   }
 
   const metadata = (user.user_metadata ?? {}) as AuthMetadata;
-  const cooldownMessage = getCooldownMessage(
-    getIsoMetadata(metadata, AVATAR_METADATA_KEY),
-  );
+  const dailyLimit = getDailyLimit(metadata, AVATAR_HISTORY_METADATA_KEY);
 
-  if (cooldownMessage) {
-    return { formId: "avatar", success: false, message: cooldownMessage };
+  if (dailyLimit) {
+    return createDailyLimitState("avatar", dailyLimit);
   }
 
   const adminClient = createAdminClient();
@@ -255,6 +300,11 @@ export async function atualizarAvatar(
       ...metadata,
       avatar_url: avatarUrl,
       [AVATAR_METADATA_KEY]: now,
+      [AVATAR_HISTORY_METADATA_KEY]: getUpdatedDailyHistory(
+        metadata,
+        AVATAR_HISTORY_METADATA_KEY,
+        now,
+      ),
     },
   });
 
@@ -307,12 +357,10 @@ export async function alterarSenha(
   }
 
   const metadata = (user.user_metadata ?? {}) as AuthMetadata;
-  const cooldownMessage = getCooldownMessage(
-    getIsoMetadata(metadata, PASSWORD_METADATA_KEY),
-  );
+  const dailyLimit = getDailyLimit(metadata, PASSWORD_HISTORY_METADATA_KEY);
 
-  if (cooldownMessage) {
-    return { formId: "senha", success: false, message: cooldownMessage };
+  if (dailyLimit) {
+    return createDailyLimitState("senha", dailyLimit);
   }
 
   return {
