@@ -2,13 +2,13 @@ name: frontend-001
 domain: frontend
 displayName: "Squad de Frontend"
 description: "Especialistas em desenvolvimento frontend com foco em qualidade, performance e experiência do usuário"
-status: active
+status: completed
 mode: economico
 execution_mode: complete
 created_at: 2026-05-02
-updated_at: 2026-05-19T00:00:00-03:00
-feature: melhoria-perfil-cms-aluno
-session: docs/.squads/sessions/melhoria-perfil-cms-aluno
+updated_at: 2026-05-27T00:00:00-03:00
+feature: exibir-depoimentos
+session: docs/.squads/sessions/exibir-depoimentos
 roles:
   - Arquiteta Frontend
   - Dev Frontend
@@ -31,4 +31,4 @@ project_context:
   docs_business: docs/business/
   docs_tech: docs/tech/
   docs_context: docs/tech-context/
-  session: docs/.squads/sessions/melhoria-perfil-cms-aluno
+  session: docs/.squads/sessions/exibir-depoimentos

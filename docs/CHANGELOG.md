@@ -4,6 +4,18 @@
 
 ---
 
+## [2026-05-27] — Depoimentos de alunos na página de vendas (Issue #14)
+
+### Adicionado
+
+- `src/app/(publics)/vendas/_features/vendas/DepoimentosVendas.tsx` — Server Component com seção de depoimentos; grid responsivo 2-3 col desktop, empilhado mobile; 3 depoimentos hardcoded com badge de resultado, 5 estrelas amber, avatar com iniciais teal
+
+### Pendente
+
+- `src/app/(publics)/vendas/page.tsx` — fora do escopo desta issue (issue #10); componente pronto para integração
+
+---
+
 ## [2026-05-09] — CMS responsivo, estados de carregamento e 404 global
 
 ### Adicionado

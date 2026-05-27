@@ -128,3 +128,30 @@ ImpactoSection foi movida para posição 2 (social proof acima do fold).
 - `heroStats` e `impactoItems` em page.tsx → unificar em fonte única quando dados vierem do Supabase
 - `blockquote`/`footer` nos depoimentos → considerar `figure`/`figcaption` para melhor semântica
 - Verificar visualmente o CMS após remapeamento de `--primary` para teal
+
+---
+
+# Feature Notes — Depoimentos de Alunos na Página de Vendas
+
+**Data:** 2026-05-27
+**Squad:** frontend-001
+**Task:** #14 — Exibir depoimentos de alunos em /vendas (sub-task da Epic #6)
+
+## O que foi implementado
+
+- `src/app/(publics)/vendas/_features/vendas/DepoimentosVendas.tsx` — Server Component com seção de depoimentos de alunos; grid 2-3 colunas desktop, empilhado mobile; 3 depoimentos hardcoded com `resultado` concreto, badge teal, stars amber, avatar com iniciais
+
+## Decisões técnicas
+
+- `page.tsx` de `/vendas` **não criado** — escopo da issue #10; componente pronto para integração
+- MVVM não aplicado — componente estático sem lógica (ADR-004 não exige para Server Components puros)
+- Badge de resultado: `ring-inset` (padrão Tailwind v4), símbolo `✓` com `aria-hidden="true"`
+
+## Pontos de atenção para manutenção futura
+
+1. Integrar em `vendas/page.tsx` (issue #10): importar `DepoimentosVendas` sem props
+2. Migração Supabase futura: `type Depoimento` já tem `id: string` — compatível com tabela `testimonials`
+
+## SUGGESTIONs pendentes (débito técnico)
+
+- **(Baixa)** Extrair `depoimentos[]` para `_features/vendas/_data/depoimentos.ts` quando crescer
