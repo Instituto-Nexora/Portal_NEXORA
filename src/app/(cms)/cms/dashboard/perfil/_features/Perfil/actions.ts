@@ -7,7 +7,7 @@ import type { PerfilActionState } from "./model";
 import { perfilSchema, senhaSchema } from "./schema";
 
 const COOLDOWN_MS = 2 * 60 * 60 * 1000;
-const AVATAR_BUCKET = "avatars";
+const AVATAR_BUCKET = "images/avatars";
 const PROFILE_METADATA_KEY = "cms_profile_last_changed_at";
 const AVATAR_METADATA_KEY = "cms_avatar_last_changed_at";
 const PASSWORD_METADATA_KEY = "cms_password_last_changed_at";
