@@ -32,7 +32,11 @@ export function PrivateHeader({ user: _ }: Props) {
           variant="ghost"
           size="icon"
           onClick={handleThemeToggle}
-          aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
+          aria-label={
+            theme === "dark"
+              ? "Mudar para tema claro"
+              : "Mudar para tema escuro"
+          }
         >
           {theme === "dark" ? (
             <Sun className={cn("size-5")} />

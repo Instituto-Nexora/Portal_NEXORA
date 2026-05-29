@@ -1,14 +1,16 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { updateSession } from "@/lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
-  
   const { supabaseResponse, user } = await updateSession(request);
 
   const { pathname } = request.nextUrl;
 
   const loggedInRestrictedRoutes = ["/login", "/cadastro", "/recuperar-senha"];
-  if (user && loggedInRestrictedRoutes.some((route) => pathname.startsWith(route))) {
+  if (
+    user &&
+    loggedInRestrictedRoutes.some((route) => pathname.startsWith(route))
+  ) {
     return NextResponse.redirect(new URL("/minha-area", request.url));
   }
 

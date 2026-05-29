@@ -1,8 +1,6 @@
 "use client";
 
 import { CheckCircle2, Monitor, Moon, Sun, Type } from "lucide-react";
-import type { FontSizeMode, FontSizeOption } from "@/hooks/useChangeFont";
-import type { ThemeMode } from "@/hooks/useTheme";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -13,6 +11,8 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import type { FontSizeMode, FontSizeOption } from "@/hooks/useChangeFont";
+import type { ThemeMode } from "@/hooks/useTheme";
 import { cn } from "@/lib/utils";
 
 type AccessibilityCardProps = {
@@ -24,7 +24,11 @@ type AccessibilityCardProps = {
   setFontSize: (value: FontSizeMode) => void;
 };
 
-const THEME_OPTIONS: { value: ThemeMode; label: string; Icon: React.ElementType }[] = [
+const THEME_OPTIONS: {
+  value: ThemeMode;
+  label: string;
+  Icon: React.ElementType;
+}[] = [
   { value: "system", label: "Sistema", Icon: Monitor },
   { value: "light", label: "Claro", Icon: Sun },
   { value: "dark", label: "Escuro", Icon: Moon },
@@ -41,13 +45,13 @@ export function AccessibilityCard({
   const isCms = variant === "cms";
 
   return (
-    <Card id={isCms ? "preferencias" : undefined} className={cn(isCms && "overflow-hidden")}>
+    <Card
+      id={isCms ? "preferencias" : undefined}
+      className={cn(isCms && "overflow-hidden")}
+    >
       <CardHeader>
         <CardTitle
-          className={cn(
-            "flex items-center gap-2",
-            !isCms && "text-teal-900",
-          )}
+          className={cn("flex items-center gap-2", !isCms && "text-teal-900")}
         >
           {!isCms && <Type className={cn("h-5 w-5 text-indigo-500")} />}
           {isCms ? "Acessibilidade visual" : "Acessibilidade"}
@@ -62,7 +66,11 @@ export function AccessibilityCard({
       <CardContent className={cn(isCms ? "grid gap-6" : "space-y-6")}>
         <div className={cn("space-y-3")}>
           <Label>{isCms ? "Tema" : "Tema Visual"}</Label>
-          <div className={cn(isCms ? "grid gap-2 sm:grid-cols-3" : "flex flex-wrap gap-2")}>
+          <div
+            className={cn(
+              isCms ? "grid gap-2 sm:grid-cols-3" : "flex flex-wrap gap-2",
+            )}
+          >
             {THEME_OPTIONS.map(({ value, label, Icon }) => {
               const isActive = theme === value;
               return (
@@ -94,7 +102,9 @@ export function AccessibilityCard({
           <Label>Tamanho da {isCms ? "fonte" : "Fonte"}</Label>
           <div
             className={cn(
-              isCms ? "grid gap-2 sm:grid-cols-2 lg:grid-cols-4" : "flex flex-wrap gap-2",
+              isCms
+                ? "grid gap-2 sm:grid-cols-2 lg:grid-cols-4"
+                : "flex flex-wrap gap-2",
             )}
           >
             {fontOptions.map((option) => {
@@ -112,7 +122,9 @@ export function AccessibilityCard({
                 >
                   <span>{option.label}</span>
                   {isCms && (
-                    <span className={cn("text-xs opacity-75")}>{option.description}</span>
+                    <span className={cn("text-xs opacity-75")}>
+                      {option.description}
+                    </span>
                   )}
                 </Button>
               );

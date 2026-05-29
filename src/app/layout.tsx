@@ -7,12 +7,12 @@ import { ThemeProvider } from "@/components/shared/ThemeProvider"
 const outfit = Outfit({
   variable: "--font-sans",
   subsets: ["latin"],
-})
+});
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-})
+});
 
 export const metadata: Metadata = {
   title: "Nexora — Tecnologia que Conecta e Transforma",
@@ -25,7 +25,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode
+  children: React.ReactNode;
 }>) {
   return (
     <html lang="pt-BR" suppressHydrationWarning className={`${outfit.variable} ${jetbrainsMono.variable} h-full antialiased`}>
@@ -40,5 +40,5 @@ export default function RootLayout({
         </ThemeProvider>
       </body>
     </html>
-  )
+  );
 }

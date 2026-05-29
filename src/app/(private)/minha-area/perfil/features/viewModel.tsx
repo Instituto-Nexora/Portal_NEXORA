@@ -1,15 +1,27 @@
 "use client";
 
-import { startTransition, useActionState, useEffect, useMemo } from "react";
-import { useForm, type UseFormReturn, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { startTransition, useActionState, useEffect, useMemo } from "react";
+import {
+  type SubmitHandler,
+  type UseFormReturn,
+  useForm,
+} from "react-hook-form";
 import { useChangeFont } from "@/hooks/useChangeFont";
 import { useTheme } from "@/hooks/useTheme";
-import { getPasswordStrength, type PasswordStrength } from "@/utils/getPasswordStrength";
+import {
+  getPasswordStrength,
+  type PasswordStrength,
+} from "@/utils/getPasswordStrength";
 import { notifyStatus } from "@/utils/notifyStatus";
 import { alterarSenha, atualizarAvatar, atualizarPerfil } from "./actions";
+import type {
+  ActionState,
+  AlterarSenhaFormData,
+  PerfilFormData,
+  PerfilInitialData,
+} from "./model";
 import { alterarSenhaSchema, perfilSchema } from "./schema";
-import type { ActionState, AlterarSenhaFormData, PerfilFormData, PerfilInitialData } from "./model";
 
 export type PerfilViewModel = {
   formPerfil: UseFormReturn<PerfilFormData>;
@@ -31,11 +43,18 @@ export type PerfilViewModel = {
   setFontSize: ReturnType<typeof useChangeFont>["setFontSize"];
 };
 
-export function usePerfilViewModel({ initialData }: { initialData: PerfilInitialData }): PerfilViewModel {
+export function usePerfilViewModel({
+  initialData,
+}: {
+  initialData: PerfilInitialData;
+}): PerfilViewModel {
   const { theme, setTheme } = useTheme();
   const { fontSize, options: fontOptions, setFontSize } = useChangeFont();
 
-  const [statusPerfil, formActionPerfil, isPendingPerfil] = useActionState(atualizarPerfil, null);
+  const [statusPerfil, formActionPerfil, isPendingPerfil] = useActionState(
+    atualizarPerfil,
+    null,
+  );
   const formPerfil = useForm<PerfilFormData>({
     resolver: zodResolver(perfilSchema),
     defaultValues: { full_name: initialData.full_name || "" },
@@ -47,14 +66,20 @@ export function usePerfilViewModel({ initialData }: { initialData: PerfilInitial
     startTransition(() => formActionPerfil(formData));
   };
 
-  const [statusSenha, formActionSenha, isPendingSenha] = useActionState(alterarSenha, null);
+  const [statusSenha, formActionSenha, isPendingSenha] = useActionState(
+    alterarSenha,
+    null,
+  );
   const formSenha = useForm<AlterarSenhaFormData>({
     resolver: zodResolver(alterarSenhaSchema),
     defaultValues: { new_password: "", confirm_password: "" },
   });
 
   const watchedPassword = formSenha.watch("new_password");
-  const passwordStrength = useMemo(() => getPasswordStrength(watchedPassword ?? ""), [watchedPassword]);
+  const passwordStrength = useMemo(
+    () => getPasswordStrength(watchedPassword ?? ""),
+    [watchedPassword],
+  );
 
   const onSubmitSenha: SubmitHandler<AlterarSenhaFormData> = (data) => {
     const formData = new FormData();
@@ -63,7 +88,10 @@ export function usePerfilViewModel({ initialData }: { initialData: PerfilInitial
     startTransition(() => formActionSenha(formData));
   };
 
-  const [statusAvatar, avatarFormAction, isPendingAvatar] = useActionState(atualizarAvatar, null);
+  const [statusAvatar, avatarFormAction, isPendingAvatar] = useActionState(
+    atualizarAvatar,
+    null,
+  );
 
   useEffect(() => notifyStatus(statusPerfil), [statusPerfil]);
   useEffect(() => notifyStatus(statusAvatar), [statusAvatar]);

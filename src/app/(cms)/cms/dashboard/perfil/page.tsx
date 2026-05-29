@@ -12,24 +12,41 @@ export const metadata: Metadata = {
   title: "Meu perfil — NEXORA CMS",
 };
 
-const COOLDOWN_MS = 2 * 60 * 60 * 1000;
+const DAILY_CHANGE_LIMIT = 5;
+const DAILY_LIMIT_WINDOW_MS = 24 * 60 * 60 * 1000;
+const PROFILE_HISTORY_METADATA_KEY = "cms_profile_change_history";
+const AVATAR_HISTORY_METADATA_KEY = "cms_avatar_change_history";
+const PASSWORD_HISTORY_METADATA_KEY = "cms_password_change_history";
 
 type AuthMetadata = Record<string, unknown>;
 
-function getNextChangeAt(metadata: AuthMetadata, key: string) {
+function getRecentDailyChanges(metadata: AuthMetadata, key: string) {
   const value = metadata[key];
+  const now = Date.now();
 
-  if (typeof value !== "string") {
-    return null;
+  if (!Array.isArray(value)) {
+    return [];
   }
 
-  const nextChangeAt = new Date(value).getTime() + COOLDOWN_MS;
+  return value.filter((entry): entry is string => {
+    if (typeof entry !== "string") {
+      return false;
+    }
 
-  if (Number.isNaN(nextChangeAt) || nextChangeAt <= Date.now()) {
-    return null;
-  }
+    const timestamp = new Date(entry).getTime();
+    return (
+      !Number.isNaN(timestamp) &&
+      timestamp <= now &&
+      now - timestamp < DAILY_LIMIT_WINDOW_MS
+    );
+  });
+}
 
-  return new Date(nextChangeAt).toISOString();
+function getChangesRemaining(metadata: AuthMetadata, key: string) {
+  return Math.max(
+    DAILY_CHANGE_LIMIT - getRecentDailyChanges(metadata, key).length,
+    0,
+  );
 }
 
 function PerfilLoading() {
@@ -87,11 +104,18 @@ async function PerfilData() {
     avatarUrl:
       profile?.avatar_url ??
       (typeof metadata.avatar_url === "string" ? metadata.avatar_url : null),
-    nextProfileChangeAt: getNextChangeAt(
+    profileChangesRemaining: getChangesRemaining(
       metadata,
-      "cms_profile_last_changed_at",
+      PROFILE_HISTORY_METADATA_KEY,
     ),
-    nextAvatarChangeAt: getNextChangeAt(metadata, "cms_avatar_last_changed_at"),
+    avatarChangesRemaining: getChangesRemaining(
+      metadata,
+      AVATAR_HISTORY_METADATA_KEY,
+    ),
+    passwordChangesRemaining: getChangesRemaining(
+      metadata,
+      PASSWORD_HISTORY_METADATA_KEY,
+    ),
     theme: "system",
     fontSize: "md",
   };

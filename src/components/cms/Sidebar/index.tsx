@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import {
   SidebarContent,
@@ -19,7 +20,6 @@ import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { SidebarNav } from "./SidebarNav";
 import { SidebarUserMenu } from "./SidebarUserMenu";
-import Link from "next/link";
 
 type Props = {
   user: SessionUser;

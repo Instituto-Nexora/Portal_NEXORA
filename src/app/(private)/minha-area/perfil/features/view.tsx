@@ -3,12 +3,19 @@
 import { Camera, KeyRound, UserCircle } from "lucide-react";
 import { AccessibilityCard } from "@/components/shared/AccessibilityCard";
 import { AvatarDropzone } from "@/components/shared/AvatarDropzone";
+import { PasswordStrengthMeter } from "@/components/shared/PasswordStrengthMeter";
+import { ProfileActionStatus } from "@/components/shared/ProfileActionStatus";
+import { ProfileIdentitySummary } from "@/components/shared/ProfileIdentitySummary";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Progress } from "@/components/ui/progress";
-import { cn } from "@/lib/utils";
 import { getInitials } from "@/utils/getInitials";
 import type { PerfilInitialData } from "./model";
 import { usePerfilViewModel } from "./viewModel";
@@ -66,32 +73,52 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                 <UserCircle className="h-5 w-5 text-teal-600" />
                 Dados pessoais
               </CardTitle>
-              <CardDescription>Visualize e atualize suas informações.</CardDescription>
+              <CardDescription>
+                Visualize e atualize suas informações.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={formPerfil.handleSubmit(onSubmitPerfil)} className="flex flex-col gap-5">
+              <form
+                onSubmit={formPerfil.handleSubmit(onSubmitPerfil)}
+                className="flex flex-col gap-5"
+              >
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="full_name">Nome completo</Label>
-                  <Input id="full_name" disabled={isLoadingPerfil} {...formPerfil.register("full_name")} />
+                  <Input
+                    id="full_name"
+                    disabled={isLoadingPerfil}
+                    {...formPerfil.register("full_name")}
+                  />
                   {formPerfil.formState.errors.full_name && (
-                    <p className="text-sm text-destructive">{formPerfil.formState.errors.full_name.message}</p>
+                    <p className="text-sm text-destructive">
+                      {formPerfil.formState.errors.full_name.message}
+                    </p>
                   )}
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="email">E-mail</Label>
-                  <Input id="email" type="email" value={initialData.email || ""} readOnly disabled className="bg-slate-50" />
-                  <p className="text-xs text-slate-400">O e-mail não pode ser alterado.</p>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={initialData.email || ""}
+                    readOnly
+                    disabled
+                    className="bg-slate-50"
+                  />
+                  <p className="text-xs text-slate-400">
+                    O e-mail não pode ser alterado.
+                  </p>
                 </div>
 
-                {statusPerfil?.formId === "perfil" && (
-                  <div className={cn("p-3 rounded-md text-center", statusPerfil.success ? "bg-teal-50 text-teal-800" : "bg-red-50 text-red-800")}>
-                    <p className="text-sm font-medium">{statusPerfil.message}</p>
-                  </div>
-                )}
+                <ProfileActionStatus status={statusPerfil} />
 
                 <div className="pt-2 flex justify-end">
-                  <Button type="submit" disabled={isLoadingPerfil} className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto">
+                  <Button
+                    type="submit"
+                    disabled={isLoadingPerfil}
+                    className="bg-teal-600 hover:bg-teal-700 w-full sm:w-auto"
+                  >
                     {isLoadingPerfil ? "Salvando..." : "Salvar Alterações"}
                   </Button>
                 </div>
@@ -105,46 +132,54 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                 <KeyRound className="h-5 w-5 text-amber-500" />
                 Segurança
               </CardTitle>
-              <CardDescription>Para sua segurança, escolha uma senha forte.</CardDescription>
+              <CardDescription>
+                Para sua segurança, escolha uma senha forte.
+              </CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={formSenha.handleSubmit(onSubmitSenha)} className="flex flex-col gap-5">
+              <form
+                onSubmit={formSenha.handleSubmit(onSubmitSenha)}
+                className="flex flex-col gap-5"
+              >
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="new_password">Nova Senha</Label>
-                  <Input id="new_password" type="password" disabled={isLoadingSenha} {...formSenha.register("new_password")} />
+                  <Input
+                    id="new_password"
+                    type="password"
+                    disabled={isLoadingSenha}
+                    {...formSenha.register("new_password")}
+                  />
                   {formSenha.formState.errors.new_password && (
-                    <p className="text-sm text-destructive">{formSenha.formState.errors.new_password.message}</p>
+                    <p className="text-sm text-destructive">
+                      {formSenha.formState.errors.new_password.message}
+                    </p>
                   )}
-                  <div className="mt-2 space-y-1.5">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-slate-500">Força da senha</span>
-                      <span className={cn("font-medium", passwordStrength.textColor)}>
-                        {passwordStrength.label}
-                      </span>
-                    </div>
-                    <Progress
-                      value={passwordStrength.score}
-                      className={cn("h-1.5 bg-slate-100", passwordStrength.barColor && `[&>div]:${passwordStrength.barColor}`)}
-                    />
-                  </div>
+                  <PasswordStrengthMeter passwordStrength={passwordStrength} />
                 </div>
 
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="confirm_password">Confirmar Nova Senha</Label>
-                  <Input id="confirm_password" type="password" disabled={isLoadingSenha} {...formSenha.register("confirm_password")} />
+                  <Input
+                    id="confirm_password"
+                    type="password"
+                    disabled={isLoadingSenha}
+                    {...formSenha.register("confirm_password")}
+                  />
                   {formSenha.formState.errors.confirm_password && (
-                    <p className="text-sm text-destructive">{formSenha.formState.errors.confirm_password.message}</p>
+                    <p className="text-sm text-destructive">
+                      {formSenha.formState.errors.confirm_password.message}
+                    </p>
                   )}
                 </div>
 
-                {statusSenha?.formId === "senha" && (
-                  <div className={cn("p-3 rounded-md text-center", statusSenha.success ? "bg-teal-50 text-teal-800" : "bg-red-50 text-red-800")}>
-                    <p className="text-sm font-medium">{statusSenha.message}</p>
-                  </div>
-                )}
+                <ProfileActionStatus status={statusSenha} />
 
                 <div className="pt-2 flex justify-end">
-                  <Button type="submit" disabled={isLoadingSenha} className="bg-amber-500 hover:bg-amber-600 text-teal-950 font-bold w-full sm:w-auto">
+                  <Button
+                    type="submit"
+                    disabled={isLoadingSenha}
+                    className="bg-amber-500 hover:bg-amber-600 text-teal-950 font-bold w-full sm:w-auto"
+                  >
                     {isLoadingSenha ? "Alterando..." : "Alterar Senha"}
                   </Button>
                 </div>
@@ -171,18 +206,18 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
                   fallbackClassName="bg-teal-600 text-white"
                 />
 
-                <div className="space-y-1 text-center">
-                  <p className="text-sm font-medium">{initialData.full_name}</p>
-                  <p className="text-xs text-muted-foreground">{initialData.email}</p>
-                </div>
+                <ProfileIdentitySummary
+                  fullName={initialData.full_name}
+                  email={initialData.email}
+                />
 
-                {statusAvatar?.formId === "avatar" && (
-                  <div className={cn("p-3 rounded-md text-center", statusAvatar.success ? "bg-teal-50 text-teal-800" : "bg-red-50 text-red-800")}>
-                    <p className="text-sm font-medium">{statusAvatar.message}</p>
-                  </div>
-                )}
+                <ProfileActionStatus status={statusAvatar} />
 
-                <Button type="submit" disabled={isPendingAvatar} className="w-full bg-teal-600 hover:bg-teal-700">
+                <Button
+                  type="submit"
+                  disabled={isPendingAvatar}
+                  className="w-full bg-teal-600 hover:bg-teal-700"
+                >
                   <Camera className="mr-2 h-4 w-4" />
                   {isPendingAvatar ? "Enviando..." : "Atualizar foto"}
                 </Button>

@@ -24,11 +24,11 @@ agents:
   - paulo-performance
   - leo-engenheiro
 pipeline:
-  default: feature-development
-  file: pipeline/pipeline.yaml
+  default: quick-fix
+  file: pipeline/quick-fix.yaml
 project_context:
   company: docs/_memory/company.md
   docs_business: docs/business/
   docs_tech: docs/tech/
   docs_context: docs/tech-context/
-  session: docs/.squads/sessions/melhoria-perfil-cms-aluno
+  session: docs/.squads/sessions/issue-92-admin-cms-conta-cooldown

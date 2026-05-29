@@ -10,7 +10,10 @@ import {
 } from "react-hook-form";
 import { useChangeFont } from "@/hooks/useChangeFont";
 import { useTheme } from "@/hooks/useTheme";
-import { getPasswordStrength, type PasswordStrength } from "@/utils/getPasswordStrength";
+import {
+  getPasswordStrength,
+  type PasswordStrength,
+} from "@/utils/getPasswordStrength";
 import { notifyStatus } from "@/utils/notifyStatus";
 import { alterarSenha, atualizarAvatar, atualizarPerfil } from "./actions";
 import type { PerfilActionState, PerfilInitialData } from "./model";
@@ -23,6 +26,13 @@ import {
 
 type UsePerfilViewModelParams = {
   initialData: PerfilInitialData;
+};
+
+type DailyLimitDialog = {
+  open: boolean;
+  message: string;
+  resetAt: string | null;
+  onOpenChange: (open: boolean) => void;
 };
 
 type PerfilViewModel = {
@@ -43,6 +53,7 @@ type PerfilViewModel = {
   fontSize: ReturnType<typeof useChangeFont>["fontSize"];
   fontOptions: ReturnType<typeof useChangeFont>["options"];
   setFontSize: ReturnType<typeof useChangeFont>["setFontSize"];
+  dailyLimitDialog: DailyLimitDialog;
 };
 
 function usePerfilViewModel({
@@ -62,6 +73,8 @@ function usePerfilViewModel({
   );
   const { theme, setTheme } = useTheme();
   const { fontSize, options: fontOptions, setFontSize } = useChangeFont();
+  const [isDailyLimitDialogOpen, setDailyLimitDialogOpen] =
+    React.useState(false);
 
   const formPerfil = useForm<PerfilFormData>({
     resolver: zodResolver(perfilSchema),
@@ -109,6 +122,20 @@ function usePerfilViewModel({
     }
   }, [formSenha, statusSenha]);
 
+  const dailyLimitStatus = React.useMemo(
+    () =>
+      [statusPerfil, statusAvatar, statusSenha].find(
+        (status) => status?.code === "daily_limit_reached",
+      ) ?? null,
+    [statusPerfil, statusAvatar, statusSenha],
+  );
+
+  React.useEffect(() => {
+    if (dailyLimitStatus) {
+      setDailyLimitDialogOpen(true);
+    }
+  }, [dailyLimitStatus]);
+
   return {
     formPerfil,
     onSubmitPerfil,
@@ -127,6 +154,13 @@ function usePerfilViewModel({
     fontSize,
     fontOptions,
     setFontSize,
+    dailyLimitDialog: {
+      open: isDailyLimitDialogOpen && Boolean(dailyLimitStatus),
+      message:
+        dailyLimitStatus?.message ?? "Limite diário de alterações alcançado.",
+      resetAt: dailyLimitStatus?.resetAt ?? null,
+      onOpenChange: setDailyLimitDialogOpen,
+    },
   };
 }
 

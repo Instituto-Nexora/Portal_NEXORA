@@ -1,5 +1,5 @@
-import { RegisterView } from './_features/register/view'
+import { RegisterView } from "./_features/register/view";
 
 export default function RegisterPage() {
-  return <RegisterView />
+  return <RegisterView />;
 }

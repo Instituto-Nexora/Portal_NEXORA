@@ -1,5 +1,6 @@
+import Link from "next/link";
+import { Separator } from "@/components/ui/separator";
 import {
-  Sidebar as SidebarRoot,
   SidebarContent,
   SidebarFooter,
   SidebarHeader,
@@ -7,6 +8,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarRail,
+  Sidebar as SidebarRoot,
   SidebarSeparator,
 } from "@/components/ui/sidebar";
 import {
@@ -16,8 +18,6 @@ import {
 } from "@/components/ui/tooltip";
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
-import Link from "next/link";
-import { Separator } from "@/components/ui/separator";
 import { PrivateSidebarNav } from "./PrivateSidebarNav";
 import { PrivateSidebarUserMenu } from "./PrivateSidebarUserMenu";
 
@@ -34,12 +34,23 @@ export function PrivateSidebar({ user, className }: Props) {
           <SidebarMenuItem>
             <Tooltip>
               <TooltipTrigger render={<span className={cn("block")} />}>
-                <SidebarMenuButton asChild className={cn("h-10 font-bold tracking-widest")}>
+                <SidebarMenuButton
+                  asChild
+                  className={cn("h-10 font-bold tracking-widest")}
+                >
                   <Link href="/minha-area" aria-label="Ir para minha área">
-                    <span className={cn("flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-black text-primary-foreground")}>
+                    <span
+                      className={cn(
+                        "flex size-7 shrink-0 items-center justify-center rounded-lg bg-primary text-xs font-black text-primary-foreground",
+                      )}
+                    >
                       N
                     </span>
-                    <span className={cn("truncate group-data-[state=collapsed]/sidebar:hidden")}>
+                    <span
+                      className={cn(
+                        "truncate group-data-[state=collapsed]/sidebar:hidden",
+                      )}
+                    >
                       NEXORA TI
                     </span>
                   </Link>

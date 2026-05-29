@@ -1,12 +1,16 @@
 "use client";
 
-import { useActionState, startTransition } from "react";
-import { useForm, type UseFormReturn, type SubmitHandler } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema } from "./schema";
+import { startTransition, useActionState } from "react";
+import {
+  type SubmitHandler,
+  type UseFormReturn,
+  useForm,
+} from "react-hook-form";
+import type { ActionState } from "@/lib/supabase/types";
 import { login } from "./actions";
 import type { LoginFormData } from "./model";
-import type { ActionState } from "@/lib/supabase/types";
+import { loginSchema } from "./schema";
 
 export type LoginViewModel = {
   form: UseFormReturn<LoginFormData>;
@@ -30,7 +34,7 @@ export function useLoginViewModel(): LoginViewModel {
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
-    
+
     // Aciona a Server Action envelopada em uma transition para capturar isPending corretamente
     startTransition(() => formAction(formData));
   };
