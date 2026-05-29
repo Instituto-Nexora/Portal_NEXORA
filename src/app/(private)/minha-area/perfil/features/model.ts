@@ -9,5 +9,4 @@ export type ActionState = BaseActionState & {
   formId: "perfil" | "senha" | "avatar";
 };
 
-// Tipo para os dados iniciais do perfil, vindo do Server Component
 export type PerfilInitialData = StudentProfile & { avatar_url?: string | null };

@@ -22,7 +22,6 @@ export default async function PerfilPage() {
   if (error || !profile) redirect("/login");
 
   return (
-    // O layout da "minha-area" já provê o padding e o título principal
     <PerfilView initialData={profile} />
   );
 }

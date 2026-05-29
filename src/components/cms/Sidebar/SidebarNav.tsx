@@ -7,6 +7,7 @@ import {
   LayoutDashboard,
   ShieldCheck,
   UserCircle,
+  TicketIcon,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -52,6 +53,12 @@ const NAV_ITEMS = [
     href: "/cms/dashboard/perfil",
     icon: UserCircle,
     exact: false,
+  },
+  { 
+    label: "Tickets", 
+    href: "/cms/dashboard/tickets", 
+    icon: TicketIcon, 
+    exact: false 
   },
 ];
 

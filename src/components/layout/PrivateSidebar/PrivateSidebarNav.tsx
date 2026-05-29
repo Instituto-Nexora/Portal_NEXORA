@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, TicketIcon, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Minha Área", href: "/minha-area", icon: LayoutDashboard, exact: true },
+  { label: "Meu Perfil", href: "/minha-area/perfil", icon: UserCircle, exact: false },
+  { label: "Meus Tickets", href: "/minha-area/tickets", icon: TicketIcon, exact: false },
 ];
 
 export function PrivateSidebarNav() {
