@@ -27,11 +27,11 @@ const useTicketChatViewModel = ({ ticket, initialMessages, currentUser }: Props)
     if (unreadFromAdmin) {
       marcarMensagensComoLidasAction(ticket.id);
     }
+
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [ticket.id, initialMessages]);
 
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [initialMessages]);
+
 
   const onSubmit = (values: NovaMensagemFormValues) => {
     startTransition(async () => {

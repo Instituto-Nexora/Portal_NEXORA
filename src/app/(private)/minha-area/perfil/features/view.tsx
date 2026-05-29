@@ -49,7 +49,7 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl text-teal-900">
             Meu perfil
           </h1>
-          <p className="max-w-2xl text-sm text-muted-foreground">
+          <p className=" text-sm text-muted-foreground">
             Gerencie dados pessoais e a segurança da conta.
           </p>
         </div>

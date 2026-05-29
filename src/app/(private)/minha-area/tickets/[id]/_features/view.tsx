@@ -1,12 +1,12 @@
 "use client";
 
-import Link from "next/link";
-import { ArrowLeft, Send, Loader2, Clock, CheckCircle2 } from "lucide-react";
+import { CheckCircle2, Clock, Loader2, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Textarea } from "@/components/ui/textarea";
+import type { Ticket, TicketMessage, TicketStatus } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { formatDate, formatTime } from "@/utils/formatDate";
 import useTicketChatViewModel from "./viewModel";
-import type { Ticket, TicketMessage, TicketStatus } from "@/lib/supabase/types";
 
 type Props = {
   ticket: Ticket;
@@ -14,99 +14,175 @@ type Props = {
   currentUser: string;
 };
 
-const statusMap: Record<TicketStatus, { label: string; color: string }> = {
-  aberto: { label: "Aberto", color: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400" },
-  em_progresso: { label: "Em Progresso", color: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400" },
-  finalizado: { label: "Finalizado", color: "bg-muted text-muted-foreground border-border" },
+const statusConfig: Record<TicketStatus, { label: string; color: string }> = {
+  aberto: {
+    label: "Aberto",
+    color:
+      "bg-amber-500/15 text-amber-600 dark:text-amber-400 border-amber-500/20",
+  },
+  em_progresso: {
+    label: "Em Progresso",
+    color: "bg-blue-500/15 text-blue-600 dark:text-blue-400 border-blue-500/20",
+  },
+  finalizado: {
+    label: "Finalizado",
+    color: "bg-muted text-muted-foreground border-border",
+  },
 };
 
-export default function TicketChatView({ ticket, initialMessages, currentUser }: Props) {
-  const { form, isPending, onSubmit, isFinished, messagesEndRef } = useTicketChatViewModel({ ticket, initialMessages, currentUser });
-  const { register, formState: { errors } } = form;
+export default function TicketChatView({
+  ticket,
+  initialMessages,
+  currentUser: _currentUser,
+}: Props) {
+  const { form, isPending, onSubmit, isFinished, messagesEndRef } =
+    useTicketChatViewModel({
+      ticket,
+      initialMessages,
+      currentUser: _currentUser,
+    });
+  const {
+    register,
+    formState: { errors },
+  } = form;
+
+  const cfg = statusConfig[ticket.status];
 
   return (
-    <div className="p-4 sm:p-6 md:p-10 max-w-4xl mx-auto flex flex-col h-[calc(100vh-80px)] sm:h-[calc(100vh-120px)]">
-      {/* Cabeçalho do Ticket */}
-      <div className="flex items-center justify-between gap-4 pb-4 border-b shrink-0">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="shrink-0 text-foreground">
-            <Link href="/minha-area/tickets" aria-label="Voltar para a lista de tickets">
-              <ArrowLeft className="w-5 h-5" aria-hidden="true" />
-            </Link>
-          </Button>
-          <div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-xl sm:text-2xl font-bold text-foreground capitalize">{ticket.topico}</h1>
-              <span className={cn("text-xs font-semibold px-2.5 py-0.5 rounded-full border", statusMap[ticket.status].color)}>
-                {statusMap[ticket.status].label}
-              </span>
-            </div>
-            <p className="text-xs text-muted-foreground mt-1">
-              Aberto em {formatDate(ticket.created_at)}
-            </p>
+    <div className="flex flex-col h-full overflow-hidden">
+      {/* Header */}
+      <div className="shrink-0 px-6 py-4 border-b bg-background/80 backdrop-blur-sm flex items-center gap-3">
+        <div className="min-w-0">
+          <div className="flex items-center gap-2.5 flex-wrap">
+            <h1 className="text-lg font-semibold text-foreground capitalize truncate">
+              {ticket.topico}
+            </h1>
+            <span
+              className={cn(
+                "text-xs font-medium px-2.5 py-0.5 rounded-full border shrink-0",
+                cfg.color,
+              )}
+            >
+              {cfg.label}
+            </span>
           </div>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Aberto em {formatDate(ticket.created_at)}
+          </p>
         </div>
       </div>
 
-      {/* Área de Histórico (Scroll) */}
-      <div className="flex-1 overflow-y-auto py-6 space-y-6 nexora-scrollbar pr-2">
-        {initialMessages.length === 0 ? (
-          <div className="text-center text-muted-foreground py-10">Nenhuma mensagem encontrada.</div>
-        ) : (
-          initialMessages.map((msg) => {
-            const isMe = msg.autor_role === "student";
-            return (
-              <div key={msg.id} className={cn("flex w-full", isMe ? "justify-end" : "justify-start")}>
-                <div className={cn(
-                  "max-w-[85%] sm:max-w-[75%] rounded-2xl p-4 flex flex-col gap-1 shadow-sm",
-                  isMe ? "bg-primary text-primary-foreground rounded-tr-sm" : "bg-card border border-border text-card-foreground rounded-tl-sm"
-                )}>
-                  <div className="flex items-center justify-between gap-4 mb-1">
-                    <span className={cn("text-xs font-bold", isMe ? "text-primary-foreground/90" : "text-foreground")}>
-                      {isMe ? "Você" : "Suporte Nexora"}
-                    </span>
-                    <span className={cn("text-[10px] flex items-center gap-1", isMe ? "text-primary-foreground/70" : "text-muted-foreground")}>
-                      <Clock className="w-3 h-3" aria-hidden="true" />
-                      {formatDate(msg.created_at)} às {formatTime(msg.created_at)}
-                    </span>
+      {/* Messages */}
+      <div className="flex-1 min-h-0 overflow-y-auto nexora-scrollbar px-4 sm:px-6 py-6">
+        <div className="mx-auto space-y-5">
+          {initialMessages.length === 0 ? (
+            <p className="text-center text-muted-foreground text-sm py-10">
+              Nenhuma mensagem encontrada.
+            </p>
+          ) : (
+            initialMessages.map((msg) => {
+              const isMe = msg.autor_role === "student";
+              return (
+                <div
+                  key={msg.id}
+                  className={cn(
+                    "flex w-full",
+                    isMe ? "justify-end" : "justify-start",
+                  )}
+                >
+                  <div
+                    className={cn(
+                      "max-w-[80%] sm:max-w-[70%] rounded-2xl px-4 py-3 shadow-sm",
+                      isMe
+                        ? "bg-primary text-primary-foreground rounded-tr-sm"
+                        : "bg-card border border-border text-card-foreground rounded-tl-sm",
+                    )}
+                  >
+                    <div className="flex items-center gap-3 mb-1.5">
+                      <span
+                        className={cn(
+                          "text-xs font-bold",
+                          isMe
+                            ? "text-primary-foreground/80"
+                            : "text-foreground",
+                        )}
+                      >
+                        {isMe ? "Você" : "Suporte Nexora"}
+                      </span>
+                      <span
+                        className={cn(
+                          "text-[10px] flex items-center gap-1 ml-auto",
+                          isMe
+                            ? "text-primary-foreground/60"
+                            : "text-muted-foreground",
+                        )}
+                      >
+                        <Clock className="w-3 h-3" />
+                        {formatDate(msg.created_at)} às{" "}
+                        {formatTime(msg.created_at)}
+                      </span>
+                    </div>
+                    <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">
+                      {msg.mensagem}
+                    </p>
                   </div>
-                  <p className="text-sm whitespace-pre-wrap break-words leading-relaxed">{msg.mensagem}</p>
                 </div>
-              </div>
-            );
-          })
-        )}
-        <div ref={messagesEndRef} />
+              );
+            })
+          )}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
-      {/* Caixa de Texto / Footer */}
-      <div className="shrink-0 pt-4 border-t bg-muted/40 sm:bg-transparent">
-        {isFinished ? (
-          <div className="bg-muted border rounded-lg p-4 flex items-center justify-center gap-2 text-muted-foreground">
-            <CheckCircle2 className="w-5 h-5 text-muted-foreground" aria-hidden="true" />
-            <p className="text-sm font-medium">Este ticket foi finalizado e não aceita novas mensagens.</p>
-          </div>
-        ) : (
-          <form onSubmit={onSubmit} className="flex gap-2 items-end">
-            <div className="flex-1 space-y-1">
-              {errors.root && <p className="text-xs text-destructive font-medium mb-1 px-1">{errors.root.message}</p>}
-              <textarea
-                rows={2}
-                placeholder="Digite sua mensagem..."
-                className={cn(
-                  "flex w-full rounded-md border bg-background px-3 py-2 text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 resize-none min-h-[60px] transition-colors",
-                  errors.mensagem ? "border-destructive focus-visible:ring-destructive" : "border-input"
-                )}
-                {...register("mensagem")}
-                disabled={isPending}
-                onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); onSubmit(); } }}
-              />
+      {/* Input */}
+      <div className="shrink-0 border-t bg-background/80 backdrop-blur-sm px-4 sm:px-6 py-4">
+        <div className="max-w-3xl mx-auto">
+          {isFinished ? (
+            <div className="bg-muted border rounded-xl px-4 py-3 flex items-center justify-center gap-2 text-muted-foreground">
+              <CheckCircle2 className="w-4 h-4 shrink-0" />
+              <p className="text-sm font-medium">
+                Este ticket foi finalizado e não aceita novas mensagens.
+              </p>
             </div>
-            <Button type="submit" size="icon" className="h-[60px] w-[60px] shrink-0 bg-accent hover:bg-accent/90 text-accent-foreground transition-colors rounded-md" disabled={isPending} aria-label="Enviar mensagem">
-              {isPending ? <Loader2 className="h-5 w-5 animate-spin" aria-hidden="true" /> : <Send className="h-5 w-5" aria-hidden="true" />}
-            </Button>
-          </form>
-        )}
+          ) : (
+            <form onSubmit={onSubmit} className="flex gap-2 items-end">
+              <div className="flex-1 space-y-1">
+                {errors.root && (
+                  <p className="text-xs text-destructive font-medium mb-1">
+                    {errors.root.message}
+                  </p>
+                )}
+                <Textarea
+                  rows={2}
+                  placeholder="Digite sua mensagem... (Enter para enviar, Shift+Enter para nova linha)"
+                  className="resize-none min-h-14 max-h-40 rounded-xl"
+                  {...register("mensagem")}
+                  disabled={isPending}
+                  aria-invalid={!!errors.mensagem}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && !e.shiftKey) {
+                      e.preventDefault();
+                      onSubmit();
+                    }
+                  }}
+                />
+              </div>
+              <Button
+                type="submit"
+                size="icon"
+                className="size-14 shrink-0 rounded-xl bg-primary hover:bg-primary/90 text-primary-foreground"
+                disabled={isPending}
+                aria-label="Enviar mensagem"
+              >
+                {isPending ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
+              </Button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

@@ -32,6 +32,7 @@
 - **Tailwind v4**: sem `tailwind.config.js` — configuração via CSS em `globals.css`
 - **Next.js 16** tem breaking changes — ler `node_modules/next/dist/docs/` antes de escrever código
 - **Supabase Service Role Key** nunca vai ao cliente — apenas server-side
+- **Shadcn/UI é obrigatório** quando o componente existir — HTML nativo (`<button>`, `<input>`, `<select>`, `<textarea>`, `<label>`, `<dialog>`) só se não houver equivalente em `src/components/ui/` (ADR-009)
 
 ---
 

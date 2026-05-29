@@ -15,7 +15,7 @@ export async function UnreadTicketsBadge() {
   if (!count || count === 0) return null;
 
   return (
-    <span className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground shadow-sm" aria-label={`${count} mensagens não lidas`}>
+    <span className="ml-auto flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground shadow-sm" >
       {count > 99 ? "99+" : count}
     </span>
   );

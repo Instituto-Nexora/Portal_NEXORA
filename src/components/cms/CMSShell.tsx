@@ -24,7 +24,7 @@ export function CMSShell({ user, children }: Props) {
             ])}
           >
             <main
-              className={cn(["mx-auto min-w-0 w-full max-w-7xl p-4 sm:p-6"])}
+              className={cn(["mx-auto min-w-0 w-full  p-4 sm:p-6"])}
             >
               {children}
             </main>

@@ -34,6 +34,8 @@ export async function createTicketAction(formData: FormData) {
     .select()
     .single();
 
+  console.log(ticketError)
+
   if (ticketError || !ticket) {
     return { success: false, message: "Houve um problema ao abrir o ticket. Tente novamente mais tarde." };
   }
