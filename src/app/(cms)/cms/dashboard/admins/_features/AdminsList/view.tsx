@@ -12,12 +12,14 @@ const ROLE_LABEL: Record<AdminRole, string> = {
   admin: "Admin",
   content_creator: "Content Creator",
   professor: "Professor",
+  aluno: "Aluno",
 };
 
 const ROLE_VARIANT: Record<AdminRole, "default" | "secondary" | "outline"> = {
   admin: "default",
   content_creator: "secondary",
   professor: "outline",
+  aluno: "default",
 };
 
 function formatDate(iso: string) {

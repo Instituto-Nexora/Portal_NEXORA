@@ -8,6 +8,7 @@ import {
   MoreHorizontal,
   Settings,
   Sun,
+  TicketIcon,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
@@ -183,6 +184,15 @@ export function SidebarUserMenu({ user }: Props) {
           >
             <UserCircle className={cn(["size-4"])} />
             Meu perfil
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem closeOnClick={false}>
+          <Link
+            href="/cms/dashboard/tickets"
+            className={cn(["flex w-full items-center gap-2"])}
+          >
+            <TicketIcon className={cn(["size-4"])} />
+            Tickets
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>

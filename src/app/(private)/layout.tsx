@@ -45,7 +45,7 @@ export default async function PrivateLayout({
               "nexora-scrollbar min-h-0 flex-1 overflow-y-auto overflow-x-hidden bg-muted/40",
             )}
           >
-            <main className={cn("mx-auto min-w-0 w-full max-w-7xl p-4 sm:p-6")}>
+            <main className={cn("mx-auto min-w-0 w-full p-4 sm:p-6")}>
               {children}
             </main>
           </div>

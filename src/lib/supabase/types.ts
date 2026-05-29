@@ -1,4 +1,4 @@
-type AdminRole = "admin" | "content_creator" | "professor";
+type AdminRole = "admin" | "content_creator" | "professor" | "aluno";
 
 type AdminProfile = {
   id: string;
@@ -9,18 +9,15 @@ type AdminProfile = {
   created_at: string;
 };
 
-type StudentProfile = {
-  id: string;
-  full_name: string;
+type StudentProfile = AdminProfile & {
   email: string;
-  avatar_url: string | null;
-  created_at: string;
-};
+  role: "aluno"
+}
 
 type SessionUser = {
   id: string;
   email: string;
-  profile: AdminProfile | null;
+  profile: AdminProfile | StudentProfile | null;
 };
 
 type ActionState =
@@ -51,6 +48,28 @@ type Event = {
   updated_at: string;
 };
 
+type TicketTopic = "aula" | "cadastro" | "curso" | "eventos" | "reclamacao";
+type TicketStatus = "aberto" | "em_progresso" | "finalizado";
+
+type Ticket = {
+  id: string;
+  aluno_id: string;
+  topico: TicketTopic;
+  status: TicketStatus;
+  created_at: string;
+  updated_at: string;
+};
+
+type TicketMessage = {
+  id: string;
+  ticket_id: string;
+  autor_id: string;
+  autor_role: "student" | AdminRole;
+  mensagem: string;
+  created_at: string;
+  lida: boolean;
+};
+
 export type {
   AdminRole,
   AdminProfile,
@@ -60,4 +79,8 @@ export type {
   EventType,
   EventStatus,
   Event,
+  TicketTopic,
+  TicketStatus,
+  Ticket,
+  TicketMessage,
 };

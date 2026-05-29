@@ -104,8 +104,8 @@ export async function Header() {
                   <LayoutDashboard className="size-4" />
                   Minha Área
                 </Link>
-                <Link
-                  href="/perfil"
+                <Link 
+                  href="/minha-area/perfil" 
                   className="px-4 py-2.5 text-sm font-medium text-gray-700 hover:bg-teal-50 hover:text-teal-900 flex items-center gap-2 transition-colors"
                 >
                   <User className="size-4" />
@@ -207,7 +207,7 @@ export async function Header() {
                       className={cn("w-full text-left")}
                       render={
                         <Link
-                          href="/perfil"
+                          href="/minha-area/perfil"
                           className={cn(
                             "flex items-center gap-3 px-3 py-2.5 rounded text-sm font-medium text-amber-500 hover:text-amber-400 hover:bg-white/10 transition-colors",
                           )}
