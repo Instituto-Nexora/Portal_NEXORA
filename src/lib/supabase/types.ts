@@ -70,6 +70,30 @@ type TicketMessage = {
   lida: boolean;
 };
 
+type LessonStatus = "published" | "draft";
+
+type Lesson = {
+  id: string;
+  course_id: string;
+  title: string;
+  order: number;
+  status: LessonStatus;
+  created_at: string;
+};
+
+type LessonProgress = {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  completed_at: string;
+};
+
+type ProgressResult = {
+  concluidas: number;
+  total: number;
+  percentual: number;
+};
+
 export type {
   AdminRole,
   AdminProfile,
@@ -83,4 +107,8 @@ export type {
   TicketStatus,
   Ticket,
   TicketMessage,
+  LessonStatus,
+  Lesson,
+  LessonProgress,
+  ProgressResult,
 };

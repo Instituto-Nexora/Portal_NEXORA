@@ -41,7 +41,7 @@ export default async function MinhaAreaPage() {
   if (error) {
     console.error("[minha-area] enrollments query error:", error.message)
     return (
-      <main className={cn("max-w-5xl mx-auto px-6 py-12")}>
+      <main className={cn("min-h-screen bg-background max-w-5xl mx-auto px-6 py-12")}>
         <p className={cn("text-sm text-destructive")}>
           Não foi possível carregar os seus cursos. Tente novamente mais tarde.
         </p>
@@ -73,7 +73,7 @@ export default async function MinhaAreaPage() {
   )
 
   return (
-    <main className={cn("max-w-5xl mx-auto px-6 py-12")}>
+    <main className={cn("min-h-screen bg-background max-w-5xl mx-auto px-6 py-12")}>
       <div className={cn("mb-10")}>
         <h1 className={cn("text-3xl font-bold text-slate-900 mb-1")}>
           Minha Área

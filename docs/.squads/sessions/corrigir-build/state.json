@@ -8,10 +8,10 @@
       "pipeline": "feature-development",
       "started_at": "2026-05-29T00:00:00-03:00",
       "completed_at": null,
-      "status": "running",
+      "status": "discarded",
       "completed_steps": [],
       "current_step": null,
-      "suspended_at": "01-gate-integridade"
+      "suspended_at": null
     }
   }
 }
