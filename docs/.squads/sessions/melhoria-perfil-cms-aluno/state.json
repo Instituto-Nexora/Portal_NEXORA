@@ -1,17 +1,22 @@
 {
   "feature": "melhoria-perfil-cms-aluno",
   "created_at": "2026-05-19T00:00:00-03:00",
-  "updated_at": "2026-05-19T00:02:00-03:00",
+  "updated_at": "2026-05-24T19:11:03.205681+00:00",
   "squads": {
     "frontend-001": {
       "domain": "frontend",
       "pipeline": "quick-fix",
       "started_at": "2026-05-19T00:00:00-03:00",
-      "completed_at": null,
-      "status": "running",
-      "completed_steps": ["01-gate-integridade", "qf-02-contexto"],
-      "current_step": "qf-03-executar",
-      "suspended_at": "qf-03-executar"
+      "completed_at": "2026-05-24T19:11:03.205681+00:00",
+      "status": "completed",
+      "completed_steps": [
+        "01-gate-integridade",
+        "qf-02-contexto",
+        "qf-03-executar",
+        "qf-04-registrar"
+      ],
+      "current_step": null,
+      "suspended_at": null
     }
   }
 }

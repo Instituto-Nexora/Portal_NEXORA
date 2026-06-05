@@ -39,7 +39,12 @@ export function DeleteEventoDialog({ eventoId, eventoTitle }: Props) {
     <Dialog>
       <DialogTrigger
         render={
-          <Button type="button" variant="destructive" size="sm" className={cn("shrink-0")} />
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            className={cn("shrink-0")}
+          />
         }
       >
         Excluir evento

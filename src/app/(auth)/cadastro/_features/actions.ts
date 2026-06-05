@@ -1,20 +1,23 @@
-'use server';
+"use server";
 
-import { redirect } from 'next/navigation';
-import { cadastroSchema } from './schema';
-import { createClient } from '@/lib/supabase/server';
-import { ActionState } from '@/lib/supabase/types';
+import { redirect } from "next/navigation";
+import { createClient } from "@/lib/supabase/server";
+import type { ActionState } from "@/lib/supabase/types";
+import { cadastroSchema } from "./schema";
 
-export async function cadastrar(_prev: ActionState, formData: FormData): Promise<ActionState> {
+export async function cadastrar(
+  _prev: ActionState,
+  formData: FormData,
+): Promise<ActionState> {
   const supabase = await createClient();
   const data = Object.fromEntries(formData.entries());
-  
+
   const validatedFields = cadastroSchema.safeParse(data);
 
   if (!validatedFields.success) {
     return {
       success: false,
-      message: 'Dados inválidos.',
+      message: "Dados inválidos.",
       errors: validatedFields.error.flatten().fieldErrors,
     };
   }
@@ -35,11 +38,11 @@ export async function cadastrar(_prev: ActionState, formData: FormData): Promise
   }
 
   if (signUpData.session) {
-    redirect('/minha-area');
+    redirect("/minha-area");
   }
 
   return {
     success: true,
-    message: 'Cadastro realizado! Verifique seu e-mail para confirmar a conta.',
+    message: "Cadastro realizado! Verifique seu e-mail para confirmar a conta.",
   };
 }

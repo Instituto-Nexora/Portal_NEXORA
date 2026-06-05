@@ -17,10 +17,16 @@ export default async function EventosPage() {
   const now = new Date();
 
   const proximos = eventos.filter(
-    (e) => e.type === "ao_vivo" && (!e.scheduled_at || new Date(e.scheduled_at) >= now),
+    (e) =>
+      e.type === "ao_vivo" &&
+      (!e.scheduled_at || new Date(e.scheduled_at) >= now),
   );
   const gravados = eventos.filter(
-    (e) => e.type === "gravado" || (e.type === "ao_vivo" && !!e.scheduled_at && new Date(e.scheduled_at) < now),
+    (e) =>
+      e.type === "gravado" ||
+      (e.type === "ao_vivo" &&
+        !!e.scheduled_at &&
+        new Date(e.scheduled_at) < now),
   );
 
   return (

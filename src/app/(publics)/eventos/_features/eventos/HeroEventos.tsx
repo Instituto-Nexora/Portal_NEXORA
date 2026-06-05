@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 
 export function HeroEventos() {
   return (
@@ -7,16 +7,24 @@ export function HeroEventos() {
       aria-labelledby="eventos-hero-title"
     >
       <div className={cn("max-w-2xl mx-auto flex flex-col items-center gap-4")}>
-        <span className={cn("text-amber-400 text-xs font-semibold tracking-widest uppercase")}>
+        <span
+          className={cn(
+            "text-amber-400 text-xs font-semibold tracking-widest uppercase",
+          )}
+        >
           Comunidade Nexora
         </span>
-        <h1 id="eventos-hero-title" className={cn("text-4xl md:text-5xl font-black leading-tight")}>
+        <h1
+          id="eventos-hero-title"
+          className={cn("text-4xl md:text-5xl font-black leading-tight")}
+        >
           Eventos e Lives
         </h1>
         <p className={cn("text-teal-200 text-lg max-w-lg")}>
-          Participe das nossas palestras, workshops e transmissões ao vivo. Conhecimento gratuito para todos.
+          Participe das nossas palestras, workshops e transmissões ao vivo.
+          Conhecimento gratuito para todos.
         </p>
       </div>
     </section>
-  )
+  );
 }

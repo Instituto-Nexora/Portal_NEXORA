@@ -33,7 +33,8 @@ export async function editarEvento(
 
   const adminClient = createAdminClient();
 
-  const currentThumbnailUrl = (formData.get("current_thumbnail_url") as string | null) || null;
+  const currentThumbnailUrl =
+    (formData.get("current_thumbnail_url") as string | null) || null;
   let thumbnail_url: string | null = currentThumbnailUrl;
 
   const thumbnailFile = formData.get("thumbnail_file") as File | null;
@@ -61,7 +62,9 @@ export async function editarEvento(
       type: parsed.data.type,
       status: parsed.data.status,
       scheduled_at: parsed.data.scheduled_at ?? null,
-      duration_minutes: parsed.data.duration_minutes ? Number(parsed.data.duration_minutes) : null,
+      duration_minutes: parsed.data.duration_minutes
+        ? Number(parsed.data.duration_minutes)
+        : null,
       thumbnail_url,
       youtube_url: parsed.data.youtube_url || null,
       updated_at: new Date().toISOString(),

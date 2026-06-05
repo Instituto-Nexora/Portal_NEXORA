@@ -1,9 +1,11 @@
 "use client";
 
 import { Camera } from "lucide-react";
+import type * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { AvatarCropDialog } from "./AvatarCropDialog";
 
 type AvatarDropzoneProps = {
   initialUrl?: string | null;
@@ -13,6 +15,14 @@ type AvatarDropzoneProps = {
   fallbackClassName?: string;
 };
 
+function setInputFile(input: HTMLInputElement | null, file: File) {
+  if (!input) return;
+
+  const dataTransfer = new DataTransfer();
+  dataTransfer.items.add(file);
+  input.files = dataTransfer.files;
+}
+
 export function AvatarDropzone({
   initialUrl,
   fallback,
@@ -21,68 +31,61 @@ export function AvatarDropzone({
   fallbackClassName,
 }: AvatarDropzoneProps) {
   const [preview, setPreview] = useState<string | null>(initialUrl ?? null);
+  const [cropImageUrl, setCropImageUrl] = useState<string | null>(null);
+  const [isCropOpen, setCropOpen] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const objectUrlRef = useRef<string | null>(null);
+  const cropSourceUrlRef = useRef<string | null>(null);
+  const previewUrlRef = useRef<string | null>(null);
 
   useEffect(() => {
     return () => {
-      if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+      if (cropSourceUrlRef.current)
+        URL.revokeObjectURL(cropSourceUrlRef.current);
+      if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
     };
   }, []);
 
   const handleFile = useCallback((file: File) => {
     if (!file.type.startsWith("image/")) return;
 
-    if (objectUrlRef.current) URL.revokeObjectURL(objectUrlRef.current);
+    if (cropSourceUrlRef.current) URL.revokeObjectURL(cropSourceUrlRef.current);
 
     const objectUrl = URL.createObjectURL(file);
-    objectUrlRef.current = objectUrl;
-    setPreview(objectUrl);
-
-    const img = new window.Image();
-    img.onload = () => {
-      const MAX = 400;
-      const scale = Math.min(1, MAX / Math.max(img.width, img.height));
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.round(img.width * scale);
-      canvas.height = Math.round(img.height * scale);
-      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
-      canvas.toBlob(
-        (blob) => {
-          if (!blob || !inputRef.current) return;
-          const webp = new File([blob], "avatar.webp", { type: "image/webp" });
-          const dt = new DataTransfer();
-          dt.items.add(webp);
-          inputRef.current.files = dt.files;
-        },
-        "image/webp",
-        0.85,
-      );
-    };
-    img.src = objectUrl;
+    cropSourceUrlRef.current = objectUrl;
+    setCropImageUrl(objectUrl);
+    setCropOpen(true);
   }, []);
 
-  function handleInputChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+  const handleCrop = useCallback((file: File, previewUrl: string) => {
+    if (previewUrlRef.current) URL.revokeObjectURL(previewUrlRef.current);
+
+    previewUrlRef.current = previewUrl;
+    setPreview(previewUrl);
+    setInputFile(inputRef.current, file);
+  }, []);
+
+  function handleInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
     if (file) handleFile(file);
   }
 
-  function handleDragOver(e: React.DragEvent) {
-    e.preventDefault();
+  function handleDragOver(event: React.DragEvent) {
+    event.preventDefault();
     if (!disabled) setIsDragging(true);
   }
 
-  function handleDragLeave(e: React.DragEvent) {
-    e.preventDefault();
+  function handleDragLeave(event: React.DragEvent) {
+    event.preventDefault();
     setIsDragging(false);
   }
 
-  function handleDrop(e: React.DragEvent) {
-    e.preventDefault();
+  function handleDrop(event: React.DragEvent) {
+    event.preventDefault();
     setIsDragging(false);
     if (disabled) return;
-    const file = e.dataTransfer.files[0];
+
+    const file = event.dataTransfer.files[0];
     if (file) handleFile(file);
   }
 
@@ -91,13 +94,20 @@ export function AvatarDropzone({
   }
 
   return (
-    <div className={cn("flex flex-col items-center gap-3")}>
+    <div className={cn(["flex flex-col items-center gap-3"])}>
+      <AvatarCropDialog
+        imageUrl={cropImageUrl}
+        open={isCropOpen}
+        onOpenChange={setCropOpen}
+        onCrop={handleCrop}
+      />
+
       <input
         ref={inputRef}
         type="file"
         name={name}
         accept="image/png,image/jpeg,image/webp"
-        className={cn("hidden")}
+        className={cn(["hidden"])}
         onChange={handleInputChange}
         disabled={disabled}
       />
@@ -109,55 +119,66 @@ export function AvatarDropzone({
         onDrop={handleDrop}
         disabled={disabled}
         aria-label="Alterar foto de perfil"
-        className={cn(
+        className={cn([
           "group relative rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-          disabled ? "cursor-not-allowed opacity-60" : "cursor-pointer",
-          isDragging && "ring-2 ring-primary ring-offset-2",
-        )}
+          {
+            "cursor-not-allowed opacity-60": disabled,
+            "cursor-pointer": !disabled,
+            "ring-2 ring-primary ring-offset-2": isDragging,
+          },
+        ])}
       >
         <Avatar
-          className={cn(
-            "size-28 border-4 border-background shadow-md ring-1 ring-border",
-          )}
+          className={cn([
+            "size-28 border-4 border-background bg-muted shadow-md ring-1 ring-border",
+          ])}
         >
           {preview && <AvatarImage src={preview} alt="Foto de perfil" />}
           <AvatarFallback
-            className={cn("text-2xl font-bold", fallbackClassName)}
+            className={cn([
+              "bg-gradient-to-br from-primary to-teal-700 text-2xl font-bold text-primary-foreground",
+              fallbackClassName,
+            ])}
           >
             {fallback}
           </AvatarFallback>
         </Avatar>
 
         <div
-          className={cn(
-            "absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full",
-            "bg-black/0 transition-colors",
-            !disabled && "group-hover:bg-black/50",
-            isDragging && "bg-black/50",
-          )}
+          className={cn([
+            "absolute inset-0 flex flex-col items-center justify-center gap-1 rounded-full bg-black/0 transition-colors",
+            {
+              "group-hover:bg-black/50": !disabled,
+              "bg-black/50": isDragging,
+            },
+          ])}
           aria-hidden="true"
         >
           <Camera
-            className={cn(
+            className={cn([
               "size-5 text-white opacity-0 transition-opacity",
-              !disabled && "group-hover:opacity-100",
-              isDragging && "opacity-100",
-            )}
+              {
+                "group-hover:opacity-100": !disabled,
+                "opacity-100": isDragging,
+              },
+            ])}
           />
           <span
-            className={cn(
+            className={cn([
               "text-[10px] font-medium leading-none text-white opacity-0 transition-opacity",
-              !disabled && "group-hover:opacity-100",
-              isDragging && "opacity-100",
-            )}
+              {
+                "group-hover:opacity-100": !disabled,
+                "opacity-100": isDragging,
+              },
+            ])}
           >
             {isDragging ? "Solte aqui" : "Trocar foto"}
           </span>
         </div>
       </button>
 
-      <p className={cn("text-center text-xs text-muted-foreground")}>
-        PNG, JPG ou WebP · máx. 5 MB · otimizado automaticamente
+      <p className={cn(["text-center text-xs text-muted-foreground"])}>
+        PNG, JPG ou WebP · máx. 5 MB · recorte e otimização automáticos
       </p>
     </div>
   );

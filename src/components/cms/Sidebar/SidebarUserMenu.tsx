@@ -8,10 +8,12 @@ import {
   MoreHorizontal,
   Settings,
   Sun,
+  TicketIcon,
   UserCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { signOut } from "@/app/(cms)/cms/login/_features/login/actions";
+import { UserAvatar } from "@/components/UserAvatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -31,7 +33,7 @@ import { useChangeFont } from "@/hooks/useChangeFont";
 import { type ThemeMode, useTheme } from "@/hooks/useTheme";
 import type { SessionUser } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
-import { UserAvatar } from "@/components/UserAvatar";
+import { getInitials } from "@/utils/getInitials";
 
 type Props = {
   user: SessionUser;
@@ -48,23 +50,13 @@ const THEME_ITEMS: Array<{
   { value: "dark", label: "Escuro", icon: Moon },
 ];
 
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase())
-    .join("");
-}
-
-
 export function SidebarUserMenu({ user }: Props) {
   const { theme, setTheme } = useTheme();
   const { fontSize, options, setFontSize } = useChangeFont();
   const { isMobile, state } = useSidebar();
   const displayName = user.profile?.full_name ?? "Administrador";
   const avatarUrl = user.profile?.avatar_url;
-  const initials = getInitials(displayName) || "NX";
+  const initials = getInitials(displayName, "NX");
   const isCollapsed = state === "collapsed";
 
   if (isMobile) {
@@ -91,15 +83,6 @@ export function SidebarUserMenu({ user }: Props) {
             </span>
           </span>
         </div>
-        <Button
-          nativeButton={false}
-          variant="ghost"
-          className={cn(["w-full justify-start gap-2"])}
-          render={<Link href="/cms/dashboard/perfil" />}
-        >
-          <UserCircle className={cn(["size-4"])} />
-          Meu perfil
-        </Button>
         <form action={signOut}>
           <Button
             type="submit"
@@ -201,6 +184,15 @@ export function SidebarUserMenu({ user }: Props) {
           >
             <UserCircle className={cn(["size-4"])} />
             Meu perfil
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem closeOnClick={false}>
+          <Link
+            href="/cms/dashboard/tickets"
+            className={cn(["flex w-full items-center gap-2"])}
+          >
+            <TicketIcon className={cn(["size-4"])} />
+            Tickets
           </Link>
         </DropdownMenuItem>
         <DropdownMenuItem closeOnClick={false}>

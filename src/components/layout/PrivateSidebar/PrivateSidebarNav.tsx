@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutDashboard } from "lucide-react";
+import { LayoutDashboard, TicketIcon, UserCircle } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -21,6 +21,8 @@ import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
   { label: "Minha Área", href: "/minha-area", icon: LayoutDashboard, exact: true },
+  { label: "Meu Perfil", href: "/minha-area/perfil", icon: UserCircle, exact: false },
+  { label: "Meus Tickets", href: "/minha-area/tickets", icon: TicketIcon, exact: false },
 ];
 
 export function PrivateSidebarNav() {
@@ -34,12 +36,18 @@ export function PrivateSidebarNav() {
       <SidebarGroupContent>
         <SidebarMenu>
           {NAV_ITEMS.map(({ label, href, icon: Icon, exact }) => {
-            const active = exact ? pathname === href : pathname.startsWith(href);
+            const active = exact
+              ? pathname === href
+              : pathname.startsWith(href);
             const item = (
               <SidebarMenuButton asChild isActive={active} title={label}>
                 <Link href={href} aria-current={active ? "page" : undefined}>
                   <Icon className={cn("size-4")} aria-hidden="true" />
-                  <span className={cn("group-data-[state=collapsed]/sidebar:hidden")}>
+                  <span
+                    className={cn(
+                      "group-data-[state=collapsed]/sidebar:hidden",
+                    )}
+                  >
                     {label}
                   </span>
                 </Link>

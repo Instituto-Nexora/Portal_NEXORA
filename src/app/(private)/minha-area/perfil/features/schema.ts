@@ -8,7 +8,8 @@ export const perfilSchema = z.object({
     .max(80, "Use no máximo 80 caracteres."),
 });
 
-export const alterarSenhaSchema = z.object({
+export const alterarSenhaSchema = z
+  .object({
     new_password: z
       .string()
       .min(8, "A senha deve ter pelo menos 8 caracteres.")

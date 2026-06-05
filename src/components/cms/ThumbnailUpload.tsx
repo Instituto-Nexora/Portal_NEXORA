@@ -34,11 +34,15 @@ export function ThumbnailUpload({
       const canvas = document.createElement("canvas");
       canvas.width = Math.round(img.width * scale);
       canvas.height = Math.round(img.height * scale);
-      canvas.getContext("2d")?.drawImage(img, 0, 0, canvas.width, canvas.height);
+      canvas
+        .getContext("2d")
+        ?.drawImage(img, 0, 0, canvas.width, canvas.height);
       canvas.toBlob(
         (blob) => {
           if (!blob || !inputRef.current) return;
-          const webp = new File([blob], "thumbnail.webp", { type: "image/webp" });
+          const webp = new File([blob], "thumbnail.webp", {
+            type: "image/webp",
+          });
           const dt = new DataTransfer();
           dt.items.add(webp);
           inputRef.current.files = dt.files;
@@ -98,7 +102,11 @@ export function ThumbnailUpload({
       <input type="hidden" name={currentUrlName} value={currentUrl} />
 
       {preview ? (
-        <div className={cn("relative w-full rounded-lg overflow-hidden border border-border group")}>
+        <div
+          className={cn(
+            "relative w-full rounded-lg overflow-hidden border border-border group",
+          )}
+        >
           <div className={cn("relative w-full aspect-video")}>
             <Image
               src={preview}
@@ -160,14 +168,21 @@ export function ThumbnailUpload({
             )}
           >
             <ImageIcon
-              className={cn("size-5", isDragging ? "text-primary" : "text-muted-foreground")}
+              className={cn(
+                "size-5",
+                isDragging ? "text-primary" : "text-muted-foreground",
+              )}
               aria-hidden="true"
             />
           </div>
           <div className={cn("text-center")}>
             <p className={cn("text-sm font-medium text-foreground")}>
               Arraste e solte ou{" "}
-              <span className={cn("text-primary underline-offset-2 hover:underline")}>
+              <span
+                className={cn(
+                  "text-primary underline-offset-2 hover:underline",
+                )}
+              >
                 clique para selecionar
               </span>
             </p>
