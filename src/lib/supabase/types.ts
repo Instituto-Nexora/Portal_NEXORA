@@ -80,6 +80,17 @@ type Curso = {
   created_at: string;
 };
 
+type Aula = {
+  id: string;
+  course_id: string;
+  title: string;
+  video_url: string | null;
+  position: number;
+  duration_seconds: number | null;
+  is_published: boolean;
+  created_at: string;
+};
+
 type LessonStatus = "published" | "draft";
 
 type Lesson = {
@@ -106,6 +117,7 @@ type ProgressResult = {
 
 export type {
   Curso,
+  Aula,
   AdminRole,
   AdminProfile,
   StudentProfile,
