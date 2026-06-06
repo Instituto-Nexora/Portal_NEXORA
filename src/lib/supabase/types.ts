@@ -70,6 +70,16 @@ type TicketMessage = {
   lida: boolean;
 };
 
+type Curso = {
+  id: string;
+  title: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  price_cents: number;
+  is_published: boolean;
+  created_at: string;
+};
+
 type LessonStatus = "published" | "draft";
 
 type Lesson = {
@@ -95,6 +105,7 @@ type ProgressResult = {
 };
 
 export type {
+  Curso,
   AdminRole,
   AdminProfile,
   StudentProfile,
