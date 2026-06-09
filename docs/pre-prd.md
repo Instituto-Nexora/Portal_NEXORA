@@ -1,4 +1,4 @@
-# PRD — NEXORA  
+# PRD — NEXORA-TI
 ### Plataforma Educacional e Serviços de TI com Impacto Social
 
 ---
@@ -6,7 +6,7 @@
 ## 1. Visão do Produto
 
 ### 1.1 Nome do Produto
-**NEXORA**
+**NEXORA-TI**
 
 ### 1.2 Descrição
 Plataforma digital voltada à oferta de cursos, palestras e treinamentos em tecnologia, com foco em empregabilidade e geração de receita, destinada a financiar iniciativas de impacto social.
