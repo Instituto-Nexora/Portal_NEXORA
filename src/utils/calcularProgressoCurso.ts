@@ -11,7 +11,7 @@ export async function calcularProgressoCurso(
     .from("lessons")
     .select("id")
     .eq("course_id", courseId)
-    .eq("status", "published")
+    .eq("is_published", true)
 
   const total = lessons?.length ?? 0
 

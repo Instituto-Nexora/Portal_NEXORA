@@ -35,7 +35,7 @@ export function CursoCard({ enrollment }: CursoCardProps) {
   const { courses, concluidas, total, percentual } = enrollment
   const isComplete = percentual >= 100
 
-  const continueHref = `/cursos/${courses.id}`
+  const continueHref = `/minha-area/cursos/${courses.id}/aulas`
 
   return (
     <Card
