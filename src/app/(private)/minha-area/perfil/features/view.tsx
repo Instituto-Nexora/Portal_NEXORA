@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { getInitials } from "@/utils/getInitials";
 import type { PerfilInitialData } from "./model";
 import { usePerfilViewModel } from "./viewModel";
@@ -143,9 +144,8 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
               >
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="new_password">Nova Senha</Label>
-                  <Input
+                  <PasswordInput
                     id="new_password"
-                    type="password"
                     disabled={isLoadingSenha}
                     {...formSenha.register("new_password")}
                   />
@@ -159,9 +159,8 @@ export default function PerfilView({ initialData }: PerfilViewProps) {
 
                 <div className="flex flex-col gap-2">
                   <Label htmlFor="confirm_password">Confirmar Nova Senha</Label>
-                  <Input
+                  <PasswordInput
                     id="confirm_password"
-                    type="password"
                     disabled={isLoadingSenha}
                     {...formSenha.register("confirm_password")}
                   />

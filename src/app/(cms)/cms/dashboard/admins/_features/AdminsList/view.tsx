@@ -1,8 +1,13 @@
+"use client";
+
+import { Pencil } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import type { AdminProfile, AdminRole } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
+import { EditAdminDrawer } from "./EditAdminDrawer";
 
 type Props = {
   admins: AdminProfile[];
@@ -31,6 +36,8 @@ function formatDate(iso: string) {
 }
 
 export function AdminsListView({ admins }: Props) {
+  const [editingAdmin, setEditingAdmin] = useState<AdminProfile | null>(null);
+
   return (
     <div className={cn("space-y-6")}>
       <div
@@ -80,9 +87,19 @@ export function AdminsListView({ admins }: Props) {
                       Desde {formatDate(admin.created_at)}
                     </p>
                   </div>
-                  <Badge variant={ROLE_VARIANT[admin.role]}>
-                    {ROLE_LABEL[admin.role]}
-                  </Badge>
+                  <div className={cn("flex shrink-0 items-center gap-2")}>
+                    <Badge variant={ROLE_VARIANT[admin.role]}>
+                      {ROLE_LABEL[admin.role]}
+                    </Badge>
+                    <Button
+                      variant="ghost"
+                      size="icon-sm"
+                      onClick={() => setEditingAdmin(admin)}
+                      aria-label={`Editar ${admin.full_name}`}
+                    >
+                      <Pencil className={cn("size-3.5")} />
+                    </Button>
+                  </div>
                 </div>
               </article>
             ))}
@@ -115,6 +132,13 @@ export function AdminsListView({ admins }: Props) {
                   >
                     Desde
                   </th>
+                  <th
+                    className={cn(
+                      "px-4 py-3 text-right font-medium text-muted-foreground",
+                    )}
+                  >
+                    Ações
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -136,6 +160,17 @@ export function AdminsListView({ admins }: Props) {
                     <td className={cn("px-4 py-3 text-muted-foreground")}>
                       {formatDate(admin.created_at)}
                     </td>
+                    <td className={cn("px-4 py-3 text-right")}>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => setEditingAdmin(admin)}
+                        aria-label={`Editar ${admin.full_name}`}
+                      >
+                        <Pencil className={cn("size-3.5")} />
+                        Editar
+                      </Button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -143,6 +178,12 @@ export function AdminsListView({ admins }: Props) {
           </div>
         </>
       )}
+
+      <EditAdminDrawer
+        key={editingAdmin?.id ?? "none"}
+        admin={editingAdmin}
+        onClose={() => setEditingAdmin(null)}
+      />
     </div>
   );
 }

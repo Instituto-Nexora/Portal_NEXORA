@@ -51,7 +51,7 @@ export function PrivateSidebar({ user, className }: Props) {
                         "truncate group-data-[state=collapsed]/sidebar:hidden",
                       )}
                     >
-                      NEXORA TI
+                      NEXORA-TI
                     </span>
                   </Link>
                 </SidebarMenuButton>

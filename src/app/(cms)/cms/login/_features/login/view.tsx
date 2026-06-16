@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import type { ActionState } from "@/lib/supabase/types";
 import { cn } from "@/lib/utils";
 import { signIn } from "./actions";
@@ -64,9 +65,8 @@ export function LoginView() {
 
             <div className={cn("space-y-1.5")}>
               <Label htmlFor="password">Senha</Label>
-              <Input
+              <PasswordInput
                 id="password"
-                type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
                 {...register("password")}
@@ -105,7 +105,7 @@ export function LoginView() {
             "text-4xl font-bold text-primary-foreground tracking-widest",
           )}
         >
-          NEXORA
+          NEXORA-TI
         </span>
       </div>
     </div>

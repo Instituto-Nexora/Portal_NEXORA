@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import TicketAdminChatView from "./_features/view";
 
 export const metadata: Metadata = {
-  title: "Detalhes do Ticket | CMS - NEXORA",
+  title: "Detalhes do Ticket | CMS - NEXORA-TI",
   description: "Visualize e responda ao chamado de suporte.",
 };
 

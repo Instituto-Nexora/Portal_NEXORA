@@ -37,6 +37,7 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { cn } from "@/lib/utils";
 import { getInitials } from "@/utils/getInitials";
 import type { PerfilInitialData } from "./model";
@@ -246,9 +247,8 @@ export function PerfilView({ initialData }: Props) {
                 <div className={cn(["grid min-w-0 gap-4 lg:grid-cols-2"])}>
                   <div className={cn(["min-w-0 space-y-2"])}>
                     <Label htmlFor="new_password">Nova senha</Label>
-                    <Input
+                    <PasswordInput
                       id="new_password"
-                      type="password"
                       autoComplete="new-password"
                       disabled={isPendingSenha}
                       {...formSenha.register("new_password")}
@@ -261,9 +261,8 @@ export function PerfilView({ initialData }: Props) {
                   </div>
                   <div className={cn(["min-w-0 space-y-2"])}>
                     <Label htmlFor="confirm_password">Confirmar senha</Label>
-                    <Input
+                    <PasswordInput
                       id="confirm_password"
-                      type="password"
                       autoComplete="new-password"
                       disabled={isPendingSenha}
                       {...formSenha.register("confirm_password")}

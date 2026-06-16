@@ -153,7 +153,7 @@ export async function Header() {
         >
           <SheetHeader className={cn("border-b border-teal-700 p-5")}>
             <SheetTitle className={cn("text-white text-base text-left")}>
-              Nexora
+              Nexora-TI
             </SheetTitle>
           </SheetHeader>
 

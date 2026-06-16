@@ -2,7 +2,7 @@ import { Inbox } from "lucide-react";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Gestão de Tickets | CMS - NEXORA",
+  title: "Gestão de Tickets | CMS - NEXORA-TI",
   description: "Gerencie os tickets de suporte dos alunos.",
 };
 

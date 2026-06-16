@@ -54,7 +54,7 @@ export function Sidebar({ user, className }: Props) {
                         "truncate group-data-[state=collapsed]/sidebar:hidden",
                       ])}
                     >
-                      NEXORA CMS
+                      NEXORA-TI CMS
                     </span>
                   </Link>
                 </SidebarMenuButton>

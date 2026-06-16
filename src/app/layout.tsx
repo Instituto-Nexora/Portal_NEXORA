@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Nexora — Tecnologia que Conecta e Transforma",
+  title: "NEXORA-TI — Tecnologia que Conecta e Transforma",
   description: "Plataforma educacional e serviços de TI com impacto social.",
   icons: {
     icon: "../app/favicon.ico",

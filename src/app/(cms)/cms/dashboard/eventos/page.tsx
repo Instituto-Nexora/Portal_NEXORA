@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 import { EventosListView } from "./_features/EventosList/view";
 
 export const metadata: Metadata = {
-  title: "Eventos — NEXORA CMS",
+  title: "Eventos — NEXORA-TI CMS",
 };
 
 type PageProps = {

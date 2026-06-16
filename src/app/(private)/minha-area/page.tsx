@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { logAccess } from "@/lib/analytics/logAccess";
+import { createClient } from "@/lib/supabase/server";
 import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
@@ -8,6 +10,14 @@ export const metadata: Metadata = {
 };
 
 export default async function MinhaAreaPage() {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    await logAccess({ studentId: user.id, resourceType: "page", resourceSlug: "minha-area" });
+  }
+
   // Mock data: Aqui você fará o fetch dos cursos do aluno no Supabase
   const meusCursos = [
     {

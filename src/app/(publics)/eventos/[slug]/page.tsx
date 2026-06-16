@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { logAccess } from "@/lib/analytics/logAccess";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { EventoDetalheView } from "./_features/EventoDetalhe/view";
 
 type PageProps = {
@@ -19,11 +21,11 @@ export async function generateMetadata({
     .single();
 
   if (!data) {
-    return { title: "Evento não encontrado — NEXORA" };
+    return { title: "Evento não encontrado — NEXORA-TI" };
   }
 
   return {
-    title: `${data.title} — NEXORA`,
+    title: `${data.title} — NEXORA-TI`,
     description: data.description,
   };
 }
@@ -42,6 +44,15 @@ export default async function EventoSlugPage({ params }: PageProps) {
   if (!data) {
     notFound();
   }
+
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  await logAccess({
+    studentId: user?.id,
+    resourceType: "event",
+    resourceId: data.id,
+    resourceSlug: data.slug,
+  });
 
   const { data: outros } = await adminClient
     .from("events")
