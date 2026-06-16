@@ -1,13 +1,12 @@
 "use client";
 
 import {
-  BookOpen,
   CalendarDays,
-  FileText,
+  GraduationCap,
   LayoutDashboard,
   ShieldCheck,
-  UserCircle,
   TicketIcon,
+  UserCircle,
 } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -34,12 +33,18 @@ const NAV_ITEMS = [
     icon: LayoutDashboard,
     exact: true,
   },
-  { label: "Conteúdos", href: "/cms/contents", icon: FileText, exact: false },
-  { label: "Cursos", href: "/cms/courses", icon: BookOpen, exact: false },
+  // { label: "Conteúdos", href: "/cms/contents", icon: FileText, exact: false },
+  // { label: "Cursos", href: "/cms/courses", icon: BookOpen, exact: false },
   {
     label: "Administradores",
     href: "/cms/dashboard/admins",
     icon: ShieldCheck,
+    exact: false,
+  },
+  {
+    label: "Alunos",
+    href: "/cms/dashboard/alunos",
+    icon: GraduationCap,
     exact: false,
   },
   {
@@ -54,11 +59,11 @@ const NAV_ITEMS = [
     icon: UserCircle,
     exact: false,
   },
-  { 
-    label: "Tickets", 
-    href: "/cms/dashboard/tickets", 
-    icon: TicketIcon, 
-    exact: false 
+  {
+    label: "Tickets",
+    href: "/cms/dashboard/tickets",
+    icon: TicketIcon,
+    exact: false,
   },
 ];
 

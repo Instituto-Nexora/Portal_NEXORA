@@ -20,8 +20,8 @@ export async function generateMetadata({
 
   return {
     title: data
-      ? `Editar: ${data.title} — NEXORA CMS`
-      : "Editar Evento — NEXORA CMS",
+      ? `Editar: ${data.title} — NEXORA-TI CMS`
+      : "Editar Evento — NEXORA-TI CMS",
   };
 }
 

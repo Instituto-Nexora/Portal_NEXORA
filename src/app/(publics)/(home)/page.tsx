@@ -76,7 +76,7 @@ const testimonials = [
   {
     id: "af",
     quote:
-      "Nunca imaginei que aprenderia a programar. O Portal Nexora tornou isso possível e acessível para mim.",
+      "Nunca imaginei que aprenderia a programar. O Portal Nexora-TI tornou isso possível e acessível para mim.",
     author: "Ana Ferreira",
     role: "Aluna · Empregabilidade em TI",
     avatarInitials: "AF",

@@ -1,33 +1,30 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { createClient } from "@/lib/supabase/server";
-import type { AdminProfile } from "@/lib/supabase/types";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { cn } from "@/lib/utils";
-import { AdminsListView } from "./_features/AdminsList/view";
+import { AlunosListView } from "./_features/AlunosList/view";
 
 export const metadata: Metadata = {
-  title: "Administradores — NEXORA-TI CMS",
+  title: "Alunos — NEXORA-TI CMS",
 };
 
-async function AdminsData() {
-  const supabase = await createClient();
+async function AlunosData() {
+  const adminClient = createAdminClient();
 
-  const { data } = await supabase
-    .from("profiles")
-    .select("*")
+  const { data } = await adminClient
+    .from("student_profiles")
+    .select("id, full_name, email, avatar_url, created_at")
     .order("created_at", { ascending: false });
 
-  const admins: AdminProfile[] = data ?? [];
-
-  return <AdminsListView admins={admins} />;
+  return <AlunosListView alunos={data ?? []} />;
 }
 
-function AdminsLoading() {
+function AlunosLoading() {
   return (
     <section
       className={cn("space-y-6")}
-      aria-label="Carregando administradores"
+      aria-label="Carregando alunos"
       aria-busy="true"
     >
       <div
@@ -39,7 +36,6 @@ function AdminsLoading() {
           <Skeleton className={cn("h-7 w-48")} />
           <Skeleton className={cn("h-4 w-72 max-w-full")} />
         </div>
-        <Skeleton className={cn("h-9 w-full sm:w-40")} />
       </div>
       <div className={cn("grid gap-3 sm:hidden")}>
         <Skeleton className={cn("h-24")} />
@@ -55,10 +51,10 @@ function AdminsLoading() {
   );
 }
 
-export default function AdminsPage() {
+export default function AlunosPage() {
   return (
-    <Suspense fallback={<AdminsLoading />}>
-      <AdminsData />
+    <Suspense fallback={<AlunosLoading />}>
+      <AlunosData />
     </Suspense>
   );
 }

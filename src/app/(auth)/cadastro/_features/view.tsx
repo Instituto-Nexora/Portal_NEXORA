@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { PasswordInput } from "@/components/ui/password-input";
 import { cn } from "@/lib/utils"; // Ajuste conforme seu helper
 import { useCadastroViewModel } from "./viewModel";
 
@@ -75,14 +76,10 @@ export const CadastroView = () => {
             >
               Senha
             </label>
-            <input
+            <PasswordInput
               id="password"
               {...form.register("password")}
               name="password"
-              type="password"
-              className={cn(
-                "w-full rounded-md border border-slate-300 p-2 focus:border-teal-500 focus:ring-teal-500",
-              )}
             />
             {form.formState.errors.password && (
               <p className={cn("text-xs text-red-500")}>
@@ -98,14 +95,10 @@ export const CadastroView = () => {
             >
               Confirmar Senha
             </label>
-            <input
+            <PasswordInput
               id="confirm_password"
               {...form.register("confirm_password")}
               name="confirm_password"
-              type="password"
-              className={cn(
-                "w-full rounded-md border border-slate-300 p-2 focus:border-teal-500 focus:ring-teal-500",
-              )}
             />
             {form.formState.errors.confirm_password && (
               <p className={cn("text-xs text-red-500")}>

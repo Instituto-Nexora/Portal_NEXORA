@@ -12,7 +12,7 @@ export function HeroEventos() {
             "text-amber-400 text-xs font-semibold tracking-widest uppercase",
           )}
         >
-          Comunidade Nexora
+          Comunidade NEXORA-TI
         </span>
         <h1
           id="eventos-hero-title"

@@ -40,7 +40,7 @@ export default function NotFound() {
           )}
         >
           O endereço acessado não existe ou foi movido. Você pode voltar para a
-          página inicial e continuar navegando pelo Portal Nexora.
+          página inicial e continuar navegando pelo Portal NEXORA-TI.
         </p>
 
         <div

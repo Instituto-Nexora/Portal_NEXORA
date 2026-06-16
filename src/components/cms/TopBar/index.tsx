@@ -16,7 +16,7 @@ export function TopBar({ title, mobileNav }: Props) {
       {mobileNav ?? <SidebarTrigger />}
       {title && <h1 className={cn(["text-base font-semibold"])}>{title}</h1>}
       <div className={cn(["ml-auto text-xs text-muted-foreground"])}>
-        NEXORA CMS
+        NEXORA-TI CMS
       </div>
     </header>
   );

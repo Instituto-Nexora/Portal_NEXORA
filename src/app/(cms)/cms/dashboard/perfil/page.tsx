@@ -9,7 +9,7 @@ import { PerfilView } from "./_features/Perfil";
 import type { PerfilInitialData } from "./_features/Perfil/model";
 
 export const metadata: Metadata = {
-  title: "Meu perfil — NEXORA CMS",
+  title: "Meu perfil — NEXORA-TI CMS",
 };
 
 const DAILY_CHANGE_LIMIT = 5;

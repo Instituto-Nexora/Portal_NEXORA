@@ -33,6 +33,7 @@ export async function criarAdmin(
       email: parsed.data.email,
       password: parsed.data.password,
       email_confirm: true,
+      user_metadata: { is_cms_admin: true },
     });
 
   if (authError || !authData.user) {

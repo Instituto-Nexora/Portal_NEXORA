@@ -1,10 +1,15 @@
+import type { Metadata } from "next";
 import { Suspense } from "react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { cn } from "@/lib/utils";
-import { DashboardView } from "./_features/dashboard/view";
+import { RelatoriosView } from "./_features/Relatorios/view";
 
-async function DashboardData() {
+export const metadata: Metadata = {
+  title: "Relatórios — NEXORA CMS",
+};
+
+async function RelatoriosData() {
   const adminClient = createAdminClient();
 
   const now = new Date();
@@ -14,26 +19,14 @@ async function DashboardData() {
   const monthAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
 
   const [
-    { count: totalEventos },
-    { count: eventosPublicados },
-    { count: totalAdmins },
-    { count: totalAlunos },
     { count: totalAcessos },
     { count: acessosHoje },
     { count: acessosSemana },
     { data: topRecursos, error: topRecursosError },
     { data: logsAtivos },
-    { count: acessosAutenticados },
+    { data: eventos },
+    { count: totalMatriculas },
   ] = await Promise.all([
-    adminClient.from("events").select("*", { count: "exact", head: true }),
-    adminClient
-      .from("events")
-      .select("*", { count: "exact", head: true })
-      .eq("status", "published"),
-    adminClient.from("profiles").select("*", { count: "exact", head: true }),
-    adminClient
-      .from("student_profiles")
-      .select("*", { count: "exact", head: true }),
     adminClient
       .from("access_logs")
       .select("*", { count: "exact", head: true }),
@@ -51,68 +44,69 @@ async function DashboardData() {
       .select("student_id")
       .gte("created_at", monthAgo.toISOString())
       .not("student_id", "is", null),
+    adminClient.from("events").select("status"),
     adminClient
-      .from("access_logs")
-      .select("*", { count: "exact", head: true })
-      .not("student_id", "is", null),
+      .from("enrollments")
+      .select("*", { count: "exact", head: true }),
   ]);
 
   if (topRecursosError) {
-    console.error("[dashboard] get_top_resources rpc error:", topRecursosError);
+    console.error("[relatorios] get_top_resources rpc error:", topRecursosError);
   }
 
   const alunosAtivos = new Set(
     (logsAtivos ?? []).map((l) => l.student_id),
   ).size;
 
+  const eventosPorStatus = (eventos ?? []).reduce<Record<string, number>>(
+    (acc, e) => {
+      acc[e.status] = (acc[e.status] ?? 0) + 1;
+      return acc;
+    },
+    {},
+  );
+
   return (
-    <DashboardView
-      totalEventos={totalEventos ?? 0}
-      eventosPublicados={eventosPublicados ?? 0}
-      totalAdmins={totalAdmins ?? 0}
-      totalAlunos={totalAlunos ?? 0}
+    <RelatoriosView
       totalAcessos={totalAcessos ?? 0}
       acessosHoje={acessosHoje ?? 0}
       acessosSemana={acessosSemana ?? 0}
       alunosAtivos={alunosAtivos}
       topRecursos={topRecursos ?? []}
-      acessosAutenticados={acessosAutenticados ?? 0}
+      eventosPorStatus={eventosPorStatus}
+      totalMatriculas={totalMatriculas ?? 0}
     />
   );
 }
 
-function DashboardLoading() {
+function RelatoriosLoading() {
   return (
     <section
       className={cn("space-y-6")}
-      aria-label="Carregando dashboard"
+      aria-label="Carregando relatórios"
       aria-busy="true"
     >
       <div className={cn("space-y-2")}>
-        <Skeleton className={cn("h-8 w-40")} />
-        <Skeleton className={cn("h-4 w-full max-w-md")} />
+        <Skeleton className={cn("h-7 w-40")} />
+        <Skeleton className={cn("h-4 w-72 max-w-full")} />
       </div>
       <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-4")}>
-        <Skeleton className={cn("h-32")} />
-        <Skeleton className={cn("h-32")} />
-        <Skeleton className={cn("h-32")} />
-        <Skeleton className={cn("h-32")} />
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className={cn("h-28")} />
+        ))}
       </div>
-      <div className={cn("grid gap-4 sm:grid-cols-2 xl:grid-cols-4")}>
-        <Skeleton className={cn("h-28")} />
-        <Skeleton className={cn("h-28")} />
-        <Skeleton className={cn("h-28")} />
-        <Skeleton className={cn("h-28")} />
+      <div className={cn("grid gap-6 lg:grid-cols-2")}>
+        <Skeleton className={cn("h-64")} />
+        <Skeleton className={cn("h-64")} />
       </div>
-      <Skeleton className={cn("h-64")} />
     </section>
   );
 }
 
-export default function DashboardPage() {
+export default function RelatoriosPage() {
   return (
-    <Suspense fallback={<DashboardLoading />}>
-      <DashboardData />
+    <Suspense fallback={<RelatoriosLoading />}>
+      <RelatoriosData />
     </Suspense>
   );
 }

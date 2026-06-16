@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { PasswordInput } from "@/components/ui/password-input";
 import { cn } from "@/lib/utils";
 import { useLoginViewModel } from "./viewModel";
 
@@ -58,9 +59,8 @@ export default function LoginView() {
               Esqueceu a senha?
             </Link>
           </div>
-          <Input
+          <PasswordInput
             id="password"
-            type="password"
             disabled={isLoading}
             {...form.register("password")}
           />

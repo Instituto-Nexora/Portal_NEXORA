@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import LoginView from "./_features/login/view";
 
 export const metadata: Metadata = {
-  title: "Entrar - NEXORA",
+  title: "Entrar - NEXORA-TI",
 };
 
 export default function LoginPage() {
