@@ -6,9 +6,9 @@ status: active
 mode: economico
 execution_mode: complete
 created_at: 2026-05-02
-updated_at: 2026-06-15T00:00:00-03:00
-feature: player-aula
-session: docs/.squads/sessions/player-aula
+updated_at: 2026-06-16T00:00:00-03:00
+feature: emissao-certificado
+session: docs/.squads/sessions/emissao-certificado
 roles:
   - Arquiteta Frontend
   - Dev Frontend

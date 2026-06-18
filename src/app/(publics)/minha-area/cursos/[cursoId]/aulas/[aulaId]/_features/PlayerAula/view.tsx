@@ -1,7 +1,7 @@
 "use client"
 
 import Link from "next/link"
-import { CheckCircle2, Circle, PlayCircle } from "lucide-react"
+import { Award, CheckCircle2, Circle, PlayCircle } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
@@ -27,6 +27,9 @@ function formatarDuracao(segundos: number | null): string {
 export function PlayerAulaView({ aula, curso, aulas, aulasConcluidas, userId }: Props) {
   const { concluidas, isConcluida, isPending, handleMarcarConcluida } =
     usePlayerAulaViewModel(curso.id, aula.id, userId, aulasConcluidas)
+
+  const aulasCursoConcluidas = aulas.filter((a) => concluidas.has(a.id)).length
+  const isCursoCompleto = aulas.length > 0 && aulasCursoConcluidas === aulas.length
 
   return (
     <div className={cn("flex flex-col lg:flex-row min-h-screen bg-background")}>
@@ -104,8 +107,22 @@ export function PlayerAulaView({ aula, curso, aulas, aulasConcluidas, userId }: 
             Aulas do curso
           </h2>
           <p className={cn("text-xs text-muted-foreground mt-0.5")}>
-            {concluidas.size} de {aulas.length} concluída{aulas.length !== 1 ? "s" : ""}
+            {aulasCursoConcluidas} de {aulas.length} concluída{aulas.length !== 1 ? "s" : ""}
           </p>
+
+          {isCursoCompleto && (
+            <Button
+              size="sm"
+              className={cn(
+                "w-full mt-3 gap-2 bg-amber-500 hover:bg-amber-400 text-teal-900 font-bold border-0",
+              )}
+              nativeButton={false}
+              render={<Link href={`/api/certificados/${curso.id}`} />}
+            >
+              <Award className={cn("w-4 h-4")} aria-hidden="true" />
+              Baixar Certificado
+            </Button>
+          )}
         </div>
 
         <nav>
