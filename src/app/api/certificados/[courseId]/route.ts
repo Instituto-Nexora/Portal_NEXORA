@@ -10,6 +10,7 @@ type Props = { params: Promise<{ courseId: string }> }
 
 export async function GET(_request: Request, { params }: Props) {
   const { courseId } = await params
+
   const supabase = await createClient()
 
   const {

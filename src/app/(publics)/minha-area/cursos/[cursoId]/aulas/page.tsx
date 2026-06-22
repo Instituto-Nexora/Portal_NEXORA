@@ -5,6 +5,7 @@ type Props = { params: Promise<{ cursoId: string }> }
 
 export default async function AulasRedirectPage({ params }: Props) {
   const { cursoId } = await params
+
   const supabase = await createClient()
 
   const { data: primeiraAula } = await supabase

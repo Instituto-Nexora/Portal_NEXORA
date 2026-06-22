@@ -1,3 +1,5 @@
+"use client"
+
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Award, Camera, CheckCircle2, Circle, PlayCircle } from "lucide-react"
@@ -6,20 +8,13 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { cn } from "@/lib/utils"
 import type { Aula, Curso, ProgressResult } from "@/lib/supabase/types"
+import { formatarDuracao } from "@/utils/formatarDuracao"
 
 type DetalhesCursoViewProps = {
   curso: Curso
   aulas: Aula[]
   concluidas: Set<string>
   progresso: ProgressResult
-}
-
-function formatarDuracao(segundos: number | null): string {
-  if (!segundos) return ""
-  const h = Math.floor(segundos / 3600)
-  const m = Math.floor((segundos % 3600) / 60)
-  if (h > 0) return `${h}h ${m}m`
-  return `${m}m`
 }
 
 export function DetalhesCursoView({

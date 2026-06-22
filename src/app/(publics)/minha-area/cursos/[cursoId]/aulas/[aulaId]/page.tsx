@@ -12,6 +12,7 @@ type Props = { params: Promise<{ cursoId: string; aulaId: string }> }
 
 export default async function PlayerAulaPage({ params }: Props) {
   const { cursoId, aulaId } = await params
+
   const supabase = await createClient()
 
   const {

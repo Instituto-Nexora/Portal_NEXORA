@@ -21,6 +21,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function DetalhesCursoPage({ params }: Props) {
   const { cursoId } = await params
+
   const supabase = await createClient()
 
   const {
@@ -39,11 +40,7 @@ export default async function DetalhesCursoPage({ params }: Props) {
   if (!enrollment) notFound()
 
   const [cursoResult, aulasResult] = await Promise.all([
-    supabase
-      .from("courses")
-      .select("*")
-      .eq("id", cursoId)
-      .single(),
+    supabase.from("courses").select("*").eq("id", cursoId).single(),
     supabase
       .from("lessons")
       .select("*")

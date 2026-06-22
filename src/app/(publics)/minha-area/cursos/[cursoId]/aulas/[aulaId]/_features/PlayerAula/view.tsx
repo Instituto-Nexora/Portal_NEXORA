@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import type { Aula, Curso } from "@/lib/supabase/types"
+import { formatarDuracao } from "@/utils/formatarDuracao"
 import { usePlayerAulaViewModel } from "./viewModel"
 
 type Props = {
@@ -14,14 +15,6 @@ type Props = {
   aulas: Aula[]
   aulasConcluidas: string[]
   userId: string
-}
-
-function formatarDuracao(segundos: number | null): string {
-  if (!segundos) return ""
-  const h = Math.floor(segundos / 3600)
-  const m = Math.floor((segundos % 3600) / 60)
-  if (h > 0) return `${h}h ${m}m`
-  return `${m}m`
 }
 
 export function PlayerAulaView({ aula, curso, aulas, aulasConcluidas, userId }: Props) {

@@ -15,4 +15,6 @@ export async function marcarAulaConcluida(
   )
   if (error) throw new Error(error.message)
   revalidatePath(`/minha-area/cursos/${cursoId}/aulas/${aulaId}`)
+  revalidatePath(`/minha-area/cursos/${cursoId}`)
+  revalidatePath("/minha-area")
 }
