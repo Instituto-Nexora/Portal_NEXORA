@@ -1,0 +1,17 @@
+{
+  "feature": "controle-de-progresso-do-aluno",
+  "created_at": "2026-06-05T00:00:00-03:00",
+  "updated_at": "2026-06-05T03:00:00-03:00",
+  "squads": {
+    "frontend-001": {
+      "domain": "frontend",
+      "pipeline": "feature-development",
+      "started_at": "2026-06-05T00:00:00-03:00",
+      "completed_at": "2026-06-05T03:00:00-03:00",
+      "status": "completed",
+      "completed_steps": ["01-gate-integridade", "02-arquitetura", "03-checkpoint-design", "04-implementacao", "05-review", "06-docs"],
+      "current_step": null,
+      "suspended_at": null
+    }
+  }
+}

@@ -87,6 +87,7 @@ export function CursosDestaque({ cursos }: CursosDestaqueProps) {
                       "bg-teal-700 hover:bg-teal-600 text-white border-0 w-full",
                     )}
                     render={<Link href={curso.href} />}
+                    nativeButton={false}
                   >
                     Saiba Mais
                   </Button>

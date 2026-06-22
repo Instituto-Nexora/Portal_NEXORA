@@ -70,7 +70,54 @@ type TicketMessage = {
   lida: boolean;
 };
 
+type Curso = {
+  id: string;
+  title: string;
+  description: string | null;
+  thumbnail_url: string | null;
+  price_cents: number;
+  is_published: boolean;
+  created_at: string;
+};
+
+type Aula = {
+  id: string;
+  course_id: string;
+  title: string;
+  video_url: string | null;
+  position: number;
+  duration_seconds: number | null;
+  is_published: boolean;
+  created_at: string;
+};
+
+type LessonStatus = "published" | "draft";
+
+type Lesson = {
+  id: string;
+  course_id: string;
+  title: string;
+  order: number;
+  status: LessonStatus;
+  created_at: string;
+};
+
+type LessonProgress = {
+  id: string;
+  user_id: string;
+  lesson_id: string;
+  completed_at: string;
+};
+
+type ProgressResult = {
+  concluidas: number;
+  total: number;
+  percentual: number;
+};
+
 export type {
+  Curso,
+  Aula,
   AdminRole,
   AdminProfile,
   StudentProfile,
@@ -83,4 +130,8 @@ export type {
   TicketStatus,
   Ticket,
   TicketMessage,
+  LessonStatus,
+  Lesson,
+  LessonProgress,
+  ProgressResult,
 };

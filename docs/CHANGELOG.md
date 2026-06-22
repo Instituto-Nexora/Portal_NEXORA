@@ -4,6 +4,25 @@
 
 ---
 
+## [2026-06-05] — Controle de progresso do aluno por aula (Issue #22)
+
+### Adicionado
+
+- `src/utils/calcularProgressoCurso.ts` — consulta `lessons` (publicadas) e `lesson_progress` (aluno) no Supabase; retorna `{ concluidas, total, percentual }`
+- `src/app/(private)/minha-area/_features/MeusCursos/actions.ts` — Server Actions `marcarAulaConcluida(aulaId)` e `desmarcarAulaConcluida(aulaId)`
+- Tipos `LessonStatus`, `Lesson`, `LessonProgress`, `ProgressResult` em `src/lib/supabase/types.ts`
+
+### Alterado
+
+- `src/app/(private)/minha-area/page.tsx` — barra de progresso migrada para `<Progress>` Shadcn; paleta teal (ADR-008); `Button` com `render` Base UI; TODO para integração real com Supabase
+
+### Pendente
+
+- Integração real em `minha-area/page.tsx` aguarda issue #18 (schema DB)
+- `marcarAulaConcluida`/`desmarcarAulaConcluida` serão chamadas no player da issue #21
+
+---
+
 ## [2026-05-23] — Listagem de cursos adquiridos (Minha Área)
 
 ### Adicionado
